@@ -25,24 +25,32 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 2. Profil użytkownika
    - Dodawanie, edycja, usuwanie szablonów preferencji (ogólne dane — brak informacji wrażliwych)
    - Możliwość zapisania preferencji podczas tworzenia pierwszego planu (wymaga potwierdzenia)
-3. Tworzenie planu
-   - Formularz notatki z polami: cel podróży, daty, liczba osób, transport, budżet, „Co robić”, „Czego unikać”
-4. Generowanie planu przy użyciu AI
-   - Jedno kliknięcie „Generuj plan”
-   - Czas odpowiedzi ≤ 30 s; w razie niepowodzenia wyświetlany jest komunikat błędu
+3. Generowanie planu przy użyciu AI
+   - Formularz z polami: cel podróży, daty, liczba osób, transport, budżet, „Co robić", „Czego unikać"
+   - Jedno kliknięcie „Generuj plan"
+   - Czas odpowiedzi ≤ 180 s; w razie niepowodzenia wyświetlany jest komunikat błędu
    - Nieograniczona liczba ponownych prób (manualnie inicjowanych)
-5. Edycja planu
-   - Użytkownik może dodawać / usuwać / przenosić dni i atrakcje
-   - Zmiana dowolnej części planu oznacza, że plan staje się „edytowany” (informacja tylko analityczna, niewidoczna w UI)
-6. Akceptacja planu
-   - Użytkownik zatwierdza plan jako finalny
-   - Plan jest zapisywany w bazie
+   - Wygenerowany plan NIE jest od razu zapisywany w bazie — istnieje tylko w interfejsie użytkownika
+4. Edycja wygenerowanego planu (przed akceptacją)
+   - Użytkownik może przeglądać i edytować wygenerowany plan w interfejsie
+   - Może dodawać / usuwać / przenosić dni i atrakcje
+   - Edycje są tymczasowe (tylko w interfejsie) dopóki użytkownik nie zaakceptuje planu
+   - Zmiana planu przed akceptacją oznacza, że plan staje się „edytowany" (informacja analityczna)
+5. Akceptacja planu
+   - Użytkownik zatwierdza plan (z lub bez edycji) klikając „Akceptuj"
+   - Dopiero wtedy plan jest zapisywany w bazie danych
+   - Plan zapisuje się ze statusem „AI" (jeśli niezmieniony) lub „Edytowany" (jeśli użytkownik go zmodyfikował)
+6. Edycja zapisanego planu (po akceptacji)
+   - Użytkownik może edytować już zapisane plany z listy
+   - Każda edycja zapisanego planu zmienia jego status na „Edytowany"
 7. Zarządzanie planami
-   - Lista planów (wszystkie stany)
-   - Usuwanie planu z potwierdzeniem
+   - Lista wszystkich zaakceptowanych/zapisanych planów
+   - Możliwość przeglądania szczegółów planu
+   - Usuwanie planu z potwierdzeniem (soft-delete)
 8. Analityka
-   - Oznaczenie planu statusem: „AI”, „Edytowany”
-   - Metryka główna: odsetek zaakceptowanych planów w pełni wygenerowanych przez AI (niezmodyfikowanych)
+   - Automatyczne oznaczenie planu statusem: „AI" lub „Edytowany"
+   - Metryka główna: odsetek zaakceptowanych planów w pełni wygenerowanych przez AI (niezmodyfikowanych przed akceptacją)
+   - Metryka dodatkowa: % wygenerowanych planów, które zostały zaakceptowane
 9. Responsywność i UX
    - Mobile-first: pełna funkcjonalność na ekranach < 400 px
    - Progres indicator podczas generowania
@@ -89,58 +97,69 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 ### US-004
 
 - ID: US-004
-- Tytuł: Tworzenie notatki planu
-- Opis: Jako zalogowany użytkownik chcę wprowadzić dane wyjazdu, aby przygotować plan.
+- Tytuł: Generowanie planu przez AI
+- Opis: Jako zalogowany użytkownik chcę wygenerować plan wycieczki na podstawie moich preferencji przy użyciu AI.
 - Kryteria akceptacji:
-  1. Formularz wymusza wypełnienie pól obowiązkowych.
-  2. Część pól moze zostać zapisana jako szablon preferencji.
+  1. Formularz wymusza wypełnienie pól obowiązkowych (cel, daty, liczba osób, budżet).
+  2. Kliknięcie „Generuj plan" rozpoczyna proces generowania.
+  3. Wyświetla się wskaźnik postępu podczas generowania.
+  4. Plan pojawia się w ≤ 180 s lub komunikat błędu.
+  5. Wygenerowany plan jest wyświetlany w interfejsie, ale NIE jest jeszcze zapisany w bazie.
 
 ### US-005
 
 - ID: US-005
-- Tytuł: Generowanie planu
-- Opis: Jako użytkownik chcę wygenerować plan na podstawie notatki i preferencji.
+- Tytuł: Ponowne generowanie planu
+- Opis: Jako użytkownik chcę móc wygenerować nowy plan, gdy poprzednia próba się nie powiodła lub nie podobał mi się wygenerowany plan.
 - Kryteria akceptacji:
-  1. Kliknięcie „Generuj plan” rozpoczyna proces.
-  2. Wyświetla się wskaźnik postępu.
-  3. Plan pojawia się w ≤ 30 s lub komunikat błędu.
+  1. Po błędzie generowania dostępny przycisk „Spróbuj ponownie".
+  2. Użytkownik może kliknąć „Generuj ponownie" nawet jeśli poprzednie generowanie się powiodło.
+  3. Nieograniczona liczba prób generowania.
+  4. Każde nowe generowanie nadpisuje poprzedni plan w interfejsie.
 
 ### US-006
 
 - ID: US-006
-- Tytuł: Ponowienie generowania
-- Opis: Jako użytkownik chcę powtórzyć generowanie, gdy poprzednia próba się nie powiodła.
+- Tytuł: Edycja wygenerowanego planu przed akceptacją
+- Opis: Jako użytkownik chcę móc edytować wygenerowany plan (dodawać, usuwać, przenosić atrakcje i dni) przed jego zaakceptowaniem.
 - Kryteria akceptacji:
-  1. Po błędzie dostępny przycisk „Spróbuj ponownie”.
-  2. Nieograniczona liczba prób.
+  1. UI pozwala na dodawanie, usuwanie, przeciąganie pozycji w wygenerowanym planie.
+  2. Edycje są widoczne natychmiast w interfejsie.
+  3. Plan pozostaje niezapisany w bazie do momentu akceptacji.
+  4. System śledzi czy plan został edytowany (do celów analitycznych).
 
 ### US-007
 
 - ID: US-007
-- Tytuł: Edycja planu
-- Opis: Jako użytkownik chcę modyfikować wygenerowany plan (dodawać, usuwać, przenosić atrakcje i dni).
+- Tytuł: Akceptacja i zapis planu
+- Opis: Jako użytkownik chcę zaakceptować wygenerowany plan (z lub bez moich edycji), aby zapisać go w bazie jako mój plan wycieczki.
 - Kryteria akceptacji:
-  1. UI pozwala na dodawanie, usuwanie, przeciąganie pozycji.
-  2. Po zapisaniu plan oznaczony jako „edytowany”.
+  1. Kliknięcie „Akceptuj plan" zapisuje plan w bazie danych.
+  2. Plan pojawia się na liście moich zapisanych planów.
+  3. Jeśli plan był edytowany przed akceptacją, zapisuje się ze statusem „Edytowany".
+  4. Jeśli plan nie był edytowany, zapisuje się ze statusem „AI".
 
 ### US-008
 
 - ID: US-008
-- Tytuł: Akceptacja planu
-- Opis: Jako użytkownik chcę zaakceptować plan, aby zapisać go jako finalny.
+- Tytuł: Edycja zapisanego planu
+- Opis: Jako użytkownik chcę móc edytować już zapisane plany z mojej listy.
 - Kryteria akceptacji:
-  1. Kliknięcie „Akceptuj” ustawia status „zaakceptowany”.
-  2. Plan trafia na listę planów.
+  1. Użytkownik może otworzyć zapisany plan z listy.
+  2. UI pozwala na edycję wszystkich elementów planu.
+  3. Zapisanie zmian automatycznie zmienia status planu na „Edytowany" (jeśli był „AI").
+  4. Zmiany są natychmiast widoczne na liście planów.
 
 ### US-009
 
 - ID: US-009
-- Tytuł: Usuwanie planu
-- Opis: Jako użytkownik chcę usunąć plan, aby zachować porządek.
+- Tytuł: Usuwanie zapisanego planu
+- Opis: Jako użytkownik chcę usunąć zapisany plan z mojej listy, aby zachować porządek.
 - Kryteria akceptacji:
-  1. Użytkownik wybiera „Usuń” z listy lub widoku szczegółowego.
-  2. System prosi o potwierdzenie.
-  3. Po potwierdzeniu plan znika.
+  1. Użytkownik wybiera „Usuń" z listy planów lub widoku szczegółowego planu.
+  2. System prosi o potwierdzenie usunięcia.
+  3. Po potwierdzeniu plan znika z listy (soft-delete).
+  4. Usunięte plany nie są wyświetlane domyślnie na liście.
 
 ### US-010
 
@@ -156,5 +175,5 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 1. Odsetek zaakceptowanych planów w pełni wygenerowanych przez AI ≥ 60 % w ciągu 3 miesięcy od startu.
 2. 75 % aktywnych użytkowników generuje ≥ 3 plany rocznie.
 3. 90 % aktywnych użytkowników ma zapisane preferencje w profilu.
-4. Czas generowania planu ≤ 30 s w 95 percentylu.
+4. Czas generowania planu ≤ 180 s w 95 percentylu.
 5. Dostępność systemu ≥ 99 % w trakcie testów MVP.

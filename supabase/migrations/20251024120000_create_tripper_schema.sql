@@ -52,7 +52,7 @@ create table user_preferences (
   budget_type      text,
   created_at       timestamptz default now() not null,
   updated_at       timestamptz default now() not null,
-  
+
   -- ensure unique template names per user
   constraint unique_user_template_name unique (user_id, name)
 );
@@ -83,6 +83,43 @@ create trigger set_updated_user_preferences
 
 /*
  * =============================================================================
+ * TABLE: plan_generations
+ * =============================================================================
+ * Purpose: Track successful AI plan generations for analytics and debugging
+ * Access: Private to each user (RLS enabled)
+ */
+
+create table plan_generations (
+  id                  uuid primary key default gen_random_uuid(),
+  user_id             uuid references auth.users(id) not null,
+  model               varchar(256) not null,
+  source_text_hash    text not null,
+  source_text_length  integer not null,
+  duration_ms         integer not null,
+  created_at          timestamptz default now() not null
+);
+
+-- enable row level security
+alter table plan_generations enable row level security;
+
+-- rls policy: users can only access their own generation records (select)
+create policy "plan_generations_select_own" on plan_generations
+  for select using (user_id = auth.uid());
+
+-- rls policy: users can only insert their own generation records
+create policy "plan_generations_insert_own" on plan_generations
+  for insert with check (user_id = auth.uid());
+
+-- rls policy: users can only update their own generation records
+create policy "plan_generations_update_own" on plan_generations
+  for update using (user_id = auth.uid());
+
+-- rls policy: users can only delete their own generation records
+create policy "plan_generations_delete_own" on plan_generations
+  for delete using (user_id = auth.uid());
+
+/*
+ * =============================================================================
  * TABLE: trip_plans
  * =============================================================================
  * Purpose: Store generated trip plans with all details
@@ -93,6 +130,7 @@ create trigger set_updated_user_preferences
 create table trip_plans (
   id             uuid primary key default gen_random_uuid(),
   user_id        uuid references auth.users(id) not null,
+  generation_id  uuid references plan_generations(id),
   destination    text not null,
   start_date     date not null,
   end_date       date not null,
@@ -140,44 +178,6 @@ create trigger set_deleted
 
 /*
  * =============================================================================
- * TABLE: plan_generations
- * =============================================================================
- * Purpose: Track successful AI plan generations for analytics and debugging
- * Access: Private to each user (RLS enabled)
- */
-
-create table plan_generations (
-  id                  uuid primary key default gen_random_uuid(),
-  user_id             uuid references auth.users(id) not null,
-  plan_id             uuid references trip_plans(id),
-  model               varchar(256) not null,
-  source_text_hash    text not null,
-  source_text_length  integer not null,
-  duration_ms         integer not null,
-  created_at          timestamptz default now() not null
-);
-
--- enable row level security
-alter table plan_generations enable row level security;
-
--- rls policy: users can only access their own generation records (select)
-create policy "plan_generations_select_own" on plan_generations
-  for select using (user_id = auth.uid());
-
--- rls policy: users can only insert their own generation records
-create policy "plan_generations_insert_own" on plan_generations
-  for insert with check (user_id = auth.uid());
-
--- rls policy: users can only update their own generation records
-create policy "plan_generations_update_own" on plan_generations
-  for update using (user_id = auth.uid());
-
--- rls policy: users can only delete their own generation records
-create policy "plan_generations_delete_own" on plan_generations
-  for delete using (user_id = auth.uid());
-
-/*
- * =============================================================================
  * TABLE: plan_generation_error_logs
  * =============================================================================
  * Purpose: Track failed AI plan generations for debugging and monitoring
@@ -213,7 +213,10 @@ grant select, insert on plan_generation_error_logs to service_role;
 -- index on user_id for faster user-specific queries on trip_plans
 create index idx_trip_plans_user_id on trip_plans(user_id);
 
--- index on user_id for faster user-specific queries on plan_generations  
+-- index on generation_id for analytics queries tracking generation acceptance
+create index idx_trip_plans_generation_id on trip_plans(generation_id);
+
+-- index on user_id for faster user-specific queries on plan_generations
 create index idx_plan_generations_user_id on plan_generations(user_id);
 
 -- index on created_at for faster cleanup operations on error logs
@@ -231,6 +234,7 @@ comment on column user_preferences.people_count is 'Default number of people for
 comment on column user_preferences.budget_type is 'Default budget category (low, medium, high)';
 
 comment on table trip_plans is 'Generated trip plans with complete itinerary details';
+comment on column trip_plans.generation_id is 'Reference to the AI generation that created this plan (nullable for analytics)';
 comment on column trip_plans.plan_details is 'JSONB structure containing daily itinerary and activities';
 comment on column trip_plans.source is 'Origin of plan generation (ai = original, ai-edited = user modified)';
 comment on column trip_plans.deleted_at is 'Soft-delete timestamp to avoid hard data loss';

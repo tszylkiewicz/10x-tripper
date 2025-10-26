@@ -20,21 +20,22 @@
 
 ### 1.2 trip_plans
 
-| Column       | Type        | Constraints                                    | Description                      |
-| ------------ | ----------- | ---------------------------------------------- | -------------------------------- |
-| id           | uuid        | PK, default gen_random_uuid()                  |                                  |
-| user_id      | uuid        | FK → auth.users(id), NOT NULL                  | Owner                            |
-| destination  | text        | NOT NULL                                       | City / region                    |
-| start_date   | date        | NOT NULL                                       | Trip start                       |
-| end_date     | date        | NOT NULL                                       | Trip end                         |
-| people_count | integer     | NOT NULL                                       | Copied from preferences or form  |
-| budget_type  | text        | NOT NULL                                       | Copied from preferences or form  |
-| plan_details | jsonb       | NOT NULL                                       | Nested structure of days / items |
-| source       | text        | NOT NULL, CHECK (source IN ('ai','ai-edited')) | Generation origin                |
-| created_at   | timestamptz | DEFAULT now()                                  |                                  |
-| updated_at   | timestamptz | DEFAULT now()                                  | Updated via trigger              |
-| deleted_at   | timestamptz |                                                | Soft-delete timestamp            |
-| deleted_by   | uuid        | FK → auth.users(id)                            | User who deleted                 |
+| Column        | Type        | Constraints                                    | Description                      |
+| ------------- | ----------- | ---------------------------------------------- | -------------------------------- |
+| id            | uuid        | PK, default gen_random_uuid()                  |                                  |
+| user_id       | uuid        | FK → auth.users(id), NOT NULL                  | Owner                            |
+| generation_id | uuid        | FK → plan_generations(id)                      | Source generation (if from AI)   |
+| destination   | text        | NOT NULL                                       | City / region                    |
+| start_date    | date        | NOT NULL                                       | Trip start                       |
+| end_date      | date        | NOT NULL                                       | Trip end                         |
+| people_count  | integer     | NOT NULL                                       | Copied from preferences or form  |
+| budget_type   | text        | NOT NULL                                       | Copied from preferences or form  |
+| plan_details  | jsonb       | NOT NULL                                       | Nested structure of days / items |
+| source        | text        | NOT NULL, CHECK (source IN ('ai','ai-edited')) | Generation origin                |
+| created_at    | timestamptz | DEFAULT now()                                  |                                  |
+| updated_at    | timestamptz | DEFAULT now()                                  | Updated via trigger              |
+| deleted_at    | timestamptz |                                                | Soft-delete timestamp            |
+| deleted_by    | uuid        | FK → auth.users(id)                            | User who deleted                 |
 
 ---
 
@@ -44,7 +45,6 @@
 | ------------------ | ------------ | ----------------------------- | ------------------------------ |
 | id                 | uuid         | PK, default gen_random_uuid() |                                |
 | user_id            | uuid         | FK → auth.users(id), NOT NULL | Owner                          |
-| plan_id            | uuid         | FK → trip_plans(id)           | Nullable until success         |
 | model              | varchar(256) | NOT NULL                      | LLM model identifier           |
 | source_text_hash   | text         | NOT NULL                      | SHA-256 (or similar) of prompt |
 | source_text_length | integer      | NOT NULL                      | Prompt length (chars)          |
@@ -73,20 +73,23 @@
 
 1. **auth.users 1 — N user_preferences** (`auth.users.id` → `user_preferences.user_id`)
 2. **auth.users 1 — N trip_plans** (`auth.users.id` → `trip_plans.user_id`)
-3. **trip_plans 1 — N plan_generations** (`trip_plans.id` → `plan_generations.plan_id`)
+3. **plan_generations 1 — N trip_plans** (`plan_generations.id` → `trip_plans.generation_id`)
 4. **auth.users 1 — N plan_generations** (`auth.users.id` → `plan_generations.user_id`)
 5. **auth.users 1 — N plan_generation_error_logs** (`auth.users.id` → `plan_generation_error_logs.user_id`)
 
 All are one-to-many; no many-to-many tables required in MVP.
 
+**Note**: A trip plan optionally references the generation that created it via `generation_id`. A generation can be referenced by zero or more trip plans (zero if the user never accepted it, one in normal cases).
+
 ## 3. Indexes
 
-| Table                      | Index                  | Purpose                          |
-| -------------------------- | ---------------------- | -------------------------------- |
-| user_preferences           | UNIQUE (user_id, name) | Prevent duplicate template names |
-| trip_plans                 | (user_id)              | Speed up owner queries           |
-| plan_generations           | (user_id)              |                                  |
-| plan_generation_error_logs | (created_at)           | Accelerate housekeeping (≥90d)   |
+| Table                      | Index                  | Purpose                                 |
+| -------------------------- | ---------------------- | --------------------------------------- |
+| user_preferences           | UNIQUE (user_id, name) | Prevent duplicate template names        |
+| trip_plans                 | (user_id)              | Speed up owner queries                  |
+| trip_plans                 | (generation_id)        | Analytics: track generation acceptance  |
+| plan_generations           | (user_id)              | Speed up owner queries                  |
+| plan_generation_error_logs | (created_at)           | Accelerate housekeeping (≥90d)          |
 
 Additional GIN / JSONB indexes can be added later for complex searches inside `plan_details`.
 
@@ -162,4 +165,5 @@ GRANT SELECT, INSERT ON plan_generation_error_logs TO service_role;
 - Soft-delete avoids hard data loss while keeping schema simple; `deleted_at` lacks index to reduce write amplification—can be added when physical purging or frequent queries require it.
 - Denormalisation of `people_count` and `budget_type` into `trip_plans` optimises reads and keeps queries simple.
 - `plan_details` JSONB structure keeps MVP flexible; future iterations may normalise into day/item tables if querying needs grow.
+- `generation_id` in `trip_plans` is nullable and optional—it tracks which AI generation (if any) the plan was created from. This supports analytics for measuring AI acceptance rates and generation-to-plan conversion.
 - **Supabase configuration**: Remember to add the above RLS policies and triggers through migrations (e.g. using `supabase db push`).
