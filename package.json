@@ -1,5 +1,5 @@
 {
-  "name": "10x-astro-starter",
+  "name": "10x-tripper",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -9,13 +9,15 @@
     "astro": "astro",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:migrate": "supabase migration up"
   },
   "dependencies": {
     "@astrojs/node": "^9.4.3",
     "@astrojs/react": "^4.3.1",
     "@astrojs/sitemap": "^3.5.1",
     "@radix-ui/react-slot": "^1.1.2",
+    "@supabase/supabase-js": "^2.76.1",
     "@tailwindcss/vite": "^4.1.13",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
