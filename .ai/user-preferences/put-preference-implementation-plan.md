@@ -5,6 +5,7 @@
 The `PUT /api/preferences/:id` endpoint allows authenticated users to update their existing preference templates. Preference templates store default trip planning settings (name, people count, budget type) that users can reuse when generating trip plans.
 
 **Key Characteristics:**
+
 - Requires user authentication via Supabase Auth
 - Users can only update their own preferences
 - Partial updates supported (all fields optional)
@@ -14,34 +15,40 @@ The `PUT /api/preferences/:id` endpoint allows authenticated users to update the
 ## 2. Request Details
 
 ### HTTP Method
+
 `PUT`
 
 ### URL Structure
+
 ```
 PUT /api/preferences/:id
 ```
 
 ### URL Parameters
+
 - **id** (required, uuid): The unique identifier of the preference template to update
 
 ### Request Headers
+
 ```
 Authorization: Bearer <jwt_token>
 Content-Type: application/json
 ```
 
 ### Request Body
+
 All fields are optional for update operations:
 
 ```json
 {
-  "name": "string",           // optional, max 256 chars, must be non-empty if provided
-  "people_count": 3,          // optional, integer >= 1, nullable
-  "budget_type": "high"       // optional, string (e.g., "low", "medium", "high"), nullable
+  "name": "string", // optional, max 256 chars, must be non-empty if provided
+  "people_count": 3, // optional, integer >= 1, nullable
+  "budget_type": "high" // optional, string (e.g., "low", "medium", "high"), nullable
 }
 ```
 
 **Validation Rules:**
+
 - At least one field must be provided
 - `name`: If provided, must be non-empty string, max 256 characters, unique per user
 - `people_count`: If provided, must be positive integer (>= 1) or null
@@ -52,6 +59,7 @@ All fields are optional for update operations:
 ### Request/Response DTOs (from `src/types.ts`)
 
 **Request Body Type:**
+
 ```typescript
 UpdateUserPreferenceDto (lines 92-96)
 {
@@ -62,12 +70,14 @@ UpdateUserPreferenceDto (lines 92-96)
 ```
 
 **Response Type:**
+
 ```typescript
 UserPreferenceDto (line 74)
 Pick<Tables<"user_preferences">, "id" | "name" | "people_count" | "budget_type">
 ```
 
 **API Response Wrapper:**
+
 ```typescript
 ApiSuccessResponse<UserPreferenceDto> (lines 317-319)
 {
@@ -92,14 +102,13 @@ UpdatePreferenceCommand (lines 288-294)
 
 ```typescript
 // In API route file
-const updatePreferenceSchema = z.object({
-  name: z.string().min(1).max(256).optional(),
-  people_count: z.number().int().positive().nullable().optional(),
-  budget_type: z.string().min(1).nullable().optional()
-}).refine(
-  (data) => Object.keys(data).length > 0,
-  { message: "At least one field must be provided for update" }
-);
+const updatePreferenceSchema = z
+  .object({
+    name: z.string().min(1).max(256).optional(),
+    people_count: z.number().int().positive().nullable().optional(),
+    budget_type: z.string().min(1).nullable().optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, { message: "At least one field must be provided for update" });
 
 const idParamSchema = z.string().uuid();
 ```
@@ -124,6 +133,7 @@ const idParamSchema = z.string().uuid();
 ### Error Responses
 
 **400 Bad Request** - Validation errors:
+
 ```json
 {
   "error": {
@@ -138,6 +148,7 @@ const idParamSchema = z.string().uuid();
 ```
 
 **400 Bad Request** - Duplicate name:
+
 ```json
 {
   "error": {
@@ -151,6 +162,7 @@ const idParamSchema = z.string().uuid();
 ```
 
 **401 Unauthorized** - Missing/invalid auth:
+
 ```json
 {
   "error": {
@@ -161,6 +173,7 @@ const idParamSchema = z.string().uuid();
 ```
 
 **404 Not Found** - Preference not found or doesn't belong to user:
+
 ```json
 {
   "error": {
@@ -171,6 +184,7 @@ const idParamSchema = z.string().uuid();
 ```
 
 **500 Internal Server Error** - Unexpected errors:
+
 ```json
 {
   "error": {
@@ -220,22 +234,24 @@ const idParamSchema = z.string().uuid();
 **Table:** `user_preferences`
 
 **Update Query Pattern:**
+
 ```typescript
 const { data, error } = await supabase
-  .from('user_preferences')
+  .from("user_preferences")
   .update({
     name: command.name,
     people_count: command.people_count,
     budget_type: command.budget_type,
-    updated_at: new Date().toISOString() // handled by trigger
+    updated_at: new Date().toISOString(), // handled by trigger
   })
-  .eq('id', command.id)
-  .eq('user_id', command.user_id) // ensures user owns the preference
+  .eq("id", command.id)
+  .eq("user_id", command.user_id) // ensures user owns the preference
   .select()
   .single();
 ```
 
 **RLS Policy Required:**
+
 - Policy name: `Users can update own preferences`
 - Rule: `user_id = auth.uid()`
 - Operation: UPDATE
@@ -243,11 +259,13 @@ const { data, error } = await supabase
 ## 6. Security Considerations
 
 ### Authentication
+
 - **Method**: JWT token in Authorization header (Bearer token)
 - **Implementation**: Use `context.locals.supabase.auth.getUser()` in API route
 - **Action on failure**: Return 401 Unauthorized
 
 ### Authorization
+
 - **Check**: Preference must belong to authenticated user
 - **Implementation**:
   - Option 1 (Recommended): Rely on Supabase RLS policies with `.eq('user_id', user.id)`
@@ -255,6 +273,7 @@ const { data, error } = await supabase
 - **Action on failure**: Return 404 Not Found (don't reveal if preference exists but belongs to another user)
 
 ### Input Validation
+
 - **Tool**: Zod schemas for type-safe validation
 - **Validation points**:
   1. URL parameter (id must be valid UUID)
@@ -262,15 +281,18 @@ const { data, error } = await supabase
   3. Business rules (name uniqueness, positive people_count)
 
 ### Data Sanitization
+
 - Zod automatically coerces and validates types
 - String fields are automatically trimmed (add .trim() to schema)
 - No direct SQL queries (Supabase client handles parameterization)
 
 ### CORS
+
 - Handle via Astro response headers if needed for cross-origin requests
 - For same-origin requests, CORS not required
 
 ### Rate Limiting
+
 - Should be implemented at middleware level (future enhancement)
 - Consider per-user limits for update operations
 
@@ -279,6 +301,7 @@ const { data, error } = await supabase
 ### Validation Errors (400)
 
 **Trigger Conditions:**
+
 - Invalid UUID format for id parameter
 - Empty string for name when provided
 - name exceeds 256 characters
@@ -287,6 +310,7 @@ const { data, error } = await supabase
 - Duplicate name for same user (UNIQUE constraint)
 
 **Handling:**
+
 ```typescript
 try {
   const validatedId = idParamSchema.parse(id);
@@ -296,45 +320,52 @@ try {
     return new Response(
       JSON.stringify({
         error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid input data',
-          details: error.errors[0]
-        }
+          code: "VALIDATION_ERROR",
+          message: "Invalid input data",
+          details: error.errors[0],
+        },
       }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } }
+      { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }
 }
 ```
 
 **Unique Constraint Violation:**
+
 ```typescript
 // In service layer
-if (error?.code === '23505') { // PostgreSQL unique violation
-  throw new Error('DUPLICATE_PREFERENCE_NAME');
+if (error?.code === "23505") {
+  // PostgreSQL unique violation
+  throw new Error("DUPLICATE_PREFERENCE_NAME");
 }
 ```
 
 ### Authentication Errors (401)
 
 **Trigger Conditions:**
+
 - Missing Authorization header
 - Invalid JWT token
 - Expired JWT token
 
 **Handling:**
+
 ```typescript
-const { data: { user }, error } = await supabase.auth.getUser();
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser();
 
 if (error || !user) {
   return new Response(
     JSON.stringify({
       error: {
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required'
-      }
+        code: "UNAUTHORIZED",
+        message: "Authentication required",
+      },
     }),
-    { status: 401, headers: { 'Content-Type': 'application/json' } }
+    { status: 401, headers: { "Content-Type": "application/json" } }
   );
 }
 ```
@@ -342,26 +373,28 @@ if (error || !user) {
 ### Not Found Errors (404)
 
 **Trigger Conditions:**
+
 - Preference with given id doesn't exist
 - Preference exists but belongs to different user (authorization failure)
 
 **Handling:**
+
 ```typescript
 // In service layer, after update attempt
 if (!data) {
-  throw new Error('PREFERENCE_NOT_FOUND');
+  throw new Error("PREFERENCE_NOT_FOUND");
 }
 
 // In API route
-if (error?.message === 'PREFERENCE_NOT_FOUND') {
+if (error?.message === "PREFERENCE_NOT_FOUND") {
   return new Response(
     JSON.stringify({
       error: {
-        code: 'PREFERENCE_NOT_FOUND',
-        message: 'Preference not found or access denied'
-      }
+        code: "PREFERENCE_NOT_FOUND",
+        message: "Preference not found or access denied",
+      },
     }),
-    { status: 404, headers: { 'Content-Type': 'application/json' } }
+    { status: 404, headers: { "Content-Type": "application/json" } }
   );
 }
 ```
@@ -369,25 +402,27 @@ if (error?.message === 'PREFERENCE_NOT_FOUND') {
 ### Server Errors (500)
 
 **Trigger Conditions:**
+
 - Database connection failures
 - Unexpected Supabase errors
 - Unhandled exceptions
 
 **Handling:**
+
 ```typescript
 try {
   // ... main logic
 } catch (error) {
-  console.error('Error updating preference:', error);
+  console.error("Error updating preference:", error);
 
   return new Response(
     JSON.stringify({
       error: {
-        code: 'INTERNAL_ERROR',
-        message: 'An unexpected error occurred'
-      }
+        code: "INTERNAL_ERROR",
+        message: "An unexpected error occurred",
+      },
     }),
-    { status: 500, headers: { 'Content-Type': 'application/json' } }
+    { status: 500, headers: { "Content-Type": "application/json" } }
   );
 }
 ```
@@ -395,29 +430,35 @@ try {
 ## 8. Performance Considerations
 
 ### Database Optimization
+
 - **Indexes**: Ensure composite index on `(user_id, name)` exists for unique constraint
 - **Query efficiency**: Single update query with `.eq()` clauses is efficient
 - **Connection pooling**: Handled by Supabase client
 
 ### Response Time
+
 - **Expected**: < 100ms for successful updates
 - **Database round trips**: 1 (single update query with RLS)
 - **No N+1 queries**: Single atomic operation
 
 ### Caching
+
 - **Not applicable**: User preferences are frequently updated and user-specific
 - **Cache invalidation**: If implementing caching later, invalidate on update
 
 ### Optimization Opportunities
+
 - Consider batch updates if multiple preferences need updating (future feature)
 - Add database-level optimistic locking with `updated_at` version checking if needed
 
 ## 9. Implementation Steps
 
 ### Step 1: Create Service Layer
+
 **File:** `src/lib/services/preferences.service.ts`
 
 **Tasks:**
+
 1. Create `updatePreference` function accepting `UpdatePreferenceCommand`
 2. Implement Supabase update query with RLS checks
 3. Handle unique constraint violations
@@ -425,12 +466,10 @@ try {
 5. Add proper error handling with custom error types
 
 **Code Structure:**
+
 ```typescript
-import type { SupabaseClient } from '../db/supabase.client';
-import type {
-  UpdatePreferenceCommand,
-  UserPreferenceDto
-} from '../types';
+import type { SupabaseClient } from "../db/supabase.client";
+import type { UpdatePreferenceCommand, UserPreferenceDto } from "../types";
 
 export async function updatePreference(
   supabase: SupabaseClient,
@@ -441,18 +480,22 @@ export async function updatePreference(
 ```
 
 ### Step 2: Create Zod Validation Schemas
+
 **File:** `src/pages/api/preferences/[id].ts` (inline) or `src/lib/validators/preference.validators.ts` (shared)
 
 **Tasks:**
+
 1. Create `updatePreferenceSchema` for request body validation
 2. Create `idParamSchema` for URL parameter validation
 3. Add refinement for "at least one field" requirement
 4. Export schemas for reuse in tests
 
 ### Step 3: Create API Route Handler
+
 **File:** `src/pages/api/preferences/[id].ts`
 
 **Tasks:**
+
 1. Export `const prerender = false` for SSR
 2. Create `PUT` function handler
 3. Extract and validate id from URL params
@@ -463,11 +506,12 @@ export async function updatePreference(
 8. Implement comprehensive error handling
 
 **Code Structure:**
+
 ```typescript
-import type { APIRoute } from 'astro';
-import { z } from 'zod';
-import { updatePreference } from '../../../lib/services/preferences.service';
-import type { UpdatePreferenceCommand } from '../../../types';
+import type { APIRoute } from "astro";
+import { z } from "zod";
+import { updatePreference } from "../../../lib/services/preferences.service";
+import type { UpdatePreferenceCommand } from "../../../types";
 
 export const prerender = false;
 
@@ -477,9 +521,11 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 ```
 
 ### Step 4: Add Type Definitions (if missing)
+
 **File:** `src/types.ts`
 
 **Tasks:**
+
 1. Verify `UpdateUserPreferenceDto` is correctly defined (lines 92-96) ✓
 2. Verify `UserPreferenceDto` is correctly defined (line 74) ✓
 3. Verify `UpdatePreferenceCommand` is correctly defined (lines 288-294) ✓
@@ -488,15 +534,18 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 **Status:** All types already defined, no action needed.
 
 ### Step 5: Add Database Migration (if needed)
+
 **File:** `supabase/migrations/XXX_add_user_preferences_rls.sql`
 
 **Tasks:**
+
 1. Ensure RLS is enabled on `user_preferences` table
 2. Create policy: `Users can update own preferences`
 3. Verify indexes exist: primary key on `id`, unique index on `(user_id, name)`
 4. Verify `updated_at` trigger exists
 
 **SQL Example:**
+
 ```sql
 -- Enable RLS
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
@@ -513,9 +562,11 @@ ON user_preferences(user_id, name);
 ```
 
 ### Step 6: Update Middleware (if needed)
+
 **File:** `src/middleware/index.ts`
 
 **Tasks:**
+
 1. Verify Supabase client is injected into `context.locals` ✓
 2. Add authentication middleware if not exists (extract user early)
 3. Add request logging for API routes (optional)
@@ -523,9 +574,11 @@ ON user_preferences(user_id, name);
 **Status:** Basic middleware exists, may need authentication enhancement.
 
 ### Step 7: Add Unit Tests
+
 **File:** `src/lib/services/__tests__/preferences.service.test.ts`
 
 **Tasks:**
+
 1. Test successful update with all fields
 2. Test successful update with partial fields
 3. Test unique constraint violation handling
@@ -534,9 +587,11 @@ ON user_preferences(user_id, name);
 6. Mock Supabase client responses
 
 ### Step 8: Add Integration Tests
+
 **File:** `tests/api/preferences.test.ts`
 
 **Tasks:**
+
 1. Test PUT with valid authentication and data
 2. Test PUT with missing authentication (401)
 3. Test PUT with invalid id format (400)
@@ -546,16 +601,20 @@ ON user_preferences(user_id, name);
 7. Test PUT for another user's preference (404)
 
 ### Step 9: Update API Documentation
+
 **File:** `docs/api/preferences.md` or similar
 
 **Tasks:**
+
 1. Document PUT endpoint with examples
 2. Add authentication requirements
 3. Document all possible error codes
 4. Add cURL examples for testing
 
 ### Step 10: Manual Testing Checklist
+
 **Tasks:**
+
 1. Test with valid JWT token and data
 2. Test with expired JWT token
 3. Test with malformed request body
@@ -585,6 +644,7 @@ ON user_preferences(user_id, name);
 ## 11. Testing Scenarios Summary
 
 ### Happy Path
+
 1. ✓ Update all fields with valid data
 2. ✓ Update only name
 3. ✓ Update only people_count
@@ -592,6 +652,7 @@ ON user_preferences(user_id, name);
 5. ✓ Set nullable fields to null
 
 ### Error Cases
+
 1. ✓ Missing authentication token (401)
 2. ✓ Invalid JWT token (401)
 3. ✓ Invalid UUID format for id (400)
@@ -603,6 +664,7 @@ ON user_preferences(user_id, name);
 9. ✓ Attempting to update another user's preference (404)
 
 ### Edge Cases
+
 1. ✓ Update with same values (should succeed, update timestamp)
 2. ✓ Update name to existing name of same preference (should succeed)
 3. ✓ Concurrent updates (last write wins, verify no data corruption)
@@ -612,17 +674,20 @@ ON user_preferences(user_id, name);
 ## 12. Dependencies
 
 ### NPM Packages (already in project)
+
 - `@supabase/supabase-js` - Supabase client
 - `zod` - Validation
 - `astro` - Framework
 
 ### Internal Dependencies
+
 - `src/db/supabase.client.ts` - Supabase client instance
 - `src/db/database.types.ts` - Generated database types
 - `src/types.ts` - Application DTOs and commands
 - `src/middleware/index.ts` - Middleware for context injection
 
 ### External Services
+
 - Supabase instance (PostgreSQL + Auth)
 
 ## 13. Rollout Plan

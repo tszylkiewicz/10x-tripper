@@ -5,10 +5,12 @@
 Endpoint GET /api/preferences służy do pobierania wszystkich szablonów preferencji (preference templates) należących do zalogowanego użytkownika. Każdy szablon preferencji zawiera domyślne ustawienia, które użytkownik może wykorzystać podczas planowania kolejnych wycieczek, takie jak liczba osób i typ budżetu.
 
 **Cel:**
+
 - Umożliwienie użytkownikowi przeglądania zapisanych szablonów preferencji
 - Zapewnienie szybkiego dostępu do często używanych konfiguracji planowania podróży
 
 **Kluczowe wymagania:**
+
 - Zwracanie tylko preferencji należących do zalogowanego użytkownika
 - Uwierzytelnienie użytkownika jest obowiązkowe
 - Brak paginacji (wszystkie preferencje użytkownika w jednym response)
@@ -20,11 +22,13 @@ Endpoint GET /api/preferences służy do pobierania wszystkich szablonów prefer
 **Struktura URL:** `/api/preferences`
 
 **Parametry:**
+
 - **Wymagane:** Brak parametrów query, path ani body
 - **Opcjonalne:** Brak
 - **Uwierzytelnienie:** Wymagany token Supabase auth w nagłówku `Authorization: Bearer <token>`
 
 **Request Headers:**
+
 ```
 Authorization: Bearer <supabase_jwt_token>
 Content-Type: application/json
@@ -33,6 +37,7 @@ Content-Type: application/json
 **Request Body:** Brak (GET request)
 
 **Przykładowe wywołanie:**
+
 ```bash
 curl -X GET https://yourdomain.com/api/preferences \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -43,14 +48,13 @@ curl -X GET https://yourdomain.com/api/preferences \
 ### DTOs (Data Transfer Objects)
 
 **UserPreferenceDto** - typ odpowiedzi (zdefiniowany w `src/types.ts:74`)
+
 ```typescript
-export type UserPreferenceDto = Pick<
-  Tables<"user_preferences">,
-  "id" | "name" | "people_count" | "budget_type"
->;
+export type UserPreferenceDto = Pick<Tables<"user_preferences">, "id" | "name" | "people_count" | "budget_type">;
 ```
 
 **ApiSuccessResponse** - wrapper sukcesu (zdefiniowany w `src/types.ts:317`)
+
 ```typescript
 export interface ApiSuccessResponse<T> {
   data: T;
@@ -58,6 +62,7 @@ export interface ApiSuccessResponse<T> {
 ```
 
 **ApiErrorResponse** - wrapper błędu (zdefiniowany w `src/types.ts:325`)
+
 ```typescript
 export interface ApiErrorResponse {
   error: {
@@ -87,6 +92,7 @@ type ErrorResponse = ApiErrorResponse;
 **Status Code:** `200 OK`
 
 **Response Body:**
+
 ```typescript
 {
   "data": UserPreferenceDto[]
@@ -94,6 +100,7 @@ type ErrorResponse = ApiErrorResponse;
 ```
 
 **Przykładowa odpowiedź:**
+
 ```json
 {
   "data": [
@@ -114,6 +121,7 @@ type ErrorResponse = ApiErrorResponse;
 ```
 
 **Przypadek pustej listy:**
+
 ```json
 {
   "data": []
@@ -127,6 +135,7 @@ type ErrorResponse = ApiErrorResponse;
 **Status Code:** `401 Unauthorized`
 
 **Response Body:**
+
 ```json
 {
   "error": {
@@ -137,6 +146,7 @@ type ErrorResponse = ApiErrorResponse;
 ```
 
 **Przypadki:**
+
 - Brak nagłówka Authorization
 - Nieprawidłowy format tokenu
 - Token wygasł
@@ -147,6 +157,7 @@ type ErrorResponse = ApiErrorResponse;
 **Status Code:** `500 Internal Server Error`
 
 **Response Body:**
+
 ```json
 {
   "error": {
@@ -160,6 +171,7 @@ type ErrorResponse = ApiErrorResponse;
 ```
 
 **Przypadki:**
+
 - Błąd połączenia z bazą danych
 - Nieoczekiwany błąd podczas przetwarzania
 - Problem z Supabase client
@@ -191,27 +203,31 @@ type ErrorResponse = ApiErrorResponse;
 ### Szczegółowy opis kroków
 
 **Krok 1: Request Processing**
+
 - Astro endpoint handler odbiera żądanie GET
 - Wydobywa nagłówki z `context.request.headers`
 
 **Krok 2-4: Authentication**
+
 - Pobiera token z nagłówka Authorization
 - Używa `supabaseClient.auth.getUser(token)` do weryfikacji
 - Jeśli niepowodzenie → zwraca 401
 - Jeśli sukces → wydobywa `user.id`
 
 **Krok 5-6: Data Retrieval**
+
 - Wywołuje serwis: `PreferenceService.getPreferences(userId)`
 - Serwis wykonuje query:
   ```typescript
   supabaseClient
-    .from('user_preferences')
-    .select('id, name, people_count, budget_type')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+    .from("user_preferences")
+    .select("id, name, people_count, budget_type")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
   ```
 
 **Krok 7-9: Response Formation**
+
 - Mapuje wyniki do typu `UserPreferenceDto[]`
 - Owija w `ApiSuccessResponse`
 - Zwraca JSON z kodem 200
@@ -219,12 +235,14 @@ type ErrorResponse = ApiErrorResponse;
 ### Interakcje z zewnętrznymi systemami
 
 **Supabase PostgreSQL:**
+
 - Tabela: `user_preferences`
 - Operacja: SELECT
 - Filtr: `user_id = <authenticated_user_id>`
 - Sortowanie: `created_at DESC` (najnowsze pierwsze)
 
 **Supabase Auth:**
+
 - Weryfikacja tokenu JWT
 - Pobranie user_id z sesji
 
@@ -235,33 +253,43 @@ type ErrorResponse = ApiErrorResponse;
 **Metoda:** Supabase JWT Token w nagłówku Authorization
 
 **Implementacja:**
+
 ```typescript
-const authHeader = context.request.headers.get('Authorization');
-if (!authHeader || !authHeader.startsWith('Bearer ')) {
-  return new Response(JSON.stringify({
-    error: {
-      code: 'UNAUTHORIZED',
-      message: 'Authentication required. Please provide a valid token.'
+const authHeader = context.request.headers.get("Authorization");
+if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Authentication required. Please provide a valid token.",
+      },
+    }),
+    {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
     }
-  }), {
-    status: 401,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  );
 }
 
-const token = authHeader.replace('Bearer ', '');
-const { data: { user }, error } = await supabaseClient.auth.getUser(token);
+const token = authHeader.replace("Bearer ", "");
+const {
+  data: { user },
+  error,
+} = await supabaseClient.auth.getUser(token);
 
 if (error || !user) {
-  return new Response(JSON.stringify({
-    error: {
-      code: 'UNAUTHORIZED',
-      message: 'Invalid or expired token.'
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Invalid or expired token.",
+      },
+    }),
+    {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
     }
-  }), {
-    status: 401,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  );
 }
 ```
 
@@ -270,11 +298,13 @@ if (error || !user) {
 **Zasada:** Users can only access their own preferences
 
 **Implementacja:**
+
 - Zawsze filtruj zapytanie przez `user_id` z tokenu
 - NIGDY nie akceptuj `user_id` z parametrów żądania
 - Wykorzystaj Row Level Security (RLS) w Supabase jako dodatkową warstwę ochrony
 
 **Recommended RLS Policy:**
+
 ```sql
 CREATE POLICY "Users can view their own preferences"
 ON user_preferences
@@ -285,29 +315,35 @@ USING (auth.uid() = user_id);
 ### Walidacja danych
 
 **Input Validation:**
+
 - Brak parametrów wejściowych do walidacji
 - Walidacja formatu tokenu (Bearer scheme)
 - Walidacja istnienia użytkownika
 
 **Output Validation:**
+
 - Upewnij się, że zwracane są tylko dozwolone pola (id, name, people_count, budget_type)
 - NIGDY nie zwracaj pól: user_id, created_at, updated_at (zgodnie z UserPreferenceDto)
 
 ### Zapobieganie atakom
 
 **SQL Injection:**
+
 - Używamy Supabase client z parametryzowanymi zapytaniami
 - Brak surowego SQL
 
 **XSS (Cross-Site Scripting):**
+
 - JSON response automatycznie escapuje dane
 - Brak renderowania HTML
 
 **CSRF (Cross-Site Request Forgery):**
+
 - GET endpoint bez side effects
 - Token JWT zapewnia ochronę
 
 **Rate Limiting:**
+
 - Rozważ implementację rate limiting na poziomie API (np. 100 requests/min per user)
 - Można użyć middleware lub Supabase Edge Functions
 
@@ -315,15 +351,15 @@ USING (auth.uid() = user_id);
 
 ### Katalog błędów
 
-| Kod błędu | Status HTTP | Scenariusz | Rozwiązanie |
-|-----------|-------------|------------|-------------|
-| UNAUTHORIZED | 401 | Brak nagłówka Authorization | Dodaj token do nagłówka |
-| UNAUTHORIZED | 401 | Nieprawidłowy format tokenu | Użyj formatu: `Bearer <token>` |
-| UNAUTHORIZED | 401 | Token wygasł | Odśwież token przez re-authentication |
-| UNAUTHORIZED | 401 | Token unieważniony | Zaloguj się ponownie |
-| INTERNAL_SERVER_ERROR | 500 | Błąd połączenia z bazą danych | Sprawdź konfigurację Supabase |
-| INTERNAL_SERVER_ERROR | 500 | Błąd Supabase client | Sprawdź logi serwera |
-| INTERNAL_SERVER_ERROR | 500 | Nieoczekiwany błąd | Sprawdź logi, zgłoś błąd |
+| Kod błędu             | Status HTTP | Scenariusz                    | Rozwiązanie                           |
+| --------------------- | ----------- | ----------------------------- | ------------------------------------- |
+| UNAUTHORIZED          | 401         | Brak nagłówka Authorization   | Dodaj token do nagłówka               |
+| UNAUTHORIZED          | 401         | Nieprawidłowy format tokenu   | Użyj formatu: `Bearer <token>`        |
+| UNAUTHORIZED          | 401         | Token wygasł                  | Odśwież token przez re-authentication |
+| UNAUTHORIZED          | 401         | Token unieważniony            | Zaloguj się ponownie                  |
+| INTERNAL_SERVER_ERROR | 500         | Błąd połączenia z bazą danych | Sprawdź konfigurację Supabase         |
+| INTERNAL_SERVER_ERROR | 500         | Błąd Supabase client          | Sprawdź logi serwera                  |
+| INTERNAL_SERVER_ERROR | 500         | Nieoczekiwany błąd            | Sprawdź logi, zgłoś błąd              |
 
 ### Strategia error handling
 
@@ -336,65 +372,76 @@ try {
   const preferences = await PreferenceService.getPreferences(user.id);
 
   // 3. Success response
-  return new Response(JSON.stringify({
-    data: preferences
-  }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  });
-
+  return new Response(
+    JSON.stringify({
+      data: preferences,
+    }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 } catch (error) {
   // Error logging
-  console.error('GET /api/preferences error:', error);
+  console.error("GET /api/preferences error:", error);
 
   // Known errors
   if (error instanceof UnauthorizedError) {
-    return new Response(JSON.stringify({
-      error: {
-        code: 'UNAUTHORIZED',
-        message: error.message
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "UNAUTHORIZED",
+          message: error.message,
+        },
+      }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
       }
-    }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    );
   }
 
   // Unknown errors
-  return new Response(JSON.stringify({
-    error: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected error occurred. Please try again later.',
-      details: {
-        timestamp: new Date().toISOString()
-      }
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred. Please try again later.",
+        details: {
+          timestamp: new Date().toISOString(),
+        },
+      },
+    }),
+    {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
     }
-  }), {
-    status: 500,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  );
 }
 ```
 
 ### Logging
 
 **Co logować:**
+
 - Wszystkie błędy 500 z pełnym stack trace
 - Błędy uwierzytelnienia (bez wrażliwych danych)
 - Czas wykonania zapytania (monitoring wydajności)
 
 **Czego NIE logować:**
+
 - Tokenów auth
 - Pełnych nagłówków Authorization
 - Danych osobowych użytkownika
 
 **Przykład:**
+
 ```typescript
-console.error('[GET /api/preferences]', {
+console.error("[GET /api/preferences]", {
   timestamp: new Date().toISOString(),
   userId: user?.id, // safe to log
   error: error.message,
-  stack: error.stack
+  stack: error.stack,
 });
 ```
 
@@ -444,17 +491,19 @@ ON user_preferences(user_id, created_at DESC);
 #### 3. Response Caching
 
 **Client-side caching:**
+
 ```typescript
 // W frontend code
-const preferences = await fetch('/api/preferences', {
+const preferences = await fetch("/api/preferences", {
   headers: {
-    'Authorization': `Bearer ${token}`,
-    'Cache-Control': 'max-age=300' // 5 minutes
-  }
+    Authorization: `Bearer ${token}`,
+    "Cache-Control": "max-age=300", // 5 minutes
+  },
 });
 ```
 
 **Server-side caching:** (opcjonalne dla przyszłości)
+
 - Użyj Redis dla cache user preferences
 - Invalidate cache przy CREATE/UPDATE/DELETE
 
@@ -486,16 +535,19 @@ console.log(`[GET /api/preferences] Duration: ${duration}ms, User: ${user.id}`);
 ### Krok 1: Przygotowanie struktury plików
 
 **1.1 Utwórz API endpoint handler**
+
 ```
 src/pages/api/preferences/index.ts
 ```
 
 **1.2 Utwórz serwis dla logiki biznesowej**
+
 ```
 src/services/preference.service.ts
 ```
 
 **1.3 Utwórz helper dla uwierzytelnienia (reusable)**
+
 ```
 src/lib/auth.helpers.ts
 ```
@@ -505,32 +557,37 @@ src/lib/auth.helpers.ts
 **Plik:** `src/lib/auth.helpers.ts`
 
 **Zadania:**
+
 - [ ] Stworzyć funkcję `extractAuthToken(request: Request): string | null`
 - [ ] Stworzyć funkcję `authenticateUser(token: string): Promise<User>`
 - [ ] Stworzyć klasę `UnauthorizedError extends Error`
 - [ ] Dodać error handling dla różnych przypadków auth failure
 
 **Przykładowa implementacja:**
+
 ```typescript
 export class UnauthorizedError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'UnauthorizedError';
+    this.name = "UnauthorizedError";
   }
 }
 
 export async function authenticateRequest(request: Request) {
-  const authHeader = request.headers.get('Authorization');
+  const authHeader = request.headers.get("Authorization");
 
-  if (!authHeader?.startsWith('Bearer ')) {
-    throw new UnauthorizedError('Authentication required. Please provide a valid token.');
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new UnauthorizedError("Authentication required. Please provide a valid token.");
   }
 
-  const token = authHeader.replace('Bearer ', '');
-  const { data: { user }, error } = await supabaseClient.auth.getUser(token);
+  const token = authHeader.replace("Bearer ", "");
+  const {
+    data: { user },
+    error,
+  } = await supabaseClient.auth.getUser(token);
 
   if (error || !user) {
-    throw new UnauthorizedError('Invalid or expired token.');
+    throw new UnauthorizedError("Invalid or expired token.");
   }
 
   return user;
@@ -542,27 +599,29 @@ export async function authenticateRequest(request: Request) {
 **Plik:** `src/services/preference.service.ts`
 
 **Zadania:**
+
 - [ ] Stworzyć klasę lub moduł `PreferenceService`
 - [ ] Zaimplementować metodę `getPreferences(userId: string): Promise<UserPreferenceDto[]>`
 - [ ] Dodać error handling dla database errors
 - [ ] Dodać sortowanie wyników (created_at DESC)
 
 **Przykładowa implementacja:**
+
 ```typescript
-import { supabaseClient } from '../db/supabase.client';
-import type { UserPreferenceDto } from '../types';
+import { supabaseClient } from "../db/supabase.client";
+import type { UserPreferenceDto } from "../types";
 
 export class PreferenceService {
   static async getPreferences(userId: string): Promise<UserPreferenceDto[]> {
     const { data, error } = await supabaseClient
-      .from('user_preferences')
-      .select('id, name, people_count, budget_type')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .from("user_preferences")
+      .select("id, name, people_count, budget_type")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Database error in getPreferences:', error);
-      throw new Error('Failed to fetch preferences');
+      console.error("Database error in getPreferences:", error);
+      throw new Error("Failed to fetch preferences");
     }
 
     return data as UserPreferenceDto[];
@@ -575,6 +634,7 @@ export class PreferenceService {
 **Plik:** `src/pages/api/preferences/index.ts`
 
 **Zadania:**
+
 - [ ] Stworzyć GET handler funkcję
 - [ ] Zintegrować auth helper
 - [ ] Wywołać PreferenceService
@@ -583,11 +643,12 @@ export class PreferenceService {
 - [ ] Dodać response headers (Content-Type, CORS jeśli potrzebne)
 
 **Przykładowa struktura:**
+
 ```typescript
-import type { APIRoute } from 'astro';
-import { authenticateRequest, UnauthorizedError } from '../../lib/auth.helpers';
-import { PreferenceService } from '../../services/preference.service';
-import type { ApiSuccessResponse, UserPreferenceDto, ApiErrorResponse } from '../../types';
+import type { APIRoute } from "astro";
+import { authenticateRequest, UnauthorizedError } from "../../lib/auth.helpers";
+import { PreferenceService } from "../../services/preference.service";
+import type { ApiSuccessResponse, UserPreferenceDto, ApiErrorResponse } from "../../types";
 
 export const GET: APIRoute = async (context) => {
   try {
@@ -599,44 +660,43 @@ export const GET: APIRoute = async (context) => {
 
     // 3. Format response
     const response: ApiSuccessResponse<UserPreferenceDto[]> = {
-      data: preferences
+      data: preferences,
     };
 
     return new Response(JSON.stringify(response), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     });
-
   } catch (error) {
-    console.error('[GET /api/preferences] Error:', error);
+    console.error("[GET /api/preferences] Error:", error);
 
     if (error instanceof UnauthorizedError) {
       const errorResponse: ApiErrorResponse = {
         error: {
-          code: 'UNAUTHORIZED',
-          message: error.message
-        }
+          code: "UNAUTHORIZED",
+          message: error.message,
+        },
       };
 
       return new Response(JSON.stringify(errorResponse), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     const errorResponse: ApiErrorResponse = {
       error: {
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred. Please try again later.',
-        details: { timestamp: new Date().toISOString() }
-      }
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred. Please try again later.",
+        details: { timestamp: new Date().toISOString() },
+      },
     };
 
     return new Response(JSON.stringify(errorResponse), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
@@ -645,12 +705,14 @@ export const GET: APIRoute = async (context) => {
 ### Krok 5: Database setup (jeśli jeszcze nie istnieje)
 
 **Zadania:**
+
 - [ ] Sprawdzić czy tabela `user_preferences` istnieje w Supabase
 - [ ] Sprawdzić czy istnieje index na `user_id`
 - [ ] Dodać RLS policy dla SELECT operation
 - [ ] Przetestować connection z local development
 
 **RLS Policy:**
+
 ```sql
 -- Enable RLS
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
@@ -665,12 +727,14 @@ USING (auth.uid() = user_id);
 ### Krok 6: Testing
 
 **6.1 Unit Tests**
+
 - [ ] Test PreferenceService.getPreferences()
   - Sukces: zwraca preferencje użytkownika
   - Sukces: zwraca pustą tablicę dla użytkownika bez preferencji
   - Błąd: rzuca wyjątek przy database error
 
 **6.2 Integration Tests**
+
 - [ ] Test GET /api/preferences endpoint
   - 200: authenticated user z preferencjami
   - 200: authenticated user bez preferencji (empty array)
@@ -680,11 +744,13 @@ USING (auth.uid() = user_id);
   - 500: błąd bazy danych (mock)
 
 **6.3 Manual Testing**
+
 - [ ] Test w Postman/Thunder Client
 - [ ] Test z frontend aplikacji
 - [ ] Test performance (response time)
 
 **Przykładowy test case:**
+
 ```bash
 # Success case
 curl -X GET http://localhost:4321/api/preferences \
@@ -703,6 +769,7 @@ curl -X GET http://localhost:4321/api/preferences \
 ### Krok 7: Documentation
 
 **Zadania:**
+
 - [ ] Dodać komentarze JSDoc do functions
 - [ ] Zaktualizować API documentation (jeśli istnieje)
 - [ ] Dodać przykłady użycia w README (opcjonalne)
@@ -710,6 +777,7 @@ curl -X GET http://localhost:4321/api/preferences \
 ### Krok 8: Code Review i Deployment
 
 **Code Review Checklist:**
+
 - [ ] Kod zgodny z TypeScript best practices
 - [ ] Wszystkie typy poprawnie zdefiniowane
 - [ ] Error handling complete
@@ -720,6 +788,7 @@ curl -X GET http://localhost:4321/api/preferences \
 - [ ] Response format matches specification
 
 **Deployment:**
+
 - [ ] Merge do main branch
 - [ ] Deploy do staging environment
 - [ ] Smoke tests na staging
@@ -729,12 +798,14 @@ curl -X GET http://localhost:4321/api/preferences \
 ### Krok 9: Monitoring post-deployment
 
 **Zadania:**
+
 - [ ] Sprawdzić error logs (pierwsze 24h)
 - [ ] Monitorować response times
 - [ ] Sprawdzić rate of 401 errors (może wskazywać problemy z auth)
 - [ ] Zbierać feedback od użytkowników
 
 **Metryki do śledzenia:**
+
 - Request count (total, per hour)
 - Error rate (401, 500)
 - Average response time

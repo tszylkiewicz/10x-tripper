@@ -18,20 +18,24 @@ Endpoint służy do pobierania szczegółów pojedynczego szablonu preferencji u
 ### Parametry:
 
 #### URL Parameters:
+
 - **id** (wymagany, string w formacie UUID v4)
   - Identyfikator szablonu preferencji
   - Przykład: `550e8400-e29b-41d4-a716-446655440000`
   - Walidacja: Musi być poprawnym UUID v4
 
 #### Query Parameters:
+
 - Brak
 
 #### Request Headers:
+
 - `Authorization: Bearer <jwt_token>` (wymagany)
   - JWT token z Supabase Auth
   - Zawiera `user_id` w payload
 
 #### Request Body:
+
 - Brak (metoda GET)
 
 ## 3. Wykorzystywane typy
@@ -40,21 +44,7 @@ Endpoint służy do pobierania szczegółów pojedynczego szablonu preferencji u
 
 ```typescript
 // Z src/types.ts (linia 74)
-export type UserPreferenceDto = Pick<
-  Tables<"user_preferences">,
-  "id" | "name" | "people_count" | "budget_type"
->;
-```
-
-**UWAGA - WYMAGANA MODYFIKACJA TYPU:**
-Zgodnie ze specyfikacją API, odpowiedź powinna zawierać również `created_at` i `updated_at`. Należy zaktualizować `UserPreferenceDto`:
-
-```typescript
-// NOWA WERSJA UserPreferenceDto
-export type UserPreferenceDto = Pick<
-  Tables<"user_preferences">,
-  "id" | "name" | "people_count" | "budget_type" | "created_at" | "updated_at"
->;
+export type UserPreferenceDto = Pick<Tables<"user_preferences">, "id" | "name" | "people_count" | "budget_type">;
 ```
 
 ### Typy Response Wrapper:
@@ -79,7 +69,7 @@ export interface ApiErrorResponse {
 
 ```typescript
 // Z src/db/database.types.ts
-Tables<"user_preferences"> // Typ tabeli z bazy danych
+Tables<"user_preferences">; // Typ tabeli z bazy danych
 ```
 
 ## 4. Szczegóły odpowiedzi
@@ -92,9 +82,7 @@ Tables<"user_preferences"> // Typ tabeli z bazy danych
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "name": "Family Vacation Template",
     "people_count": 4,
-    "budget_type": "medium",
-    "created_at": "2025-01-15T10:30:00Z",
-    "updated_at": "2025-01-15T10:30:00Z"
+    "budget_type": "medium"
   }
 }
 ```
@@ -234,32 +222,43 @@ Tables<"user_preferences"> // Typ tabeli z bazy danych
 ### 6.1 Autoryzacja i Autentykacja
 
 **Wymagania:**
+
 - Każde żądanie MUSI zawierać ważny JWT token w headerze `Authorization: Bearer <token>`
 - Token jest weryfikowany przez Supabase Auth
 - Z tokenu ekstrahowany jest `user_id` użytkownika
 
 **Implementacja:**
+
 ```typescript
-const authHeader = request.headers.get('Authorization');
-if (!authHeader?.startsWith('Bearer ')) {
-  return new Response(JSON.stringify({
-    error: {
-      code: 'UNAUTHORIZED',
-      message: 'Missing or invalid authentication token'
-    }
-  }), { status: 401 });
+const authHeader = request.headers.get("Authorization");
+if (!authHeader?.startsWith("Bearer ")) {
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Missing or invalid authentication token",
+      },
+    }),
+    { status: 401 }
+  );
 }
 
 const token = authHeader.substring(7);
-const { data: { user }, error } = await supabase.auth.getUser(token);
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser(token);
 
 if (error || !user) {
-  return new Response(JSON.stringify({
-    error: {
-      code: 'UNAUTHORIZED',
-      message: 'Invalid authentication token'
-    }
-  }), { status: 401 });
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Invalid authentication token",
+      },
+    }),
+    { status: 401 }
+  );
 }
 
 const userId = user.id;
@@ -270,16 +269,17 @@ const userId = user.id;
 **Zagrożenie:** Użytkownik może próbować uzyskać dostęp do preferencji innego użytkownika, zgadując lub podstawiając UUID.
 
 **Ochrona:**
+
 ```typescript
 // Query MUSI zawierać oba warunki:
 // 1. id = requested_id
 // 2. user_id = authenticated_user_id
 
 const { data, error } = await supabase
-  .from('user_preferences')
-  .select('*')
-  .eq('id', id)
-  .eq('user_id', userId)  // ← Krytyczne zabezpieczenie
+  .from("user_preferences")
+  .select("*")
+  .eq("id", id)
+  .eq("user_id", userId) // ← Krytyczne zabezpieczenie
   .single();
 ```
 
@@ -288,23 +288,28 @@ const { data, error } = await supabase
 ### 6.3 Walidacja Danych Wejściowych
 
 **UUID Validation:**
+
 ```typescript
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 if (!UUID_REGEX.test(id)) {
-  return new Response(JSON.stringify({
-    error: {
-      code: 'INVALID_UUID',
-      message: 'The provided ID is not a valid UUID format',
-      details: { field: 'id' }
-    }
-  }), { status: 400 });
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "INVALID_UUID",
+        message: "The provided ID is not a valid UUID format",
+        details: { field: "id" },
+      },
+    }),
+    { status: 400 }
+  );
 }
 ```
 
 ### 6.4 Rate Limiting (Opcjonalne, ale zalecane)
 
 Rozważyć implementację rate limiting per użytkownika:
+
 - np. 100 requests/minute per user
 - Ochrona przed nadmiernym odpytywaniem API
 - Implementacja przez middleware lub Supabase Edge Functions
@@ -319,98 +324,92 @@ Rozważyć implementację rate limiting per użytkownika:
 
 ### 7.1 Katalog błędów
 
-| Kod HTTP | Error Code             | Opis                                          | Przyczyna                                    |
-|----------|------------------------|-----------------------------------------------|----------------------------------------------|
-| 400      | INVALID_UUID           | Nieprawidłowy format UUID                     | ID nie jest poprawnym UUID v4                |
-| 401      | UNAUTHORIZED           | Brak lub nieprawidłowa autoryzacja            | Brak tokenu, token wygasły, token nieprawidłowy |
-| 404      | PREFERENCE_NOT_FOUND   | Preferencja nie znaleziona                    | ID nie istnieje LUB należy do innego użytkownika |
-| 500      | INTERNAL_SERVER_ERROR  | Wewnętrzny błąd serwera                       | Błąd DB, nieoczekiwany wyjątek               |
-| 500      | DATABASE_ERROR         | Błąd komunikacji z bazą danych                | Timeout, connection error                    |
+| Kod HTTP | Error Code            | Opis                               | Przyczyna                                        |
+| -------- | --------------------- | ---------------------------------- | ------------------------------------------------ |
+| 400      | INVALID_UUID          | Nieprawidłowy format UUID          | ID nie jest poprawnym UUID v4                    |
+| 401      | UNAUTHORIZED          | Brak lub nieprawidłowa autoryzacja | Brak tokenu, token wygasły, token nieprawidłowy  |
+| 404      | PREFERENCE_NOT_FOUND  | Preferencja nie znaleziona         | ID nie istnieje LUB należy do innego użytkownika |
+| 500      | INTERNAL_SERVER_ERROR | Wewnętrzny błąd serwera            | Błąd DB, nieoczekiwany wyjątek                   |
+| 500      | DATABASE_ERROR        | Błąd komunikacji z bazą danych     | Timeout, connection error                        |
 
 ### 7.2 Szczegółowa obsługa scenariuszy
 
 #### Scenariusz 1: Nieprawidłowy format UUID
+
 ```typescript
 // Walidacja formatu
 if (!isValidUUID(id)) {
-  return errorResponse(400, 'INVALID_UUID',
-    'The provided ID is not a valid UUID format',
-    { field: 'id', value: id }
-  );
+  return errorResponse(400, "INVALID_UUID", "The provided ID is not a valid UUID format", { field: "id", value: id });
 }
 ```
 
 #### Scenariusz 2: Brak tokenu autoryzacji
+
 ```typescript
-const authHeader = request.headers.get('Authorization');
+const authHeader = request.headers.get("Authorization");
 if (!authHeader) {
-  return errorResponse(401, 'UNAUTHORIZED',
-    'Missing authentication token'
-  );
+  return errorResponse(401, "UNAUTHORIZED", "Missing authentication token");
 }
 ```
 
 #### Scenariusz 3: Nieprawidłowy token JWT
+
 ```typescript
-const { data: { user }, error } = await supabase.auth.getUser(token);
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser(token);
 if (error || !user) {
-  return errorResponse(401, 'UNAUTHORIZED',
-    'Invalid or expired authentication token'
-  );
+  return errorResponse(401, "UNAUTHORIZED", "Invalid or expired authentication token");
 }
 ```
 
 #### Scenariusz 4: Preferencja nie znaleziona lub brak dostępu
-```typescript
-const { data, error } = await supabase
-  .from('user_preferences')
-  .select('*')
-  .eq('id', id)
-  .eq('user_id', userId)
-  .single();
 
-if (error?.code === 'PGRST116' || !data) {
+```typescript
+const { data, error } = await supabase.from("user_preferences").select("*").eq("id", id).eq("user_id", userId).single();
+
+if (error?.code === "PGRST116" || !data) {
   // PGRST116 = not found in PostgREST
-  return errorResponse(404, 'PREFERENCE_NOT_FOUND',
-    'Preference not found or doesn\'t belong to user'
-  );
+  return errorResponse(404, "PREFERENCE_NOT_FOUND", "Preference not found or doesn't belong to user");
 }
 ```
 
 #### Scenariusz 5: Błąd bazy danych
+
 ```typescript
-if (error && error.code !== 'PGRST116') {
-  console.error('Database error:', error);
-  return errorResponse(500, 'DATABASE_ERROR',
-    'An error occurred while accessing the database'
-  );
+if (error && error.code !== "PGRST116") {
+  console.error("Database error:", error);
+  return errorResponse(500, "DATABASE_ERROR", "An error occurred while accessing the database");
 }
 ```
 
 #### Scenariusz 6: Nieoczekiwany błąd
+
 ```typescript
 try {
   // ... main logic
 } catch (error) {
-  console.error('Unexpected error:', error);
-  return errorResponse(500, 'INTERNAL_SERVER_ERROR',
-    'An unexpected error occurred while processing your request'
-  );
+  console.error("Unexpected error:", error);
+  return errorResponse(500, "INTERNAL_SERVER_ERROR", "An unexpected error occurred while processing your request");
 }
 ```
 
 ### 7.3 Logging
 
 **Co logować:**
+
 - Wszystkie błędy 500 (server errors) → szczegółowe logi
 - Błędy 401/404 → podstawowe info (bez sensytywnych danych)
 - Błędy 400 → opcjonalnie dla monitoringu
 
 **Gdzie logować:**
+
 - Console logs (server-side)
 - Opcjonalnie: Sentry, LogRocket, lub inny monitoring service
 
 **Co NIE logować:**
+
 - JWT tokeny
 - Pełne payloady z sentytywnymi danymi
 - Internal stack traces w response do klienta
@@ -434,6 +433,7 @@ try {
 ### 8.2 Strategie optymalizacji
 
 #### Indexy bazodanowe:
+
 ```sql
 -- Index na (user_id, id) dla szybkich query
 CREATE INDEX idx_user_preferences_user_id_id
@@ -444,21 +444,25 @@ ON user_preferences(user_id, id);
 ```
 
 #### Caching (opcjonalne):
+
 - Rozważyć cache JWT verification results (krótki TTL, np. 30s)
 - Cache user_preferences per user (invalidacja przy UPDATE/DELETE)
 - Implementacja przez Redis lub in-memory cache
 
 #### Connection Pooling:
+
 - Supabase automatycznie zarządza connection pooling
 - Upewnić się, że używamy jednej instancji Supabase client
 
 #### Response Compression:
+
 - Enable gzip/brotli compression dla JSON responses
 - Konfiguracja na poziomie serwera (DigitalOcean/Docker)
 
 ### 8.3 Monitoring wydajności
 
 **Metryki do śledzenia:**
+
 - Średni czas odpowiedzi (target: <200ms)
 - P95/P99 latency
 - Database query time
@@ -466,6 +470,7 @@ ON user_preferences(user_id, id);
 - Error rate (target: <1%)
 
 **Narzędzia:**
+
 - Supabase Dashboard (database performance)
 - Application Performance Monitoring (APM) tools
 - Custom logging z timestamps
@@ -477,12 +482,10 @@ ON user_preferences(user_id, id);
 **Plik:** `src/types.ts` (linia 74)
 
 **Zmiana:**
+
 ```typescript
 // PRZED:
-export type UserPreferenceDto = Pick<
-  Tables<"user_preferences">,
-  "id" | "name" | "people_count" | "budget_type"
->;
+export type UserPreferenceDto = Pick<Tables<"user_preferences">, "id" | "name" | "people_count" | "budget_type">;
 
 // PO:
 export type UserPreferenceDto = Pick<
@@ -498,10 +501,11 @@ export type UserPreferenceDto = Pick<
 **Plik:** `src/services/preferences.service.ts`
 
 **Zawartość:**
+
 ```typescript
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../db/database.types';
-import type { UserPreferenceDto } from '../types';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../db/database.types";
+import type { UserPreferenceDto } from "../types";
 
 export class PreferencesService {
   private supabase;
@@ -514,19 +518,16 @@ export class PreferencesService {
    * Pobiera preferencję użytkownika po ID
    * Weryfikuje, że preferencja należy do użytkownika
    */
-  async getPreferenceById(
-    id: string,
-    userId: string
-  ): Promise<UserPreferenceDto | null> {
+  async getPreferenceById(id: string, userId: string): Promise<UserPreferenceDto | null> {
     const { data, error } = await this.supabase
-      .from('user_preferences')
-      .select('id, name, people_count, budget_type, created_at, updated_at')
-      .eq('id', id)
-      .eq('user_id', userId)
+      .from("user_preferences")
+      .select("id, name, people_count, budget_type, created_at, updated_at")
+      .eq("id", id)
+      .eq("user_id", userId)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         // Not found
         return null;
       }
@@ -543,7 +544,7 @@ export class PreferencesService {
 **Plik:** `src/lib/api-helpers.ts` (lub podobny)
 
 ```typescript
-import type { ApiErrorResponse, ApiSuccessResponse } from '../types';
+import type { ApiErrorResponse, ApiSuccessResponse } from "../types";
 
 export function isValidUUID(uuid: string): boolean {
   const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -554,7 +555,7 @@ export function successResponse<T>(data: T, status: number = 200): Response {
   const response: ApiSuccessResponse<T> = { data };
   return new Response(JSON.stringify(response), {
     status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { "Content-Type": "application/json" },
   });
 }
 
@@ -565,17 +566,17 @@ export function errorResponse(
   details?: Record<string, unknown>
 ): Response {
   const response: ApiErrorResponse = {
-    error: { code, message, details }
+    error: { code, message, details },
   };
   return new Response(JSON.stringify(response), {
     status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { "Content-Type": "application/json" },
   });
 }
 
 export async function extractUserId(request: Request): Promise<string | null> {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
     return null;
   }
 
@@ -592,11 +593,11 @@ export async function extractUserId(request: Request): Promise<string | null> {
 **Plik:** `src/pages/api/preferences/[id].ts`
 
 ```typescript
-import type { APIRoute } from 'astro';
-import { PreferencesService } from '../../../services/preferences.service';
-import { isValidUUID, successResponse, errorResponse } from '../../../lib/api-helpers';
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../../../db/database.types';
+import type { APIRoute } from "astro";
+import { PreferencesService } from "../../../services/preferences.service";
+import { isValidUUID, successResponse, errorResponse } from "../../../lib/api-helpers";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../../../db/database.types";
 
 export const GET: APIRoute = async ({ params, request }) => {
   try {
@@ -604,74 +605,49 @@ export const GET: APIRoute = async ({ params, request }) => {
     const id = params.id;
 
     if (!id || !isValidUUID(id)) {
-      return errorResponse(
-        400,
-        'INVALID_UUID',
-        'The provided ID is not a valid UUID format',
-        { field: 'id' }
-      );
+      return errorResponse(400, "INVALID_UUID", "The provided ID is not a valid UUID format", { field: "id" });
     }
 
     // 2. Extract and verify JWT token
-    const authHeader = request.headers.get('Authorization');
+    const authHeader = request.headers.get("Authorization");
 
-    if (!authHeader?.startsWith('Bearer ')) {
-      return errorResponse(
-        401,
-        'UNAUTHORIZED',
-        'Missing or invalid authentication token'
-      );
+    if (!authHeader?.startsWith("Bearer ")) {
+      return errorResponse(401, "UNAUTHORIZED", "Missing or invalid authentication token");
     }
 
     const token = authHeader.substring(7);
 
     // 3. Initialize Supabase client and verify user
-    const supabase = createClient<Database>(
-      import.meta.env.SUPABASE_URL,
-      import.meta.env.SUPABASE_ANON_KEY
-    );
+    const supabase = createClient<Database>(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_ANON_KEY);
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      return errorResponse(
-        401,
-        'UNAUTHORIZED',
-        'Invalid or expired authentication token'
-      );
+      return errorResponse(401, "UNAUTHORIZED", "Invalid or expired authentication token");
     }
 
     const userId = user.id;
 
     // 4. Fetch preference from database
-    const preferencesService = new PreferencesService(
-      import.meta.env.SUPABASE_URL,
-      import.meta.env.SUPABASE_ANON_KEY
-    );
+    const preferencesService = new PreferencesService(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_ANON_KEY);
 
     const preference = await preferencesService.getPreferenceById(id, userId);
 
     // 5. Handle not found case
     if (!preference) {
-      return errorResponse(
-        404,
-        'PREFERENCE_NOT_FOUND',
-        'Preference not found or doesn\'t belong to user'
-      );
+      return errorResponse(404, "PREFERENCE_NOT_FOUND", "Preference not found or doesn't belong to user");
     }
 
     // 6. Return success response
     return successResponse(preference);
-
   } catch (error) {
     // 7. Handle unexpected errors
-    console.error('Unexpected error in GET /api/preferences/:id:', error);
+    console.error("Unexpected error in GET /api/preferences/:id:", error);
 
-    return errorResponse(
-      500,
-      'INTERNAL_SERVER_ERROR',
-      'An unexpected error occurred while processing your request'
-    );
+    return errorResponse(500, "INTERNAL_SERVER_ERROR", "An unexpected error occurred while processing your request");
   }
 };
 ```
@@ -688,23 +664,25 @@ SUPABASE_ANON_KEY=your-anon-key
 **Plik:** `astro.config.mjs`
 
 Upewnić się, że zmienne są dostępne:
+
 ```javascript
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
 export default defineConfig({
   // ... other config
   vite: {
     define: {
-      'import.meta.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
-      'import.meta.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY),
-    }
-  }
+      "import.meta.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
+      "import.meta.env.SUPABASE_ANON_KEY": JSON.stringify(process.env.SUPABASE_ANON_KEY),
+    },
+  },
 });
 ```
 
 ### Krok 6: Weryfikacja indexów bazodanowych
 
 **Sprawdzenie w Supabase Dashboard:**
+
 ```sql
 -- Sprawdź istniejące indexy
 SELECT indexname, indexdef
@@ -721,28 +699,25 @@ ON user_preferences(user_id, id);
 **Plik:** `src/services/__tests__/preferences.service.test.ts`
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { PreferencesService } from '../preferences.service';
+import { describe, it, expect, beforeEach } from "vitest";
+import { PreferencesService } from "../preferences.service";
 
-describe('PreferencesService', () => {
+describe("PreferencesService", () => {
   let service: PreferencesService;
 
   beforeEach(() => {
-    service = new PreferencesService(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
+    service = new PreferencesService(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
   });
 
-  it('should return preference for valid id and user_id', async () => {
+  it("should return preference for valid id and user_id", async () => {
     // TODO: Implement test
   });
 
-  it('should return null for non-existent preference', async () => {
+  it("should return null for non-existent preference", async () => {
     // TODO: Implement test
   });
 
-  it('should return null when preference belongs to different user', async () => {
+  it("should return null when preference belongs to different user", async () => {
     // TODO: Implement test
   });
 });
@@ -753,22 +728,22 @@ describe('PreferencesService', () => {
 **Plik:** `tests/api/preferences.test.ts`
 
 ```typescript
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('GET /api/preferences/:id', () => {
-  it('should return 401 without auth token', async () => {
+describe("GET /api/preferences/:id", () => {
+  it("should return 401 without auth token", async () => {
     // TODO: Implement test
   });
 
-  it('should return 400 for invalid UUID', async () => {
+  it("should return 400 for invalid UUID", async () => {
     // TODO: Implement test
   });
 
-  it('should return 404 for non-existent preference', async () => {
+  it("should return 404 for non-existent preference", async () => {
     // TODO: Implement test
   });
 
-  it('should return 200 with preference data for valid request', async () => {
+  it("should return 200 with preference data for valid request", async () => {
     // TODO: Implement test
   });
 });
@@ -785,6 +760,7 @@ describe('GET /api/preferences/:id', () => {
 ### Krok 10: Code Review i Testing
 
 **Checklist:**
+
 - [ ] Typ UserPreferenceDto zawiera wszystkie wymagane pola
 - [ ] Walidacja UUID działa poprawnie
 - [ ] Autoryzacja JWT jest poprawnie zaimplementowana
@@ -810,12 +786,14 @@ describe('GET /api/preferences/:id', () => {
 ## 10. Dodatkowe uwagi
 
 ### Zgodność z tech stack:
+
 - ✅ Astro 5 - API Routes
 - ✅ TypeScript 5 - Full typing
 - ✅ Supabase - Auth + Database
 - ✅ PostgreSQL - user_preferences table
 
 ### Bezpieczeństwo:
+
 - ✅ JWT Authentication
 - ✅ IDOR Protection
 - ✅ SQL Injection Prevention
@@ -823,11 +801,13 @@ describe('GET /api/preferences/:id', () => {
 - ✅ Error Message Security (nie leakujemy informacji)
 
 ### Performance:
+
 - ✅ Single DB query
 - ✅ Proper indexing
 - ✅ Minimal data transfer
 
 ### Maintainability:
+
 - ✅ Service layer separation
 - ✅ Reusable helper functions
 - ✅ Clear error handling

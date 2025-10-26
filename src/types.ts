@@ -293,6 +293,19 @@ export interface UpdatePreferenceCommand {
   user_id: string;
 }
 
+/**
+ * Command for deleting a user preference
+ * Used in backend to validate and process preference deletion
+ *
+ * Validation rules:
+ * - id: Required, valid UUID format
+ * - user_id: Required, extracted from authenticated session
+ */
+export interface DeletePreferenceCommand {
+  id: string;
+  user_id: string;
+}
+
 // =============================================================================
 // QUERY PARAMETERS Dtos
 // =============================================================================

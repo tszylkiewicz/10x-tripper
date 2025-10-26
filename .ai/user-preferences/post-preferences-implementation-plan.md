@@ -5,6 +5,7 @@
 Endpoint POST /api/preferences służy do tworzenia nowych szablonów preferencji użytkownika. Pozwala użytkownikom zapisywać często używane konfiguracje (np. liczba osób, typ budżetu) pod własną nazwą, co przyspiesza proces planowania kolejnych wycieczek. Endpoint wymaga autentykacji i zapewnia unikalność nazw szablonów w obrębie jednego użytkownika.
 
 **Kluczowe cechy:**
+
 - Autentykowany endpoint (wymaga tokenu JWT)
 - Walidacja unikalności nazwy per użytkownik
 - Zwraca pełny zasób wraz z ID
@@ -22,12 +23,14 @@ Endpoint POST /api/preferences służy do tworzenia nowych szablonów preferencj
 ### Parametry Request Body:
 
 **Wymagane:**
+
 - `name` (string): Nazwa szablonu preferencji
   - Max 256 znaków
   - Musi być unikalna dla danego użytkownika
   - Nie może być pusta
 
 **Opcjonalne:**
+
 - `people_count` (integer | null): Domyślna liczba osób
   - Musi być liczbą całkowitą >= 1 (jeśli podana)
   - Może być null lub pominięta
@@ -48,6 +51,7 @@ Endpoint POST /api/preferences służy do tworzenia nowych szablonów preferencj
 ## 3. Wykorzystywane typy
 
 ### Request DTOs:
+
 ```typescript
 // src/types.ts:81-85
 CreateUserPreferenceDto {
@@ -58,6 +62,7 @@ CreateUserPreferenceDto {
 ```
 
 ### Response DTOs:
+
 ```typescript
 // src/types.ts:74
 UserPreferenceDto = Pick<Tables<"user_preferences">,
@@ -72,6 +77,7 @@ UserPreferenceDto {
 ```
 
 ### Command Models:
+
 ```typescript
 // src/types.ts:273-278
 CreatePreferenceCommand {
@@ -83,6 +89,7 @@ CreatePreferenceCommand {
 ```
 
 ### Response Wrappers:
+
 ```typescript
 // src/types.ts:317-331
 ApiSuccessResponse<UserPreferenceDto> {
@@ -116,6 +123,7 @@ ApiErrorResponse {
 ### Error Responses:
 
 **401 Unauthorized:**
+
 ```json
 {
   "error": {
@@ -126,6 +134,7 @@ ApiErrorResponse {
 ```
 
 **400 Bad Request - Brakująca nazwa:**
+
 ```json
 {
   "error": {
@@ -139,6 +148,7 @@ ApiErrorResponse {
 ```
 
 **400 Bad Request - Duplikat nazwy:**
+
 ```json
 {
   "error": {
@@ -152,6 +162,7 @@ ApiErrorResponse {
 ```
 
 **400 Bad Request - Nieprawidłowa liczba osób:**
+
 ```json
 {
   "error": {
@@ -165,6 +176,7 @@ ApiErrorResponse {
 ```
 
 **500 Internal Server Error:**
+
 ```json
 {
   "error": {
@@ -233,6 +245,7 @@ INSERT INTO user_preferences (
 ## 6. Względy bezpieczeństwa
 
 ### 1. Autentykacja
+
 - **Wymagany JWT token** z Supabase Auth w nagłówku Authorization
 - Token musi być zweryfikowany przed przetwarzaniem żądania
 - Nieprawidłowy/wygasły token → 401 Unauthorized
@@ -240,22 +253,32 @@ INSERT INTO user_preferences (
 
 ```typescript
 // Przykładowa weryfikacja w Astro API Route
-const token = request.headers.get('Authorization')?.replace('Bearer ', '');
+const token = request.headers.get("Authorization")?.replace("Bearer ", "");
 if (!token) {
-  return new Response(JSON.stringify({
-    error: { code: 'UNAUTHORIZED', message: 'Missing authentication token' }
-  }), { status: 401 });
+  return new Response(
+    JSON.stringify({
+      error: { code: "UNAUTHORIZED", message: "Missing authentication token" },
+    }),
+    { status: 401 }
+  );
 }
 
-const { data: { user }, error } = await supabase.auth.getUser(token);
+const {
+  data: { user },
+  error,
+} = await supabase.auth.getUser(token);
 if (error || !user) {
-  return new Response(JSON.stringify({
-    error: { code: 'UNAUTHORIZED', message: 'Invalid authentication token' }
-  }), { status: 401 });
+  return new Response(
+    JSON.stringify({
+      error: { code: "UNAUTHORIZED", message: "Invalid authentication token" },
+    }),
+    { status: 401 }
+  );
 }
 ```
 
 ### 2. Autoryzacja
+
 - Użytkownik może tworzyć preferencje **tylko dla siebie**
 - `user_id` MUSI być pobrany z zweryfikowanej sesji, **NIGDY** z request body
 - Row Level Security (RLS) w Supabase jako dodatkowa warstwa ochrony
@@ -269,17 +292,20 @@ WITH CHECK (auth.uid() = user_id);
 ```
 
 ### 3. Walidacja danych wejściowych
+
 - **Name sanitization**: Walidacja długości, brak niebezpiecznych znaków
 - **Type checking**: Sprawdzenie typów wszystkich pól (string, integer, null)
 - **Range validation**: people_count >= 1 (jeśli podany)
 - **SQL Injection prevention**: Supabase Client automatycznie używa prepared statements
 
 ### 4. CORS
+
 - Skonfigurować dozwolone origins dla frontend aplikacji
 - Ograniczyć dozwolone metody do POST
 - Wymagać credentials dla żądań cross-origin
 
 ### 5. Input Size Limits
+
 - Limitować rozmiar request body (np. max 1KB)
 - Zapobieganie atakom DoS przez duże payloady
 
@@ -287,19 +313,19 @@ WITH CHECK (auth.uid() = user_id);
 
 ### Kategorie błędów:
 
-| Kod statusu | Kod błędu | Scenariusz | Obsługa |
-|------------|-----------|------------|---------|
-| **401** | UNAUTHORIZED | Brak tokenu | Zwróć komunikat o braku autoryzacji |
-| **401** | UNAUTHORIZED | Nieprawidłowy token | Zwróć komunikat o nieprawidłowym tokenie |
-| **400** | VALIDATION_ERROR | Brak pola `name` | Zwróć szczegóły walidacji |
-| **400** | VALIDATION_ERROR | `name` przekracza 256 znaków | Zwróć szczegóły walidacji |
-| **400** | VALIDATION_ERROR | `name` jest pustym stringiem | Zwróć szczegóły walidacji |
-| **400** | DUPLICATE_NAME | UNIQUE constraint violation | Zwróć komunikat o duplikacie z nazwą |
-| **400** | VALIDATION_ERROR | `people_count` < 1 | Zwróć szczegóły walidacji |
-| **400** | VALIDATION_ERROR | `people_count` nie jest integer | Zwróć szczegóły walidacji |
-| **400** | VALIDATION_ERROR | Nieprawidłowy JSON | Zwróć komunikat o błędzie parsowania |
-| **500** | DATABASE_ERROR | Błąd połączenia z bazą | Loguj szczegóły, zwróć ogólny komunikat |
-| **500** | INTERNAL_SERVER_ERROR | Nieoczekiwany błąd | Loguj szczegóły, zwróć ogólny komunikat |
+| Kod statusu | Kod błędu             | Scenariusz                      | Obsługa                                  |
+| ----------- | --------------------- | ------------------------------- | ---------------------------------------- |
+| **401**     | UNAUTHORIZED          | Brak tokenu                     | Zwróć komunikat o braku autoryzacji      |
+| **401**     | UNAUTHORIZED          | Nieprawidłowy token             | Zwróć komunikat o nieprawidłowym tokenie |
+| **400**     | VALIDATION_ERROR      | Brak pola `name`                | Zwróć szczegóły walidacji                |
+| **400**     | VALIDATION_ERROR      | `name` przekracza 256 znaków    | Zwróć szczegóły walidacji                |
+| **400**     | VALIDATION_ERROR      | `name` jest pustym stringiem    | Zwróć szczegóły walidacji                |
+| **400**     | DUPLICATE_NAME        | UNIQUE constraint violation     | Zwróć komunikat o duplikacie z nazwą     |
+| **400**     | VALIDATION_ERROR      | `people_count` < 1              | Zwróć szczegóły walidacji                |
+| **400**     | VALIDATION_ERROR      | `people_count` nie jest integer | Zwróć szczegóły walidacji                |
+| **400**     | VALIDATION_ERROR      | Nieprawidłowy JSON              | Zwróć komunikat o błędzie parsowania     |
+| **500**     | DATABASE_ERROR        | Błąd połączenia z bazą          | Loguj szczegóły, zwróć ogólny komunikat  |
+| **500**     | INTERNAL_SERVER_ERROR | Nieoczekiwany błąd              | Loguj szczegóły, zwróć ogólny komunikat  |
 
 ### Przykładowa implementacja obsługi błędów:
 
@@ -308,35 +334,44 @@ try {
   // Walidacja request body
   const body = await request.json();
 
-  if (!body.name || typeof body.name !== 'string') {
-    return new Response(JSON.stringify({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Validation failed',
-        details: { name: 'Name is required and must be a string' }
-      }
-    }), { status: 400 });
+  if (!body.name || typeof body.name !== "string") {
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Validation failed",
+          details: { name: "Name is required and must be a string" },
+        },
+      }),
+      { status: 400 }
+    );
   }
 
   if (body.name.length > 256) {
-    return new Response(JSON.stringify({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Validation failed',
-        details: { name: 'Name must not exceed 256 characters' }
-      }
-    }), { status: 400 });
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Validation failed",
+          details: { name: "Name must not exceed 256 characters" },
+        },
+      }),
+      { status: 400 }
+    );
   }
 
   if (body.people_count !== undefined && body.people_count !== null) {
     if (!Number.isInteger(body.people_count) || body.people_count < 1) {
-      return new Response(JSON.stringify({
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Validation failed',
-          details: { people_count: 'Must be a positive integer (>= 1)' }
-        }
-      }), { status: 400 });
+      return new Response(
+        JSON.stringify({
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Validation failed",
+            details: { people_count: "Must be a positive integer (>= 1)" },
+          },
+        }),
+        { status: 400 }
+      );
     }
   }
 
@@ -345,36 +380,43 @@ try {
     user_id: user.id,
     name: body.name,
     people_count: body.people_count,
-    budget_type: body.budget_type
+    budget_type: body.budget_type,
   });
 
   return new Response(JSON.stringify({ data: preference }), { status: 201 });
-
 } catch (error) {
   // Obsługa UNIQUE constraint violation
-  if (error.code === '23505') { // PostgreSQL unique violation code
-    return new Response(JSON.stringify({
-      error: {
-        code: 'DUPLICATE_NAME',
-        message: 'A preference with this name already exists',
-        details: { name: body.name }
-      }
-    }), { status: 400 });
+  if (error.code === "23505") {
+    // PostgreSQL unique violation code
+    return new Response(
+      JSON.stringify({
+        error: {
+          code: "DUPLICATE_NAME",
+          message: "A preference with this name already exists",
+          details: { name: body.name },
+        },
+      }),
+      { status: 400 }
+    );
   }
 
   // Logowanie nieoczekiwanych błędów
-  console.error('Unexpected error in POST /api/preferences:', error);
+  console.error("Unexpected error in POST /api/preferences:", error);
 
-  return new Response(JSON.stringify({
-    error: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected error occurred'
-    }
-  }), { status: 500 });
+  return new Response(
+    JSON.stringify({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
+    }),
+    { status: 500 }
+  );
 }
 ```
 
 ### Logowanie błędów:
+
 - Strukturalne logowanie z kontekstem (user_id, request_id, timestamp)
 - Błędy 4xx: info level (user errors)
 - Błędy 5xx: error level (server errors)
@@ -421,20 +463,21 @@ try {
 
 ### Metryki do monitorowania:
 
-| Metryka | Cel | Akcja przy przekroczeniu |
-|---------|-----|--------------------------|
-| Średni czas odpowiedzi | < 200ms | Analiza slow queries |
-| P95 czas odpowiedzi | < 500ms | Optymalizacja lub scaling |
-| Błędy 5xx | < 0.1% | Natychmiastowa analiza |
-| Błędy 4xx (DUPLICATE_NAME) | < 5% | Poprawa UX (sprawdzanie dostępności nazwy) |
+| Metryka                    | Cel     | Akcja przy przekroczeniu                   |
+| -------------------------- | ------- | ------------------------------------------ |
+| Średni czas odpowiedzi     | < 200ms | Analiza slow queries                       |
+| P95 czas odpowiedzi        | < 500ms | Optymalizacja lub scaling                  |
+| Błędy 5xx                  | < 0.1%  | Natychmiastowa analiza                     |
+| Błędy 4xx (DUPLICATE_NAME) | < 5%    | Poprawa UX (sprawdzanie dostępności nazwy) |
 
 ## 9. Etapy wdrożenia
 
 ### Krok 1: Utworzenie PreferencesService
+
 ```typescript
 // src/services/userpPreferences.service.ts
-import { createClient } from '@supabase/supabase-js';
-import type { CreatePreferenceCommand, UserPreferenceDto } from '../types';
+import { createClient } from "@supabase/supabase-js";
+import type { CreatePreferenceCommand, UserPreferenceDto } from "../types";
 
 export class PreferencesService {
   constructor(private supabase: SupabaseClient) {}
@@ -445,12 +488,12 @@ export class PreferencesService {
 
     // INSERT do bazy
     const { data, error } = await this.supabase
-      .from('user_preferences')
+      .from("user_preferences")
       .insert({
         user_id: command.user_id,
         name: command.name,
         people_count: command.people_count,
-        budget_type: command.budget_type
+        budget_type: command.budget_type,
       })
       .select()
       .single();
@@ -464,16 +507,16 @@ export class PreferencesService {
 
   private validateCreateCommand(command: CreatePreferenceCommand): void {
     if (!command.name || command.name.length === 0) {
-      throw new ValidationError('Name is required');
+      throw new ValidationError("Name is required");
     }
 
     if (command.name.length > 256) {
-      throw new ValidationError('Name must not exceed 256 characters');
+      throw new ValidationError("Name must not exceed 256 characters");
     }
 
     if (command.people_count !== undefined && command.people_count !== null) {
       if (!Number.isInteger(command.people_count) || command.people_count < 1) {
-        throw new ValidationError('People count must be a positive integer');
+        throw new ValidationError("People count must be a positive integer");
       }
     }
   }
@@ -481,68 +524,77 @@ export class PreferencesService {
 ```
 
 ### Krok 2: Utworzenie custom error classes
+
 ```typescript
 // src/errors/validation.error.ts
 export class ValidationError extends Error {
-  constructor(message: string, public field?: string) {
+  constructor(
+    message: string,
+    public field?: string
+  ) {
     super(message);
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
   }
 }
 
 // src/errors/duplicate.error.ts
 export class DuplicateError extends Error {
-  constructor(message: string, public field?: string, public value?: any) {
+  constructor(
+    message: string,
+    public field?: string,
+    public value?: any
+  ) {
     super(message);
-    this.name = 'DuplicateError';
+    this.name = "DuplicateError";
   }
 }
 ```
 
 ### Krok 3: Utworzenie Astro API Route
+
 ```typescript
 // src/pages/api/user/preferences.ts
-import type { APIRoute } from 'astro';
-import { createClient } from '@supabase/supabase-js';
-import { PreferencesService } from '../../services/preferences.service';
-import { ValidationError } from '../../errors/validation.error';
-import type { CreateUserPreferenceDto, ApiSuccessResponse, ApiErrorResponse } from '../../types';
+import type { APIRoute } from "astro";
+import { createClient } from "@supabase/supabase-js";
+import { PreferencesService } from "../../services/preferences.service";
+import { ValidationError } from "../../errors/validation.error";
+import type { CreateUserPreferenceDto, ApiSuccessResponse, ApiErrorResponse } from "../../types";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     // 1. Weryfikacja autentykacji
-    const token = request.headers.get('Authorization')?.replace('Bearer ', '');
+    const token = request.headers.get("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
       const errorResponse: ApiErrorResponse = {
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'Missing authentication token'
-        }
+          code: "UNAUTHORIZED",
+          message: "Missing authentication token",
+        },
       };
       return new Response(JSON.stringify(errorResponse), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
-    const supabase = createClient(
-      import.meta.env.SUPABASE_URL,
-      import.meta.env.SUPABASE_ANON_KEY
-    );
+    const supabase = createClient(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_ANON_KEY);
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
       const errorResponse: ApiErrorResponse = {
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'Invalid authentication token'
-        }
+          code: "UNAUTHORIZED",
+          message: "Invalid authentication token",
+        },
       };
       return new Response(JSON.stringify(errorResponse), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -554,13 +606,13 @@ export const POST: APIRoute = async ({ request }) => {
     } catch (e) {
       const errorResponse: ApiErrorResponse = {
         error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid JSON in request body'
-        }
+          code: "VALIDATION_ERROR",
+          message: "Invalid JSON in request body",
+        },
       };
       return new Response(JSON.stringify(errorResponse), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -569,7 +621,7 @@ export const POST: APIRoute = async ({ request }) => {
       user_id: user.id,
       name: body.name,
       people_count: body.people_count,
-      budget_type: body.budget_type
+      budget_type: body.budget_type,
     };
 
     // 4. Wywołanie service
@@ -578,152 +630,152 @@ export const POST: APIRoute = async ({ request }) => {
 
     // 5. Zwrócenie sukcesu
     const successResponse: ApiSuccessResponse<typeof preference> = {
-      data: preference
+      data: preference,
     };
 
     return new Response(JSON.stringify(successResponse), {
       status: 201,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
     // Obsługa ValidationError
     if (error instanceof ValidationError) {
       const errorResponse: ApiErrorResponse = {
         error: {
-          code: 'VALIDATION_ERROR',
+          code: "VALIDATION_ERROR",
           message: error.message,
-          details: error.field ? { [error.field]: error.message } : undefined
-        }
+          details: error.field ? { [error.field]: error.message } : undefined,
+        },
       };
       return new Response(JSON.stringify(errorResponse), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     // Obsługa UNIQUE constraint violation
-    if (error.code === '23505') {
+    if (error.code === "23505") {
       const errorResponse: ApiErrorResponse = {
         error: {
-          code: 'DUPLICATE_NAME',
-          message: 'A preference with this name already exists'
-        }
+          code: "DUPLICATE_NAME",
+          message: "A preference with this name already exists",
+        },
       };
       return new Response(JSON.stringify(errorResponse), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
     }
 
     // Logowanie nieoczekiwanych błędów
-    console.error('Unexpected error in POST /api/preferences:', {
+    console.error("Unexpected error in POST /api/preferences:", {
       error,
       userId: user?.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Zwrócenie ogólnego błędu
     const errorResponse: ApiErrorResponse = {
       error: {
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'An unexpected error occurred'
-      }
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" },
     });
   }
 };
 ```
 
 ### Krok 4: Testy jednostkowe dla PreferencesService
+
 ```typescript
 // src/services/__tests__/userPreferences.service.test.ts
-import { describe, it, expect, vi } from 'vitest';
-import { PreferencesService } from '../preferences.service';
-import { ValidationError } from '../../errors/validation.error';
+import { describe, it, expect, vi } from "vitest";
+import { PreferencesService } from "../preferences.service";
+import { ValidationError } from "../../errors/validation.error";
 
-describe('PreferencesService', () => {
-  describe('createPreference', () => {
-    it('should throw ValidationError when name is empty', async () => {
+describe("PreferencesService", () => {
+  describe("createPreference", () => {
+    it("should throw ValidationError when name is empty", async () => {
       const mockSupabase = createMockSupabase();
       const service = new PreferencesService(mockSupabase);
 
       await expect(
         service.createPreference({
-          user_id: 'user-123',
-          name: '',
+          user_id: "user-123",
+          name: "",
           people_count: null,
-          budget_type: null
+          budget_type: null,
         })
       ).rejects.toThrow(ValidationError);
     });
 
-    it('should throw ValidationError when name exceeds 256 characters', async () => {
+    it("should throw ValidationError when name exceeds 256 characters", async () => {
       const mockSupabase = createMockSupabase();
       const service = new PreferencesService(mockSupabase);
 
       await expect(
         service.createPreference({
-          user_id: 'user-123',
-          name: 'a'.repeat(257),
+          user_id: "user-123",
+          name: "a".repeat(257),
           people_count: null,
-          budget_type: null
+          budget_type: null,
         })
       ).rejects.toThrow(ValidationError);
     });
 
-    it('should throw ValidationError when people_count is negative', async () => {
+    it("should throw ValidationError when people_count is negative", async () => {
       const mockSupabase = createMockSupabase();
       const service = new PreferencesService(mockSupabase);
 
       await expect(
         service.createPreference({
-          user_id: 'user-123',
-          name: 'Test',
+          user_id: "user-123",
+          name: "Test",
           people_count: -1,
-          budget_type: null
+          budget_type: null,
         })
       ).rejects.toThrow(ValidationError);
     });
 
-    it('should create preference successfully', async () => {
+    it("should create preference successfully", async () => {
       const mockSupabase = createMockSupabase({
         insert: vi.fn().mockReturnThis(),
         select: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({
           data: {
-            id: 'pref-123',
-            user_id: 'user-123',
-            name: 'Test Preference',
+            id: "pref-123",
+            user_id: "user-123",
+            name: "Test Preference",
             people_count: 2,
-            budget_type: 'medium',
-            created_at: '2025-01-15T10:00:00Z',
-            updated_at: '2025-01-15T10:00:00Z'
+            budget_type: "medium",
+            created_at: "2025-01-15T10:00:00Z",
+            updated_at: "2025-01-15T10:00:00Z",
           },
-          error: null
-        })
+          error: null,
+        }),
       });
 
       const service = new PreferencesService(mockSupabase);
 
       const result = await service.createPreference({
-        user_id: 'user-123',
-        name: 'Test Preference',
+        user_id: "user-123",
+        name: "Test Preference",
         people_count: 2,
-        budget_type: 'medium'
+        budget_type: "medium",
       });
 
       expect(result).toEqual({
-        id: 'pref-123',
-        user_id: 'user-123',
-        name: 'Test Preference',
+        id: "pref-123",
+        user_id: "user-123",
+        name: "Test Preference",
         people_count: 2,
-        budget_type: 'medium',
-        created_at: '2025-01-15T10:00:00Z',
-        updated_at: '2025-01-15T10:00:00Z'
+        budget_type: "medium",
+        created_at: "2025-01-15T10:00:00Z",
+        updated_at: "2025-01-15T10:00:00Z",
       });
     });
   });
@@ -731,90 +783,91 @@ describe('PreferencesService', () => {
 ```
 
 ### Krok 7: Testy integracyjne dla API endpoint
+
 ```typescript
 // src/pages/api/__tests__/preferences.test.ts
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('POST /api/preferences', () => {
-  it('should return 401 when no auth token provided', async () => {
-    const response = await fetch('http://localhost:4321/api/preferences', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'Test' })
+describe("POST /api/preferences", () => {
+  it("should return 401 when no auth token provided", async () => {
+    const response = await fetch("http://localhost:4321/api/preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Test" }),
     });
 
     expect(response.status).toBe(401);
     const data = await response.json();
-    expect(data.error.code).toBe('UNAUTHORIZED');
+    expect(data.error.code).toBe("UNAUTHORIZED");
   });
 
-  it('should return 400 when name is missing', async () => {
+  it("should return 400 when name is missing", async () => {
     const token = await getTestToken();
 
-    const response = await fetch('http://localhost:4321/api/preferences', {
-      method: 'POST',
+    const response = await fetch("http://localhost:4321/api/preferences", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ people_count: 2 })
+      body: JSON.stringify({ people_count: 2 }),
     });
 
     expect(response.status).toBe(400);
     const data = await response.json();
-    expect(data.error.code).toBe('VALIDATION_ERROR');
+    expect(data.error.code).toBe("VALIDATION_ERROR");
   });
 
-  it('should return 400 when duplicate name', async () => {
+  it("should return 400 when duplicate name", async () => {
     const token = await getTestToken();
 
     // Utwórz pierwszą preferencję
-    await fetch('http://localhost:4321/api/preferences', {
-      method: 'POST',
+    await fetch("http://localhost:4321/api/preferences", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name: 'Duplicate Test' })
+      body: JSON.stringify({ name: "Duplicate Test" }),
     });
 
     // Próba utworzenia duplikatu
-    const response = await fetch('http://localhost:4321/api/preferences', {
-      method: 'POST',
+    const response = await fetch("http://localhost:4321/api/preferences", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ name: 'Duplicate Test' })
+      body: JSON.stringify({ name: "Duplicate Test" }),
     });
 
     expect(response.status).toBe(400);
     const data = await response.json();
-    expect(data.error.code).toBe('DUPLICATE_NAME');
+    expect(data.error.code).toBe("DUPLICATE_NAME");
   });
 
-  it('should create preference successfully', async () => {
+  it("should create preference successfully", async () => {
     const token = await getTestToken();
 
-    const response = await fetch('http://localhost:4321/api/preferences', {
-      method: 'POST',
+    const response = await fetch("http://localhost:4321/api/preferences", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        name: 'Integration Test',
+        name: "Integration Test",
         people_count: 3,
-        budget_type: 'high'
-      })
+        budget_type: "high",
+      }),
     });
 
     expect(response.status).toBe(201);
     const data = await response.json();
     expect(data.data).toMatchObject({
-      name: 'Integration Test',
+      name: "Integration Test",
       people_count: 3,
-      budget_type: 'high'
+      budget_type: "high",
     });
     expect(data.data.id).toBeDefined();
     expect(data.data.created_at).toBeDefined();
@@ -822,22 +875,26 @@ describe('POST /api/preferences', () => {
   });
 });
 ```
+
 ---
 
 ## Notatki implementacyjne
 
 ### ⚠️ Uwagi:
+
 2. **Error codes**: PostgreSQL error code `23505` oznacza UNIQUE constraint violation
 3. **Timezone**: Wszystkie timestampy w UTC (format ISO 8601)
 4. **Null vs undefined**: W TypeScript używamy `| null` dla opcjonalnych wartości w bazie
 
 ### 🔧 Narzędzia pomocnicze:
+
 - Supabase Dashboard do testowania SQL i RLS policies
 - Postman/Insomnia do testowania API
 - Vitest do testów jednostkowych i integracyjnych
 - Sentry do monitorowania błędów w produkcji
 
 ### 📚 Referencje:
+
 - [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [Supabase RLS](https://supabase.com/docs/guides/auth/row-level-security)
 - [Astro API Routes](https://docs.astro.build/en/core-concepts/endpoints/)
