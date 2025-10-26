@@ -17,6 +17,7 @@ The API is organized around three main resources that map directly to database t
 Retrieve all preference templates for the authenticated user.
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -24,15 +25,14 @@ Retrieve all preference templates for the authenticated user.
       "id": "uuid",
       "name": "string",
       "people_count": 2,
-      "budget_type": "medium",
-      "created_at": "2025-01-15T10:30:00Z",
-      "updated_at": "2025-01-15T10:30:00Z"
+      "budget_type": "medium"
     }
   ]
 }
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 
 ---
@@ -42,6 +42,7 @@ Retrieve all preference templates for the authenticated user.
 Create a new preference template.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -51,25 +52,26 @@ Create a new preference template.
 ```
 
 **Validation Rules:**
+
 - `name`: Required, max 256 characters, must be unique per user
 - `people_count`: Optional, integer, positive value
 - `budget_type`: Optional, string (e.g., "low", "medium", "high")
 
 **Response (201 Created):**
+
 ```json
 {
   "data": {
     "id": "uuid",
     "name": "string",
     "people_count": 2,
-    "budget_type": "medium",
-    "created_at": "2025-01-15T10:30:00Z",
-    "updated_at": "2025-01-15T10:30:00Z"
+    "budget_type": "medium"
   }
 }
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` - Validation error (e.g., missing name, duplicate name)
 - `401 Unauthorized` - Missing or invalid authentication token
 
@@ -80,23 +82,24 @@ Create a new preference template.
 Retrieve a specific preference template.
 
 **URL Parameters:**
+
 - `id` (required, uuid) - Preference template ID
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
     "id": "uuid",
     "name": "string",
     "people_count": 2,
-    "budget_type": "medium",
-    "created_at": "2025-01-15T10:30:00Z",
-    "updated_at": "2025-01-15T10:30:00Z"
+    "budget_type": "medium"
   }
 }
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 - `404 Not Found` - Preference not found or doesn't belong to user
 
@@ -107,9 +110,11 @@ Retrieve a specific preference template.
 Update an existing preference template.
 
 **URL Parameters:**
+
 - `id` (required, uuid) - Preference template ID
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -119,23 +124,24 @@ Update an existing preference template.
 ```
 
 **Validation Rules:**
+
 - Same as POST /api/preferences
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
     "id": "uuid",
     "name": "string",
     "people_count": 3,
-    "budget_type": "high",
-    "created_at": "2025-01-15T10:30:00Z",
-    "updated_at": "2025-01-15T12:45:00Z"
+    "budget_type": "high"
   }
 }
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` - Validation error
 - `401 Unauthorized` - Missing or invalid authentication token
 - `404 Not Found` - Preference not found or doesn't belong to user
@@ -147,11 +153,13 @@ Update an existing preference template.
 Delete a preference template.
 
 **URL Parameters:**
+
 - `id` (required, uuid) - Preference template ID
 
 **Response (204 No Content)**
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 - `404 Not Found` - Preference not found or doesn't belong to user
 
@@ -164,11 +172,13 @@ Delete a preference template.
 Retrieve all accepted/saved trip plans for the authenticated user.
 
 **Query Parameters:**
+
 - `include_deleted` (optional, boolean, default: false) - Include soft-deleted plans
 - `sort_by` (optional, string, default: "created_at") - Sort field (created_at, start_date, updated_at)
 - `sort_order` (optional, string, default: "desc") - Sort order (asc, desc)
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -210,6 +220,7 @@ Retrieve all accepted/saved trip plans for the authenticated user.
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 
 ---
@@ -219,6 +230,7 @@ Retrieve all accepted/saved trip plans for the authenticated user.
 Generate a new trip plan using AI. This endpoint does NOT save the plan to the database - it only generates and returns it. The user must explicitly accept the plan using POST /api/trip-plans to save it.
 
 **Request Body:**
+
 ```json
 {
   "destination": "Paris, France",
@@ -235,6 +247,7 @@ Generate a new trip plan using AI. This endpoint does NOT save the plan to the d
 ```
 
 **Validation Rules:**
+
 - `destination`: Required, non-empty string
 - `start_date`: Required, valid ISO date (YYYY-MM-DD), not in the past
 - `end_date`: Required, valid ISO date (YYYY-MM-DD), must be >= start_date
@@ -243,6 +256,7 @@ Generate a new trip plan using AI. This endpoint does NOT save the plan to the d
 - `preferences`: Optional, object with user's notes for AI generation (transport, todo, avoid, etc.)
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -282,6 +296,7 @@ Generate a new trip plan using AI. This endpoint does NOT save the plan to the d
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` - Validation error (e.g., end_date before start_date, missing required fields)
 - `401 Unauthorized` - Missing or invalid authentication token
 - `408 Request Timeout` - AI generation exceeded 180 second timeout
@@ -289,6 +304,7 @@ Generate a new trip plan using AI. This endpoint does NOT save the plan to the d
 - `500 Internal Server Error` - AI generation failed (error details in response body)
 
 **Notes:**
+
 - Generation timeout is set to 180 seconds per PRD requirement
 - Failed generations are logged to `plan_generation_error_logs` table
 - Successful generations are logged to `plan_generations` table
@@ -303,6 +319,7 @@ Generate a new trip plan using AI. This endpoint does NOT save the plan to the d
 Accept and save a generated trip plan to the database. This can be called with the plan exactly as generated by AI (source="ai") or with user modifications (source="ai-edited").
 
 **Request Body:**
+
 ```json
 {
   "generation_id": "uuid",
@@ -326,6 +343,7 @@ Accept and save a generated trip plan to the database. This can be called with t
 ```
 
 **Validation Rules:**
+
 - `generation_id`: Optional, uuid linking to the generation that created this plan (for analytics)
 - `destination`: Required, non-empty string
 - `start_date`: Required, valid ISO date (YYYY-MM-DD)
@@ -336,6 +354,7 @@ Accept and save a generated trip plan to the database. This can be called with t
 - `source`: Required, must be either "ai" (if unmodified from generation) or "ai-edited" (if user edited before accepting)
 
 **Response (201 Created):**
+
 ```json
 {
   "data": {
@@ -354,10 +373,12 @@ Accept and save a generated trip plan to the database. This can be called with t
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` - Validation error (e.g., empty plan_details, invalid source value, end_date before start_date)
 - `401 Unauthorized` - Missing or invalid authentication token
 
 **Notes:**
+
 - This is the "accept" action that saves the plan to the database
 - If `generation_id` is provided, it's stored in the `trip_plans.generation_id` field to link the plan to its source generation
 - The `source` field is critical for analytics:
@@ -372,9 +393,11 @@ Accept and save a generated trip plan to the database. This can be called with t
 Retrieve a specific saved trip plan.
 
 **URL Parameters:**
+
 - `id` (required, uuid) - Trip plan ID
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -396,6 +419,7 @@ Retrieve a specific saved trip plan.
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 - `404 Not Found` - Trip plan not found or doesn't belong to user
 
@@ -406,9 +430,11 @@ Retrieve a specific saved trip plan.
 Update a saved trip plan (manual edits). Automatically changes source to "ai-edited" if it was "ai".
 
 **URL Parameters:**
+
 - `id` (required, uuid) - Trip plan ID
 
 **Request Body:**
+
 ```json
 {
   "destination": "Paris, France",
@@ -430,11 +456,13 @@ Update a saved trip plan (manual edits). Automatically changes source to "ai-edi
 ```
 
 **Validation Rules:**
+
 - All fields are optional
 - If provided, same validation as POST /api/trip-plans
 - `plan_details`: Must be valid JSON structure
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -453,11 +481,13 @@ Update a saved trip plan (manual edits). Automatically changes source to "ai-edi
 ```
 
 **Error Responses:**
+
 - `400 Bad Request` - Validation error
 - `401 Unauthorized` - Missing or invalid authentication token
 - `404 Not Found` - Trip plan not found or doesn't belong to user
 
 **Notes:**
+
 - Any edit to `plan_details` automatically changes `source` from "ai" to "ai-edited"
 - Editing other fields (destination, dates, etc.) does not change source
 
@@ -468,11 +498,13 @@ Update a saved trip plan (manual edits). Automatically changes source to "ai-edi
 Soft delete a saved trip plan (sets deleted_at and deleted_by).
 
 **URL Parameters:**
+
 - `id` (required, uuid) - Trip plan ID
 
 **Response (204 No Content)**
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 - `404 Not Found` - Trip plan not found or doesn't belong to user
 
@@ -485,10 +517,12 @@ Soft delete a saved trip plan (sets deleted_at and deleted_by).
 Retrieve generation statistics for analytics purposes.
 
 **Query Parameters:**
+
 - `start_date` (optional, date) - Filter generations from this date
 - `end_date` (optional, date) - Filter generations until this date
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -510,6 +544,7 @@ Retrieve generation statistics for analytics purposes.
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized` - Missing or invalid authentication token
 - `403 Forbidden` - User doesn't have analytics access (future: admin only)
 
@@ -528,6 +563,7 @@ The API uses **Supabase Authentication** with JWT Bearer tokens:
    - `POST /auth/v1/logout` - User logout
 
 2. **Token Usage**: All API requests must include the JWT token:
+
    ```
    Authorization: Bearer <jwt_token>
    ```
@@ -542,25 +578,31 @@ The API uses **Supabase Authentication** with JWT Bearer tokens:
 Authorization is implemented using **PostgreSQL Row Level Security (RLS)**:
 
 1. **User Preferences**:
+
    ```sql
    CREATE POLICY up_owner ON user_preferences
      USING (user_id = auth.uid());
    ```
+
    - Users can only access their own preference templates
 
 2. **Trip Plans**:
+
    ```sql
    CREATE POLICY tp_owner ON trip_plans
      USING (user_id = auth.uid());
    ```
+
    - Users can only access their own trip plans
    - Soft-deleted plans are included only when `deleted_at IS NOT NULL`
 
 3. **Plan Generations**:
+
    ```sql
    CREATE POLICY pg_owner ON plan_generations
      USING (user_id = auth.uid());
    ```
+
    - Users can only view their own generation logs
 
 4. **Error Logs**:
@@ -595,17 +637,20 @@ Authorization is implemented using **PostgreSQL Row Level Security (RLS)**:
 ### 4.1 User Preferences Validation
 
 **Field Constraints:**
+
 - `name`: Required, max 256 characters, unique per user
 - `people_count`: Optional, positive integer (>= 1)
 - `budget_type`: Optional, string (recommended values: "low", "medium", "high")
 
 **Business Rules:**
+
 - A user cannot have two preference templates with the same name
 - Deleting a preference template does not affect existing trip plans that used it
 
 ### 4.2 Trip Plans Validation
 
 **Field Constraints:**
+
 - `destination`: Required, non-empty string
 - `start_date`: Required, valid ISO date (YYYY-MM-DD), cannot be in the past (for generation)
 - `end_date`: Required, valid ISO date (YYYY-MM-DD), must be >= start_date
@@ -653,6 +698,7 @@ Authorization is implemented using **PostgreSQL Row Level Security (RLS)**:
    - Hard deletion can be implemented later for data cleanup (90+ days)
 
 **Workflow Summary:**
+
 ```
 1. User fills form → POST /api/trip-plans/generate
 2. AI generates plan → Returns plan + generation_id (NOT saved to DB)
@@ -700,6 +746,7 @@ The `plan_details` JSONB field has the following recommended structure:
 ```
 
 **Validation**:
+
 - The structure is flexible (JSONB allows schema evolution)
 - Frontend and AI must agree on this structure
 - Backend validates it's valid JSON but doesn't enforce strict schema in MVP
@@ -708,6 +755,7 @@ The `plan_details` JSONB field has the following recommended structure:
 ### 4.4 Generation Logging
 
 **Successful Generation** (plan_generations table):
+
 - `user_id`: From auth.uid()
 - `model`: AI model identifier (e.g., "gpt-4", "claude-3-sonnet")
 - `source_text_hash`: SHA-256 hash of the prompt sent to AI
@@ -716,6 +764,7 @@ The `plan_details` JSONB field has the following recommended structure:
 - `created_at`: Timestamp of generation
 
 **Failed Generation** (plan_generation_error_logs table):
+
 - `user_id`: From auth.uid()
 - `model`: AI model identifier
 - `source_text_hash`: SHA-256 hash of the prompt
@@ -726,6 +775,7 @@ The `plan_details` JSONB field has the following recommended structure:
 - `created_at`: Timestamp of error
 
 **Analytics Usage**:
+
 - Calculate AI acceptance rate: (count of trip_plans with source="ai") / (count of all trip_plans)
 - Track generation-to-acceptance rate: (count of trip_plans with generation_id NOT NULL) / (count of all plan_generations)
 - Track generation performance: average duration_ms, error rate by model
@@ -770,27 +820,32 @@ All errors return a consistent JSON structure:
 ### 5.3 Common Error Codes
 
 **Authentication Errors:**
+
 - `AUTH_TOKEN_MISSING` - No Authorization header provided
 - `AUTH_TOKEN_INVALID` - Token is malformed or expired
 - `AUTH_TOKEN_EXPIRED` - Token has expired, use refresh token
 
 **Validation Errors:**
+
 - `VALIDATION_REQUIRED_FIELD` - Required field is missing
 - `VALIDATION_INVALID_FORMAT` - Field format is invalid (e.g., date)
 - `VALIDATION_CONSTRAINT_VIOLATION` - Database constraint violated (e.g., unique name)
 - `VALIDATION_INVALID_DATE_RANGE` - end_date is before start_date
 
 **Resource Errors:**
+
 - `RESOURCE_NOT_FOUND` - Requested resource doesn't exist or doesn't belong to user
 - `RESOURCE_ALREADY_EXISTS` - Resource with same unique constraint already exists
 
 **Generation Errors:**
+
 - `GENERATION_TIMEOUT` - AI generation exceeded 180 second timeout
 - `GENERATION_FAILED` - AI generation failed (see error_message for details)
 - `GENERATION_INVALID_INPUT` - Plan is missing required fields for generation
 - `GENERATION_QUOTA_EXCEEDED` - User has exceeded generation quota (future)
 
 **Rate Limiting:**
+
 - `RATE_LIMIT_EXCEEDED` - Too many requests, retry after X seconds
 
 ---

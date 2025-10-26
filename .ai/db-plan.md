@@ -83,13 +83,13 @@ All are one-to-many; no many-to-many tables required in MVP.
 
 ## 3. Indexes
 
-| Table                      | Index                  | Purpose                                 |
-| -------------------------- | ---------------------- | --------------------------------------- |
-| user_preferences           | UNIQUE (user_id, name) | Prevent duplicate template names        |
-| trip_plans                 | (user_id)              | Speed up owner queries                  |
-| trip_plans                 | (generation_id)        | Analytics: track generation acceptance  |
-| plan_generations           | (user_id)              | Speed up owner queries                  |
-| plan_generation_error_logs | (created_at)           | Accelerate housekeeping (≥90d)          |
+| Table                      | Index                  | Purpose                                |
+| -------------------------- | ---------------------- | -------------------------------------- |
+| user_preferences           | UNIQUE (user_id, name) | Prevent duplicate template names       |
+| trip_plans                 | (user_id)              | Speed up owner queries                 |
+| trip_plans                 | (generation_id)        | Analytics: track generation acceptance |
+| plan_generations           | (user_id)              | Speed up owner queries                 |
+| plan_generation_error_logs | (created_at)           | Accelerate housekeeping (≥90d)         |
 
 Additional GIN / JSONB indexes can be added later for complex searches inside `plan_details`.
 
