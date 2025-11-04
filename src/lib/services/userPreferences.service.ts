@@ -6,7 +6,7 @@
  */
 
 import type { SupabaseClient } from "../../db/supabase.client";
-import type { CreatePreferenceCommand, DeletePreferenceCommand, UserPreferenceDto } from "../../types";
+import type { CreatePreferenceCommand, DeletePreferenceCommand, UpdatePreferenceCommand, UserPreferenceDto } from "../../types";
 import { ValidationError } from "../../errors/validation.error";
 
 export class UserPreferencesService {
@@ -95,6 +95,51 @@ export class UserPreferencesService {
   }
 
   /**
+   * Updates an existing user preference
+   *
+   * @param command - Command object containing preference ID, user_id, and fields to update
+   * @returns Updated preference as UserPreferenceDto or null if not found
+   * @throws ValidationError if command data is invalid
+   * @throws Error if database operation fails
+   */
+  async updatePreference(command: UpdatePreferenceCommand): Promise<UserPreferenceDto | null> {
+    // Validate command before database operation
+    this.validateUpdateCommand(command);
+
+    // Build update object with only provided fields
+    const updateData: Record<string, unknown> = {};
+    if (command.name !== undefined) {
+      updateData.name = command.name;
+    }
+    if (command.people_count !== undefined) {
+      updateData.people_count = command.people_count;
+    }
+    if (command.budget_type !== undefined) {
+      updateData.budget_type = command.budget_type;
+    }
+
+    // Update in database
+    const { data, error } = await this.supabase
+      .from("user_preferences")
+      .update(updateData)
+      .eq("id", command.id)
+      .eq("user_id", command.user_id)
+      .select("id, name, people_count, budget_type")
+      .single();
+
+    // Handle "not found" case
+    if (error) {
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      console.error("Database error in updatePreference:", error);
+      throw error;
+    }
+
+    return data as UserPreferenceDto;
+  }
+
+  /**
    * Deletes a user preference by ID
    *
    * @param command - Command containing preference ID and user ID
@@ -140,6 +185,43 @@ export class UserPreferencesService {
     }
 
     // Validate people_count (if provided)
+    if (command.people_count !== undefined && command.people_count !== null) {
+      if (!Number.isInteger(command.people_count) || command.people_count < 1) {
+        throw new ValidationError("People count must be a positive integer (>= 1)", "people_count");
+      }
+    }
+
+    // Note: budget_type is optional and can be any string, so no validation needed
+  }
+
+  /**
+   * Validates UpdatePreferenceCommand
+   *
+   * @param command - Command to validate
+   * @throws ValidationError if validation fails
+   */
+  private validateUpdateCommand(command: UpdatePreferenceCommand): void {
+    // At least one field must be provided
+    const hasName = command.name !== undefined;
+    const hasPeopleCount = command.people_count !== undefined;
+    const hasBudgetType = command.budget_type !== undefined;
+
+    if (!hasName && !hasPeopleCount && !hasBudgetType) {
+      throw new ValidationError("At least one field must be provided for update", "general");
+    }
+
+    // Validate name (if provided)
+    if (hasName) {
+      if (!command.name || command.name.trim().length === 0) {
+        throw new ValidationError("Name cannot be empty", "name");
+      }
+
+      if (command.name.length > 256) {
+        throw new ValidationError("Name must not exceed 256 characters", "name");
+      }
+    }
+
+    // Validate people_count (if provided and not null)
     if (command.people_count !== undefined && command.people_count !== null) {
       if (!Number.isInteger(command.people_count) || command.people_count < 1) {
         throw new ValidationError("People count must be a positive integer (>= 1)", "people_count");
