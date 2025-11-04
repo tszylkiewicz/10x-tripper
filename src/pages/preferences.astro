@@ -1,0 +1,25 @@
+---
+/**
+ * Preferences Page
+ *
+ * Strona zarządzania preferencjami użytkownika.
+ * Wyświetla listę preferencji i pozwala na operacje CRUD.
+ *
+ * Route: /preferences
+ */
+
+import Layout from "../layouts/Layout.astro";
+import { PreferencesView } from "../preferences/components/PreferencesView";
+
+// TODO: Dodać sprawdzenie uwierzytelnienia gdy będzie dostępne
+// const session = Astro.locals.session;
+// if (!session) {
+//   return Astro.redirect('/login');
+// }
+---
+
+<Layout title="Moje Preferencje - Tripper">
+  <main>
+    <PreferencesView client:load />
+  </main>
+</Layout>
