@@ -44,7 +44,8 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
    - Użytkownik może edytować już zapisane plany z listy
    - Każda edycja zapisanego planu zmienia jego status na „Edytowany"
 7. Zarządzanie planami
-   - Lista wszystkich zaakceptowanych/zapisanych planów
+   - Lista wszystkich zaakceptowanych/zapisanych planów (sortowana według daty rozpoczęcia - od najbliższej)
+   - Domyślnie wyświetlane są tylko aktywne plany (usunięte plany są ukryte)
    - Możliwość przeglądania szczegółów planu
    - Usuwanie planu z potwierdzeniem (soft-delete)
 8. Analityka

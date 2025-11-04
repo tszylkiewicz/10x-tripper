@@ -312,12 +312,9 @@ export interface DeletePreferenceCommand {
 
 /**
  * Query parameters for GET /api/trip-plans
+ * MVP: No query parameters - returns only active plans sorted by start_date ASC
  */
-export interface GetTripPlansQueryDto {
-  include_deleted?: boolean;
-  sort_by?: "created_at" | "start_date" | "updated_at";
-  sort_order?: "asc" | "desc";
-}
+export type GetTripPlansQueryDto = Record<string, never>;
 
 // =============================================================================
 // RESPONSE WRAPPER TYPES
