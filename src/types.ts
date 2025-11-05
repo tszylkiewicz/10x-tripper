@@ -306,6 +306,19 @@ export interface DeletePreferenceCommand {
   user_id: string;
 }
 
+/**
+ * Command for deleting a trip plan (soft delete)
+ * Used in backend to validate and process trip plan deletion
+ *
+ * Validation rules:
+ * - id: Required, valid UUID format
+ * - user_id: Required, extracted from authenticated session
+ */
+export interface DeleteTripPlanCommand {
+  id: string;
+  user_id: string;
+}
+
 // =============================================================================
 // QUERY PARAMETERS Dtos
 // =============================================================================
