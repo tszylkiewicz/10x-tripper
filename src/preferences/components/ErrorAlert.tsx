@@ -19,9 +19,7 @@ export function ErrorAlert({ message, onDismiss, onRetry }: ErrorAlertProps) {
     <Alert variant="destructive" className="relative">
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>Wystąpił błąd</AlertTitle>
-      <AlertDescription className="pr-8">
-        {message}
-      </AlertDescription>
+      <AlertDescription className="pr-8">{message}</AlertDescription>
 
       {/* Przycisk zamykania */}
       <button
@@ -35,12 +33,7 @@ export function ErrorAlert({ message, onDismiss, onRetry }: ErrorAlertProps) {
       {/* Opcjonalny przycisk "Spróbuj ponownie" */}
       {onRetry && (
         <div className="mt-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRetry}
-            className="h-8"
-          >
+          <Button variant="outline" size="sm" onClick={onRetry} className="h-8">
             Spróbuj ponownie
           </Button>
         </div>

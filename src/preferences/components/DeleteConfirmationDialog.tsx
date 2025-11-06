@@ -44,10 +44,8 @@ export function DeleteConfirmationDialog({
           <AlertDialogTitle>Czy na pewno chcesz usunąć?</AlertDialogTitle>
           <AlertDialogDescription>
             Ta akcja jest nieodwracalna. Preferencja{" "}
-            <strong className="font-semibold text-foreground">
-              {preference?.name}
-            </strong>{" "}
-            zostanie trwale usunięta z twojego konta.
+            <strong className="font-semibold text-foreground">{preference?.name}</strong> zostanie trwale usunięta z
+            twojego konta.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

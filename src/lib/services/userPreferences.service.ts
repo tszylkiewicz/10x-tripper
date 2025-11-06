@@ -6,7 +6,12 @@
  */
 
 import type { SupabaseClient } from "../../db/supabase.client";
-import type { CreatePreferenceCommand, DeletePreferenceCommand, UpdatePreferenceCommand, UserPreferenceDto } from "../../types";
+import type {
+  CreatePreferenceCommand,
+  DeletePreferenceCommand,
+  UpdatePreferenceCommand,
+  UserPreferenceDto,
+} from "../../types";
 import { ValidationError } from "../../errors/validation.error";
 
 export class UserPreferencesService {

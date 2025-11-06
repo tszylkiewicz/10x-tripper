@@ -68,13 +68,7 @@ export function PreferencesView() {
       </div>
 
       {/* Error Alert */}
-      {state.error && (
-        <ErrorAlert
-          message={state.error}
-          onDismiss={clearError}
-          onRetry={fetchPreferences}
-        />
-      )}
+      {state.error && <ErrorAlert message={state.error} onDismiss={clearError} onRetry={fetchPreferences} />}
 
       {/* Content */}
       {state.preferences.length === 0 ? (

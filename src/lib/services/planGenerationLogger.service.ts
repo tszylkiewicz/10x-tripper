@@ -20,7 +20,7 @@ export async function calculatePromptHash(prompt: string): Promise<string> {
   const data = encoder.encode(prompt);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /**
@@ -51,11 +51,7 @@ export async function logGenerationSuccess(
     duration_ms: params.duration_ms,
   };
 
-  const { data, error } = await supabase
-    .from("plan_generations")
-    .insert(insert)
-    .select("id")
-    .single();
+  const { data, error } = await supabase.from("plan_generations").insert(insert).select("id").single();
 
   if (error) {
     console.error("Failed to log generation success:", error);
@@ -97,9 +93,7 @@ export async function logGenerationError(
     error_code: params.error_code || null,
   };
 
-  const { error } = await supabase
-    .from("plan_generation_error_logs")
-    .insert(insert);
+  const { error } = await supabase.from("plan_generation_error_logs").insert(insert);
 
   if (error) {
     console.error("Failed to log generation error:", error);

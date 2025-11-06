@@ -7,13 +7,7 @@
  */
 
 import { Pencil, Trash2, Users } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { UserPreferenceDto } from "../../types";
 
@@ -65,9 +59,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
         <div className="flex items-center gap-2 text-sm">
           <Users className="h-4 w-4 text-muted-foreground" />
           <span className="text-muted-foreground">Liczba osób:</span>
-          <span className="font-medium">
-            {preference.people_count ?? "Nie określono"}
-          </span>
+          <span className="font-medium">{preference.people_count ?? "Nie określono"}</span>
         </div>
 
         {/* Typ budżetu */}
@@ -84,12 +76,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
       </CardContent>
 
       <CardFooter className="flex justify-end gap-2 border-t pt-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onEdit(preference)}
-          className="gap-2"
-        >
+        <Button variant="outline" size="sm" onClick={() => onEdit(preference)} className="gap-2">
           <Pencil className="h-4 w-4" />
           Edytuj
         </Button>

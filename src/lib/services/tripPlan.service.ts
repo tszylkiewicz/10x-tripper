@@ -7,14 +7,14 @@
 
 import type { SupabaseClient } from "../../db/supabase.client";
 import type {
-  TripPlanDto,
-  PlanDetailsDto,
-  DeleteTripPlanCommand,
   AcceptPlanCommand,
+  DeleteTripPlanCommand,
+  PlanDetailsDto,
+  TripPlanDto,
+  TripPlanUpdate,
   UpdatePlanCommand,
-  TripPlanUpdate
 } from "../../types";
-import type { Tables, Json } from "../../db/database.types";
+import type { Json, Tables } from "../../db/database.types";
 import { isValidUUID } from "../validators/uuid.validator";
 import { ValidationError } from "../../errors/validation.error";
 
@@ -44,7 +44,7 @@ export class TripPlanService {
       throw new Error("Failed to fetch trip plans");
     }
 
-    return data.map(item => this.mapToDto(item));
+    return data.map((item) => this.mapToDto(item));
   }
 
   /**
@@ -179,42 +179,27 @@ export class TripPlanService {
     const endDate = new Date(command.end_date);
 
     if (endDate < startDate) {
-      throw new ValidationError(
-        "End date must be on or after start date",
-        "end_date"
-      );
+      throw new ValidationError("End date must be on or after start date", "end_date");
     }
 
     // Validate people_count >= 1
     if (command.people_count < 1) {
-      throw new ValidationError(
-        "People count must be at least 1",
-        "people_count"
-      );
+      throw new ValidationError("People count must be at least 1", "people_count");
     }
 
     // Validate plan_details is not empty
     if (!command.plan_details || Object.keys(command.plan_details).length === 0) {
-      throw new ValidationError(
-        "Plan details cannot be empty",
-        "plan_details"
-      );
+      throw new ValidationError("Plan details cannot be empty", "plan_details");
     }
 
     // Validate plan_details.days exists and has items
     if (!command.plan_details.days || command.plan_details.days.length === 0) {
-      throw new ValidationError(
-        "Plan must contain at least one day",
-        "plan_details"
-      );
+      throw new ValidationError("Plan must contain at least one day", "plan_details");
     }
 
     // Validate source is valid enum value
     if (command.source !== "ai" && command.source !== "ai-edited") {
-      throw new ValidationError(
-        "Source must be either 'ai' or 'ai-edited'",
-        "source"
-      );
+      throw new ValidationError("Source must be either 'ai' or 'ai-edited'", "source");
     }
   }
 
@@ -227,10 +212,7 @@ export class TripPlanService {
    * @throws ValidationError if generation_id doesn't exist
    * @private
    */
-  private async verifyGenerationExists(
-    generationId: string,
-    userId: string
-  ): Promise<void> {
+  private async verifyGenerationExists(generationId: string, userId: string): Promise<void> {
     const { data, error } = await this.supabase
       .from("plan_generations")
       .select("id")
@@ -250,10 +232,7 @@ export class TripPlanService {
     }
 
     if (!data) {
-      throw new ValidationError(
-        "The provided generation_id does not exist or does not belong to you",
-        "generation_id"
-      );
+      throw new ValidationError("The provided generation_id does not exist or does not belong to you", "generation_id");
     }
   }
 
@@ -424,10 +403,7 @@ export class TripPlanService {
       // Validate each day has activities
       for (const day of command.plan_details.days) {
         if (!day.activities || day.activities.length === 0) {
-          throw new ValidationError(
-            `Day ${day.day} must have at least one activity`,
-            "plan_details"
-          );
+          throw new ValidationError(`Day ${day.day} must have at least one activity`, "plan_details");
         }
       }
     }
@@ -440,7 +416,12 @@ export class TripPlanService {
    * @returns Mapped TripPlanDto with typed plan_details
    * @private
    */
-  private mapToDto(data: Pick<Tables<"trip_plans">, "id" | "destination" | "start_date" | "end_date" | "people_count" | "budget_type" | "plan_details">): TripPlanDto {
+  private mapToDto(
+    data: Pick<
+      Tables<"trip_plans">,
+      "id" | "destination" | "start_date" | "end_date" | "people_count" | "budget_type" | "plan_details"
+    >
+  ): TripPlanDto {
     return {
       id: data.id,
       destination: data.destination,

@@ -21,8 +21,8 @@ export function EmptyState({ onCreateClick }: EmptyStateProps) {
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Brak preferencji</h3>
         <p className="max-w-md text-sm text-muted-foreground">
-          Utwórz swoją pierwszą preferencję, aby szybciej planować przyszłe wyjazdy.
-          Zapisane preferencje pozwolą Ci łatwiej konfigurować parametry planów podróży.
+          Utwórz swoją pierwszą preferencję, aby szybciej planować przyszłe wyjazdy. Zapisane preferencje pozwolą Ci
+          łatwiej konfigurować parametry planów podróży.
         </p>
       </div>
       <Button onClick={onCreateClick} className="mt-4">

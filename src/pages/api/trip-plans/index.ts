@@ -22,7 +22,13 @@ import { ZodError } from "zod";
 import { acceptTripPlanSchema } from "../../../lib/validators/tripPlans.validator";
 import { TripPlanService } from "../../../lib/services/tripPlan.service";
 import { ValidationError } from "../../../errors/validation.error";
-import type { AcceptPlanCommand, AcceptTripPlanDto, TripPlanDto, ApiSuccessResponse, ApiErrorResponse } from "../../../types";
+import type {
+  AcceptPlanCommand,
+  AcceptTripPlanDto,
+  TripPlanDto,
+  ApiSuccessResponse,
+  ApiErrorResponse,
+} from "../../../types";
 
 export const prerender = false;
 
@@ -33,7 +39,10 @@ export const prerender = false;
 export const GET: APIRoute = async ({ locals }) => {
   try {
     // 1. Verify authentication
-    const { data: { user }, error: authError } = await locals.supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await locals.supabase.auth.getUser();
 
     if (authError || !user) {
       const errorResponse: ApiErrorResponse = {

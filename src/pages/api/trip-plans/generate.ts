@@ -19,17 +19,14 @@ import type {
   ApiSuccessResponse,
   ApiErrorResponse,
   GeneratedTripPlanDto,
-  GenerateTripPlanRequestDto
+  GenerateTripPlanRequestDto,
 } from "../../../types";
 import {
   validateGenerateTripPlanRequest,
-  createGeneratePlanCommand
+  createGeneratePlanCommand,
 } from "../../../lib/validators/tripPlans.validator";
 import { generateTripPlan, buildPrompt, MODEL } from "../../../lib/services/aiGeneration.service";
-import {
-  logGenerationSuccess,
-  logGenerationError
-} from "../../../lib/services/planGenerationLogger.service";
+import { logGenerationSuccess, logGenerationError } from "../../../lib/services/planGenerationLogger.service";
 
 export const prerender = false;
 
@@ -100,7 +97,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // 4. Check authentication
-    const { data: { user }, error: authError } = await locals.supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await locals.supabase.auth.getUser();
 
     if (authError || !user) {
       const errorResponse: ApiErrorResponse = {

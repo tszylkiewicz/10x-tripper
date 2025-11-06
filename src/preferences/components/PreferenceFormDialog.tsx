@@ -17,13 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePreferenceForm } from "../hooks/usePreferenceForm";
 import { BUDGET_TYPE_OPTIONS } from "../types";
 import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "../../types";
@@ -45,17 +39,8 @@ export function PreferenceFormDialog({
   onCancel,
   isSubmitting,
 }: PreferenceFormDialogProps) {
-  const {
-    formData,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    validateForm,
-    toDto,
-    hasErrors,
-    nameCharCount,
-  } = usePreferenceForm({ initialData, mode });
+  const { formData, errors, touched, handleChange, handleBlur, validateForm, toDto, hasErrors, nameCharCount } =
+    usePreferenceForm({ initialData, mode });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,11 +93,7 @@ export function PreferenceFormDialog({
                 ) : (
                   <p className="text-sm text-muted-foreground">Wymagane, max 256 znaków</p>
                 )}
-                <p
-                  className={`text-xs ${
-                    nameCharCount > 256 ? "text-destructive" : "text-muted-foreground"
-                  }`}
-                >
+                <p className={`text-xs ${nameCharCount > 256 ? "text-destructive" : "text-muted-foreground"}`}>
                   {nameCharCount}/256
                 </p>
               </div>
@@ -165,12 +146,7 @@ export function PreferenceFormDialog({
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
               Anuluj
             </Button>
             <Button type="submit" disabled={isSubmitting || hasErrors()}>

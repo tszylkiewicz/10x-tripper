@@ -19,7 +19,7 @@ import type {
   ApiErrorResponse,
   TripPlanDto,
   DeleteTripPlanCommand,
-  UpdatePlanCommand
+  UpdatePlanCommand,
 } from "../../../types";
 
 export const prerender = false;
@@ -347,9 +347,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   } catch (error) {
     // 6. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in DELETE /api/trip-plans/:id:", {
-      error: error instanceof Error
-        ? { message: error.message, name: error.name }
-        : error,
+      error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 

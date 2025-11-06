@@ -19,9 +19,8 @@ const MODEL = import.meta.env.OPENROUTER_MODEL || "anthropic/claude-3-sonnet-202
 function buildPrompt(command: GeneratePlanCommand): string {
   const { destination, start_date, end_date, people_count, budget_type, notes } = command;
 
-  const durationDays = Math.ceil(
-    (new Date(end_date).getTime() - new Date(start_date).getTime()) / (1000 * 60 * 60 * 24)
-  ) + 1;
+  const durationDays =
+    Math.ceil((new Date(end_date).getTime() - new Date(start_date).getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
   let prompt = `Generate a detailed trip plan with the following requirements:
 
@@ -41,7 +40,7 @@ Budget Type: ${budget_type}
 
     // Other dynamic preferences
     Object.entries(notes).forEach(([key, value]) => {
-      if (key !== 'transport' && key !== 'todo' && key !== 'avoid' && value) {
+      if (key !== "transport" && key !== "todo" && key !== "avoid" && value) {
         prompt += `\n- ${key}: ${value}`;
       }
     });
@@ -103,128 +102,133 @@ async function callOpenRouterAPI(prompt: string, abortSignal: AbortSignal): Prom
   const delay = Math.random() * 2000 + 1000;
   await new Promise((resolve, reject) => {
     const timeout = setTimeout(resolve, delay);
-    abortSignal.addEventListener('abort', () => {
+    abortSignal.addEventListener("abort", () => {
       clearTimeout(timeout);
-      reject(new DOMException('Aborted', 'AbortError'));
+      reject(new DOMException("Aborted", "AbortError"));
     });
   });
 
   // Mock response based on the prompt
   const mockResponse = {
-    "days": [
+    days: [
       {
-        "day": 1,
-        "date": "2025-06-15",
-        "activities": [
+        day: 1,
+        date: "2025-06-15",
+        activities: [
           {
-            "time": "09:00",
-            "title": "Arrival and Hotel Check-in",
-            "description": "Arrive at the destination and check into your accommodation. Take some time to rest and freshen up after your journey.",
-            "location": "Hotel Central",
-            "estimated_cost": 0,
-            "duration": "1 hour",
-            "category": "logistics"
+            time: "09:00",
+            title: "Arrival and Hotel Check-in",
+            description:
+              "Arrive at the destination and check into your accommodation. Take some time to rest and freshen up after your journey.",
+            location: "Hotel Central",
+            estimated_cost: 0,
+            duration: "1 hour",
+            category: "logistics",
           },
           {
-            "time": "10:30",
-            "title": "Explore Local Market",
-            "description": "Visit the vibrant local market to get a feel for the city. Sample local snacks and pick up some fresh fruits.",
-            "location": "Central Market Square",
-            "estimated_cost": 15,
-            "duration": "2 hours",
-            "category": "sightseeing"
+            time: "10:30",
+            title: "Explore Local Market",
+            description:
+              "Visit the vibrant local market to get a feel for the city. Sample local snacks and pick up some fresh fruits.",
+            location: "Central Market Square",
+            estimated_cost: 15,
+            duration: "2 hours",
+            category: "sightseeing",
           },
           {
-            "time": "13:00",
-            "title": "Lunch at Traditional Restaurant",
-            "description": "Enjoy authentic local cuisine at a highly-rated traditional restaurant.",
-            "location": "La Bella Vista Restaurant, 123 Main Street",
-            "estimated_cost": 25,
-            "duration": "1.5 hours",
-            "category": "food"
+            time: "13:00",
+            title: "Lunch at Traditional Restaurant",
+            description: "Enjoy authentic local cuisine at a highly-rated traditional restaurant.",
+            location: "La Bella Vista Restaurant, 123 Main Street",
+            estimated_cost: 25,
+            duration: "1.5 hours",
+            category: "food",
           },
           {
-            "time": "15:00",
-            "title": "Walking City Tour",
-            "description": "Join a guided walking tour to discover the main attractions and learn about the city's history.",
-            "location": "Tourist Information Center",
-            "estimated_cost": 20,
-            "duration": "3 hours",
-            "category": "sightseeing"
+            time: "15:00",
+            title: "Walking City Tour",
+            description:
+              "Join a guided walking tour to discover the main attractions and learn about the city's history.",
+            location: "Tourist Information Center",
+            estimated_cost: 20,
+            duration: "3 hours",
+            category: "sightseeing",
           },
           {
-            "time": "19:00",
-            "title": "Dinner at Rooftop Restaurant",
-            "description": "End your first day with a spectacular sunset dinner at a rooftop restaurant with panoramic views.",
-            "location": "Sky Terrace, 456 High Street",
-            "estimated_cost": 40,
-            "duration": "2 hours",
-            "category": "food"
-          }
-        ]
+            time: "19:00",
+            title: "Dinner at Rooftop Restaurant",
+            description:
+              "End your first day with a spectacular sunset dinner at a rooftop restaurant with panoramic views.",
+            location: "Sky Terrace, 456 High Street",
+            estimated_cost: 40,
+            duration: "2 hours",
+            category: "food",
+          },
+        ],
       },
       {
-        "day": 2,
-        "date": "2025-06-16",
-        "activities": [
+        day: 2,
+        date: "2025-06-16",
+        activities: [
           {
-            "time": "08:00",
-            "title": "Breakfast at Hotel",
-            "description": "Start your day with a complimentary breakfast at the hotel.",
-            "location": "Hotel Central",
-            "estimated_cost": 0,
-            "duration": "1 hour",
-            "category": "food"
+            time: "08:00",
+            title: "Breakfast at Hotel",
+            description: "Start your day with a complimentary breakfast at the hotel.",
+            location: "Hotel Central",
+            estimated_cost: 0,
+            duration: "1 hour",
+            category: "food",
           },
           {
-            "time": "09:30",
-            "title": "Museum Visit",
-            "description": "Explore the city's main museum featuring local art and historical artifacts.",
-            "location": "National Museum, 789 Culture Avenue",
-            "estimated_cost": 15,
-            "duration": "2.5 hours",
-            "category": "culture"
+            time: "09:30",
+            title: "Museum Visit",
+            description: "Explore the city's main museum featuring local art and historical artifacts.",
+            location: "National Museum, 789 Culture Avenue",
+            estimated_cost: 15,
+            duration: "2.5 hours",
+            category: "culture",
           },
           {
-            "time": "12:30",
-            "title": "Lunch at Cafe",
-            "description": "Light lunch at a charming local cafe.",
-            "location": "Cafe Boulevard, 321 Park Street",
-            "estimated_cost": 18,
-            "duration": "1 hour",
-            "category": "food"
+            time: "12:30",
+            title: "Lunch at Cafe",
+            description: "Light lunch at a charming local cafe.",
+            location: "Cafe Boulevard, 321 Park Street",
+            estimated_cost: 18,
+            duration: "1 hour",
+            category: "food",
           },
           {
-            "time": "14:00",
-            "title": "Beach Time",
-            "description": "Relax at the beautiful local beach. Swim, sunbathe, or try water sports.",
-            "location": "Sunset Beach",
-            "estimated_cost": 10,
-            "duration": "3 hours",
-            "category": "leisure"
+            time: "14:00",
+            title: "Beach Time",
+            description: "Relax at the beautiful local beach. Swim, sunbathe, or try water sports.",
+            location: "Sunset Beach",
+            estimated_cost: 10,
+            duration: "3 hours",
+            category: "leisure",
           },
           {
-            "time": "18:00",
-            "title": "Seafood Dinner",
-            "description": "Fresh seafood dinner at a beachfront restaurant.",
-            "location": "Ocean View Restaurant, Sunset Beach Promenade",
-            "estimated_cost": 35,
-            "duration": "2 hours",
-            "category": "food"
-          }
-        ]
-      }
+            time: "18:00",
+            title: "Seafood Dinner",
+            description: "Fresh seafood dinner at a beachfront restaurant.",
+            location: "Ocean View Restaurant, Sunset Beach Promenade",
+            estimated_cost: 35,
+            duration: "2 hours",
+            category: "food",
+          },
+        ],
+      },
     ],
-    "accommodation": {
-      "name": "Hotel Central",
-      "address": "100 Downtown Avenue, City Center",
-      "check_in": "2025-06-15",
-      "check_out": "2025-06-17",
-      "estimated_cost": 120,
-      "booking_url": "https://booking.example.com/hotel-central"
+    accommodation: {
+      name: "Hotel Central",
+      address: "100 Downtown Avenue, City Center",
+      check_in: "2025-06-15",
+      check_out: "2025-06-17",
+      estimated_cost: 120,
+      booking_url: "https://booking.example.com/hotel-central",
     },
-    "total_estimated_cost": 458,
-    "notes": "Best time to visit attractions is early morning to avoid crowds. Consider purchasing a city pass for discounts on multiple attractions. The local currency is accepted everywhere, but cards are also widely used."
+    total_estimated_cost: 458,
+    notes:
+      "Best time to visit attractions is early morning to avoid crowds. Consider purchasing a city pass for discounts on multiple attractions. The local currency is accepted everywhere, but cards are also widely used.",
   };
 
   return JSON.stringify(mockResponse);
@@ -275,7 +279,10 @@ async function callOpenRouterAPI(prompt: string, abortSignal: AbortSignal): Prom
  */
 function parseAIResponse(response: string): PlanDetailsDto {
   // Remove potential markdown code blocks
-  const cleaned = response.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  const cleaned = response
+    .replace(/```json\n?/g, "")
+    .replace(/```\n?/g, "")
+    .trim();
 
   try {
     const parsed = JSON.parse(cleaned);
@@ -302,7 +309,7 @@ function parseAIResponse(response: string): PlanDetailsDto {
     return parsed as PlanDetailsDto;
   } catch (error) {
     console.error("Failed to parse AI response:", response);
-    throw new Error(`Failed to parse AI response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to parse AI response: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 
@@ -333,14 +340,14 @@ export async function generateTripPlan(command: GeneratePlanCommand): Promise<Ge
       end_date: command.end_date,
       people_count: command.people_count,
       budget_type: command.budget_type,
-      plan_details: planDetails
+      plan_details: planDetails,
     };
   } catch (error) {
     const duration = Date.now() - startTime;
 
     // Re-throw with metadata for logging
-    const enhancedError = new Error(error instanceof Error ? error.message : 'Unknown error');
-    enhancedError.name = error instanceof Error ? error.name : 'Error';
+    const enhancedError = new Error(error instanceof Error ? error.message : "Unknown error");
+    enhancedError.name = error instanceof Error ? error.name : "Error";
     (enhancedError as any).duration_ms = duration;
     (enhancedError as any).prompt = prompt;
 
