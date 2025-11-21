@@ -30,9 +30,7 @@ export function Navbar({ userEmail }: NavbarProps) {
         </a>
 
         <div className="flex items-center gap-4">
-          {userEmail && (
-            <span className="hidden text-sm text-muted-foreground md:inline">{userEmail}</span>
-          )}
+          {userEmail && <span className="hidden text-sm text-muted-foreground md:inline">{userEmail}</span>}
           <Button variant="ghost" size="sm" onClick={handleLogout} aria-label="Wyloguj się">
             <LogOut className="size-4 md:mr-2" />
             <span className="hidden md:inline">Wyloguj</span>

@@ -3,13 +3,13 @@ Twoim zadaniem jest zaimplementowanie widoku frontendu w oparciu o podany plan i
 Najpierw przejrzyj plan implementacji:
 
 <implementation_plan>
-@.ai/trip-plans/views/dashboard-view-implementation-plan.md
+@.ai/trip-plans/views/trip-plan-details-view-implementation-plan.md
 </implementation_plan>
 
 Teraz przejrzyj zasady implementacji:
 
 <implementation_rules>
-@.claude/shared.mdc, @.claude/frontend.mdc, @.claude/astro.mdc, @.claude/react.mdc, @.claude/ui-shadcn-helper.mdc
+@.claude/rules/shared.mdc, @.claude/rules/frontend.mdc, @.claude/rules/astro.mdc, @.claude/rules/react.mdc, @.claude/rules/ui-shadcn-helper.mdc
 </implementation_rules>
 
 Przejrzyj zdefiniowane typy:

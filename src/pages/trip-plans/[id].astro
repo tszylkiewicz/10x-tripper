@@ -1,0 +1,25 @@
+---
+/**
+ * Trip Plan Details Page
+ *
+ * Strona wyświetlająca szczegóły planu wycieczki.
+ * Umożliwia przeglądanie, edycję i usuwanie planu.
+ *
+ * Route: /trip-plans/:id
+ */
+
+import Layout from "../../layouts/Layout.astro";
+import { TripPlanDetailsView } from "../../components/trip-plans/details/TripPlanDetailsView";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/");
+}
+---
+
+<Layout title="Szczegóły planu - Tripper">
+  <main class="container mx-auto px-4 py-8">
+    <TripPlanDetailsView planId={id} client:load />
+  </main>
+</Layout>

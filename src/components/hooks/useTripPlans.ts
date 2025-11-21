@@ -23,9 +23,7 @@ const MOCK_PLANS: TripPlanDto[] = [
         },
         {
           date: "2025-06-16",
-          activities: [
-            { time: "09:00", title: "Kazimierz", description: "Spacer po dzielnicy" },
-          ],
+          activities: [{ time: "09:00", title: "Kazimierz", description: "Spacer po dzielnicy" }],
         },
       ],
     },
@@ -61,9 +59,7 @@ const MOCK_PLANS: TripPlanDto[] = [
       days: [
         {
           date: "2025-08-10",
-          activities: [
-            { time: "08:00", title: "Morskie Oko", description: "Wycieczka nad jezioro" },
-          ],
+          activities: [{ time: "08:00", title: "Morskie Oko", description: "Wycieczka nad jezioro" }],
         },
         {
           date: "2025-08-11",

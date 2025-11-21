@@ -75,9 +75,7 @@ export function DashboardContent({ userEmail }: DashboardContentProps) {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Twoje plany</h1>
-            <p className="text-muted-foreground">
-              Zarządzaj swoimi planami wycieczek
-            </p>
+            <p className="text-muted-foreground">Zarządzaj swoimi planami wycieczek</p>
           </div>
           <div className="hidden md:block">
             <CreatePlanButton onClick={handleCreatePlan} />
