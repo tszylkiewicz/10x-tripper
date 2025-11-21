@@ -287,7 +287,7 @@ export class TripPlanService {
     // 5. Execute UPDATE query
     const { data, error } = await this.supabase
       .from("trip_plans")
-      .update(updateData)
+      .update(updateData as unknown as Record<string, unknown>)
       .eq("id", command.id)
       .eq("user_id", command.user_id)
       .select("id, destination, start_date, end_date, people_count, budget_type, plan_details")

@@ -1,251 +1,69 @@
-Jako starszy programista frontendu Twoim zadaniem jest stworzenie szczegółowego planu wdrożenia nowego widoku w aplikacji internetowej. Plan ten powinien być kompleksowy i wystarczająco jasny dla innego programisty frontendowego, aby mógł poprawnie i wydajnie wdrożyć widok.
+Twoim zadaniem jest zaimplementowanie widoku frontendu w oparciu o podany plan implementacji i zasady implementacji. Twoim celem jest stworzenie szczegółowej i dokładnej implementacji, która jest zgodna z dostarczonym planem, poprawnie reprezentuje strukturę komponentów, integruje się z API i obsługuje wszystkie określone interakcje użytkownika.
 
-Najpierw przejrzyj następujące informacje:
+Najpierw przejrzyj plan implementacji:
 
-1. Product Requirements Document (PRD):
-<prd>
-@.ai/prd.md
-</prd>
+<implementation_plan>
+@.ai/trip-plans/views/dashboard-view-implementation-plan.md
+</implementation_plan>
 
-2. Opis widoku:
-<view_description>
-• **Szczegóły planu** (`/trip-plans/:id`)
-  - Cel: Podgląd i edycja planu
-  - Kluczowe informacje: Nagłówek planu, dni, aktywności, przyciski „Edytuj", „Usuń"
-  - Kluczowe komponenty: `PlanDetails`, `PlanDay`, `PlanActivity`, `DeleteDialog`
-  - Uwagi UX / a11y / bezpieczeństwo: Soft-delete – backend filtruje `deleted_at`
+Teraz przejrzyj zasady implementacji:
 
-</view_description>
+<implementation_rules>
+@.claude/shared.mdc, @.claude/frontend.mdc, @.claude/astro.mdc, @.claude/react.mdc, @.claude/ui-shadcn-helper.mdc
+</implementation_rules>
 
-3. User Stories:
-<user_stories>
-### US-008
+Przejrzyj zdefiniowane typy:
 
-- ID: US-008
-- Tytuł: Edycja zapisanego planu
-- Opis: Jako użytkownik chcę móc edytować już zapisane plany z mojej listy.
-- Kryteria akceptacji:
-  1. Użytkownik może otworzyć zapisany plan z listy.
-  2. UI pozwala na edycję wszystkich elementów planu.
-  3. Zapisanie zmian automatycznie zmienia status planu na „Edytowany" (jeśli był „AI").
-  4. Zmiany są natychmiast widoczne na liście planów.
-
-</user_stories>
-
-4. Endpoint Description:
-<endpoint_description>
-#### GET /api/trip-plans/:id
-
-Retrieve a specific saved trip plan.
-
-**URL Parameters:**
-
-- `id` (required, uuid) - Trip plan ID
-
-**Response (200 OK):**
-
-```json
-{
-  "data": {
-    "id": "uuid",
-    "destination": "Paris, France",
-    "start_date": "2025-06-15",
-    "end_date": "2025-06-22",
-    "people_count": 2,
-    "budget_type": "medium",
-    "plan_details": {
-      "days": [...],
-      "accommodation": {...}
-    },
-    "source": "ai-edited",
-    "created_at": "2025-01-15T10:30:00Z",
-    "updated_at": "2025-01-15T14:20:00Z"
-  }
-}
-```
-
-**Error Responses:**
-
-- `401 Unauthorized` - Missing or invalid authentication token
-- `404 Not Found` - Trip plan not found or doesn't belong to user
-
----
-
-#### PATCH /api/trip-plans/:id
-
-Update a saved trip plan (manual edits). Automatically changes source to "ai-edited" if it was "ai".
-
-**URL Parameters:**
-
-- `id` (required, uuid) - Trip plan ID
-
-**Request Body:**
-
-```json
-{
-  "destination": "Paris, France",
-  "start_date": "2025-06-15",
-  "end_date": "2025-06-23",
-  "people_count": 3,
-  "budget_type": "high",
-  "plan_details": {
-    "days": [
-      {
-        "day": 1,
-        "date": "2025-06-15",
-        "activities": [...]
-      }
-    ],
-    "accommodation": {...}
-  }
-}
-```
-
-**Validation Rules:**
-
-- All fields are optional
-- If provided, same validation as POST /api/trip-plans
-- `plan_details`: Must be valid JSON structure
-
-**Response (200 OK):**
-
-```json
-{
-  "data": {
-    "id": "uuid",
-    "destination": "Paris, France",
-    "start_date": "2025-06-15",
-    "end_date": "2025-06-23",
-    "people_count": 3,
-    "budget_type": "high",
-    "plan_details": {...},
-    "source": "ai-edited",
-    "created_at": "2025-01-15T10:30:00Z",
-    "updated_at": "2025-01-15T15:45:00Z"
-  }
-}
-```
-
-**Error Responses:**
-
-- `400 Bad Request` - Validation error
-- `401 Unauthorized` - Missing or invalid authentication token
-- `404 Not Found` - Trip plan not found or doesn't belong to user
-
-**Notes:**
-
-- Any edit to `plan_details` automatically changes `source` from "ai" to "ai-edited"
-- Editing other fields (destination, dates, etc.) does not change source
-
----
-</endpoint_description>
-
-5. Endpoint Implementation:
-<endpoint_implementation>
-@src/pages/api/trip-plans/index.ts
-</endpoint_implementation>
-
-6. Type Definitions:
-<type_definitions>
+<types>
 @src/types.ts
-</type_definitions>
+</types>
 
-7. Tech Stack:
-<tech_stack>
-@.ai/tech-stack.md
-</tech_stack>
+Wdrażaj plan zgodnie z następującym podejściem:
 
-Przed utworzeniem ostatecznego planu wdrożenia przeprowadź analizę i planowanie wewnątrz tagów <implementation_breakdown> w swoim bloku myślenia. Ta sekcja może być dość długa, ponieważ ważne jest, aby być dokładnym.
+<implementation_approach>
+Realizuj maksymalnie 3 kroki planu implementacji, podsumuj krótko co zrobiłeś i opisz plan na 3 kolejne działania - zatrzymaj w tym momencie pracę i czekaj na mój feedback.
+</implementation_approach>
 
-W swoim podziale implementacji wykonaj następujące kroki:
-1. Dla każdej sekcji wejściowej (PRD, User Stories, Endpoint Description, Endpoint Implementation, Type Definitions, Tech Stack):
-  - Podsumuj kluczowe punkty
- - Wymień wszelkie wymagania lub ograniczenia
- - Zwróć uwagę na wszelkie potencjalne wyzwania lub ważne kwestie
-2. Wyodrębnienie i wypisanie kluczowych wymagań z PRD
-3. Wypisanie wszystkich potrzebnych głównych komponentów, wraz z krótkim opisem ich opisu, potrzebnych typów, obsługiwanych zdarzeń i warunków walidacji
-4. Stworzenie wysokopoziomowego diagramu drzewa komponentów
-5. Zidentyfikuj wymagane DTO i niestandardowe typy ViewModel dla każdego komponentu widoku. Szczegółowo wyjaśnij te nowe typy, dzieląc ich pola i powiązane typy.
-6. Zidentyfikuj potencjalne zmienne stanu i niestandardowe hooki, wyjaśniając ich cel i sposób ich użycia
-7. Wymień wymagane wywołania API i odpowiadające im akcje frontendowe
-8. Zmapuj każdej historii użytkownika do konkretnych szczegółów implementacji, komponentów lub funkcji
-9. Wymień interakcje użytkownika i ich oczekiwane wyniki
-10. Wymień warunki wymagane przez API i jak je weryfikować na poziomie komponentów
-11. Zidentyfikuj potencjalne scenariusze błędów i zasugeruj, jak sobie z nimi poradzić
-12. Wymień potencjalne wyzwania związane z wdrożeniem tego widoku i zasugeruj możliwe rozwiązania
+Dokładnie przeanalizuj plan wdrożenia i zasady. Zwróć szczególną uwagę na strukturę komponentów, wymagania dotyczące integracji API i interakcje użytkownika opisane w planie.
 
-Po przeprowadzeniu analizy dostarcz plan wdrożenia w formacie Markdown z następującymi sekcjami:
+Wykonaj następujące kroki, aby zaimplementować widok frontendu:
 
-1. Przegląd: Krótkie podsumowanie widoku i jego celu.
-2. Routing widoku: Określenie ścieżki, na której widok powinien być dostępny.
-3. Struktura komponentów: Zarys głównych komponentów i ich hierarchii.
-4. Szczegóły komponentu: Dla każdego komponentu należy opisać:
- - Opis komponentu, jego przeznaczenie i z czego się składa
- - Główne elementy HTML i komponenty dzieci, które budują komponent
- - Obsługiwane zdarzenia
- - Warunki walidacji (szczegółowe warunki, zgodnie z API)
- - Typy (DTO i ViewModel) wymagane przez komponent
- - Propsy, które komponent przyjmuje od rodzica (interfejs komponentu)
-5. Typy: Szczegółowy opis typów wymaganych do implementacji widoku, w tym dokładny podział wszelkich nowych typów lub modeli widoku według pól i typów.
-6. Zarządzanie stanem: Szczegółowy opis sposobu zarządzania stanem w widoku, określenie, czy wymagany jest customowy hook.
-7. Integracja API: Wyjaśnienie sposobu integracji z dostarczonym punktem końcowym. Precyzyjnie wskazuje typy żądania i odpowiedzi.
-8. Interakcje użytkownika: Szczegółowy opis interakcji użytkownika i sposobu ich obsługi.
-9. Warunki i walidacja: Opisz jakie warunki są weryfikowane przez interfejs, których komponentów dotyczą i jak wpływają one na stan interfejsu
-10. Obsługa błędów: Opis sposobu obsługi potencjalnych błędów lub przypadków brzegowych.
-11. Kroki implementacji: Przewodnik krok po kroku dotyczący implementacji widoku.
+1. Struktura komponentów:
+   - Zidentyfikuj wszystkie komponenty wymienione w planie wdrożenia.
+   - Utwórz hierarchiczną strukturę tych komponentów.
+   - Upewnij się, że obowiązki i relacje każdego komponentu są jasno zdefiniowane.
 
-Upewnij się, że Twój plan jest zgodny z PRD, historyjkami użytkownika i uwzględnia dostarczony stack technologiczny.
+2. Integracja API:
+   - Zidentyfikuj wszystkie endpointy API wymienione w planie.
+   - Wdróż niezbędne wywołania API dla każdego endpointa.
+   - Obsłuż odpowiedzi z API i odpowiednio aktualizacji stan komponentów.
 
-Ostateczne wyniki powinny być w języku polskim i zapisane w pliku o nazwie .ai/{view-name}-view-implementation-plan.md. Nie uwzględniaj żadnej analizy i planowania w końcowym wyniku.
+3. Interakcje użytkownika:
+   - Wylistuj wszystkie interakcje użytkownika określone w planie wdrożenia.
+   - Wdróż obsługi zdarzeń dla każdej interakcji.
+   - Upewnij się, że każda interakcja wyzwala odpowiednią akcję lub zmianę stanu.
 
-Oto przykład tego, jak powinien wyglądać plik wyjściowy (treść jest do zastąpienia):
+4. Zarządzanie stanem:
+   - Zidentyfikuj wymagany stan dla każdego komponentu.
+   - Zaimplementuj zarządzanie stanem przy użyciu odpowiedniej metody (stan lokalny, custom hook, stan współdzielony).
+   - Upewnij się, że zmiany stanu wyzwalają niezbędne ponowne renderowanie.
 
-```markdown
-# Plan implementacji widoku [Nazwa widoku]
+5. Stylowanie i layout:
+   - Zastosuj określone stylowanie i layout, jak wspomniano w planie wdrożenia.
+   - Zapewnienie responsywności, jeśli wymaga tego plan.
 
-## 1. Przegląd
-[Krótki opis widoku i jego celu]
+6. Obsługa błędów i przypadki brzegowe:
+   - Wdrożenie obsługi błędów dla wywołań API i interakcji użytkownika.
+   - Rozważ i obsłuż potencjalne edge case'y wymienione w planie.
 
-## 2. Routing widoku
-[Ścieżka, na której widok powinien być dostępny]
+7. Optymalizacja wydajności:
+   - Wdrożenie wszelkich optymalizacji wydajności określonych w planie lub zasadach.
+   - Zapewnienie wydajnego renderowania i minimalnej liczby niepotrzebnych ponownych renderowań.
 
-## 3. Struktura komponentów
-[Zarys głównych komponentów i ich hierarchii]
+8. Testowanie:
+   - Jeśli zostało to określone w planie, zaimplementuj testy jednostkowe dla komponentów i funkcji.
+   - Dokładnie przetestuj wszystkie interakcje użytkownika i integracje API.
 
-## 4. Szczegóły komponentów
-### [Nazwa komponentu 1]
-- Opis komponentu [opis]
-- Główne elementy: [opis]
-- Obsługiwane interakcje: [lista]
-- Obsługiwana walidacja: [lista, szczegółowa]
-- Typy: [lista]
-- Propsy: [lista]
+W trakcie całego procesu implementacji należy ściśle przestrzegać dostarczonych zasad implementacji. Zasady te mają pierwszeństwo przed wszelkimi ogólnymi najlepszymi praktykami, które mogą być z nimi sprzeczne.
 
-### [Nazwa komponentu 2]
-[...]
-
-## 5. Typy
-[Szczegółowy opis wymaganych typów]
-
-## 6. Zarządzanie stanem
-[Opis zarządzania stanem w widoku]
-
-## 7. Integracja API
-[Wyjaśnienie integracji z dostarczonym endpointem, wskazanie typów żądania i odpowiedzi]
-
-## 8. Interakcje użytkownika
-[Szczegółowy opis interakcji użytkownika]
-
-## 9. Warunki i walidacja
-[Szczegółowy opis warunków i ich walidacji]
-
-## 10. Obsługa błędów
-[Opis obsługi potencjalnych błędów]
-
-## 11. Kroki implementacji
-1. [Krok 1]
-2. [Krok 2]
-3. [...]
-```
-
-Rozpocznij analizę i planowanie już teraz. Twój ostateczny wynik powinien składać się wyłącznie z planu wdrożenia w języku polskim w formacie markdown, który zapiszesz w pliku .ai/view-edit-plans-view-implementation-plan.md i nie powinien powielać ani powtarzać żadnej pracy wykonanej w podziale implementacji.
+Upewnij się, że twoja implementacja dokładnie odzwierciedla dostarczony plan implementacji i przestrzega wszystkich określonych zasad. Zwróć szczególną uwagę na strukturę komponentów, integrację API i obsługę interakcji użytkownika.

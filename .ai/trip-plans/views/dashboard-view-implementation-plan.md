@@ -2,7 +2,7 @@
 
 ## 1. Przegląd
 
-Dashboard to główny widok aplikacji Tripper, dostępny pod ścieżką `/`. Jego celem jest prezentacja wszystkich zaakceptowanych i zapisanych planów wycieczek użytkownika oraz umożliwienie podstawowych operacji: przeglądania szczegółów, usuwania planów i tworzenia nowych. Widok wyświetla karty planów posortowane według daty rozpoczęcia (od najbliższej), pokazuje status każdego planu (AI/Edytowany) i zapewnia szybki dostęp do tworzenia nowego planu.
+Dashboard to główny widok aplikacji Tripper, dostępny pod ścieżką `/`. Jego celem jest prezentacja wszystkich zaakceptowanych i zapisanych planów wycieczek użytkownika oraz umożliwienie podstawowych operacji: przeglądania szczegółów, usuwania planów i tworzenia nowych. Widok wyświetla karty planów posortowane według daty rozpoczęcia (od najbliższej) i zapewnia szybki dostęp do tworzenia nowego planu.
 
 ## 2. Routing widoku
 
@@ -26,7 +26,6 @@ index.astro (DashboardPage)
     │   │   ├── ErrorState (React) [conditional: error]
     │   │   ├── EmptyState (React) [conditional: plans.length === 0]
     │   │   └── PlanCard[] (React) [conditional: plans.length > 0]
-    │   │       └── Badge (Shadcn/ui) - status planu
     │   └── CreatePlanButton (React)
     └── DeleteConfirmDialog (React) [conditional: selectedPlan]
     └── Toaster (Shadcn/ui)
@@ -81,7 +80,7 @@ index.astro (DashboardPage)
 
 **Typy**:
 
-- `TripPlanViewModel[]` - lista planów
+- `TripPlanDto[]` - lista planów
 - Stan dialogu usuwania
 
 **Propsy**: brak (root component)
@@ -148,7 +147,7 @@ interface NavbarProps {
 **Typy**:
 
 - `PlansListState` - stan wewnętrzny (z custom hook)
-- `TripPlanViewModel[]` - lista planów
+- `TripPlanDto[]` - lista planów
 
 **Propsy**:
 
@@ -170,7 +169,6 @@ interface PlansListProps {
 - `<Card>` (Shadcn/ui) - główny kontener
   - `<CardHeader>`
     - Destination (h3)
-    - Badge ze statusem (AI/Edytowany)
   - `<CardContent>`
     - Daty (start_date - end_date)
     - Liczba osób (people_count)
@@ -189,13 +187,13 @@ interface PlansListProps {
 
 **Typy**:
 
-- `TripPlanViewModel` - dane planu
+- `TripPlanDto` - dane planu
 
 **Propsy**:
 
 ```typescript
 interface PlanCardProps {
-  plan: TripPlanViewModel;
+  plan: TripPlanDto;
   onClick: () => void;
   onDelete: () => void;
 }
@@ -334,7 +332,7 @@ interface ErrorStateProps {
 
 **Typy**:
 
-- `TripPlanViewModel` (częściowo - destination, start_date, end_date)
+- `TripPlanDto` (częściowo - destination, start_date, end_date)
 
 **Propsy**:
 
@@ -355,36 +353,11 @@ interface DeleteConfirmDialogProps {
 
 ## 5. Typy
 
-### 5.1. TripPlanViewModel
+### 5.1. TripPlanDto
 
-Rozszerzony typ TripPlanDto zawierający dodatkowe pola potrzebne w widoku Dashboard.
+Wykorzystujemy istniejący typ `TripPlanDto` z `src/types.ts` bezpośrednio w widoku Dashboard.
 
-```typescript
-/**
- * ViewModel dla pojedynczego planu wycieczki w widoku Dashboard
- * Rozszerza TripPlanDto o pola source, created_at, updated_at
- */
-interface TripPlanViewModel extends TripPlanDto {
-  /**
-   * Źródło planu - czy został wygenerowany przez AI czy edytowany
-   * 'ai' - plan wygenerowany przez AI i zaakceptowany bez edycji
-   * 'ai-edited' - plan edytowany przez użytkownika
-   */
-  source: "ai" | "ai-edited";
-
-  /**
-   * Data utworzenia planu (ISO 8601)
-   */
-  created_at: string;
-
-  /**
-   * Data ostatniej aktualizacji planu (ISO 8601)
-   */
-  updated_at: string;
-}
-```
-
-**Pola dziedziczone z TripPlanDto**:
+**Pola TripPlanDto**:
 
 - `id: string` - UUID planu
 - `destination: string` - cel podróży
@@ -406,7 +379,7 @@ interface PlansListState {
   /**
    * Lista planów użytkownika
    */
-  plans: TripPlanViewModel[];
+  plans: TripPlanDto[];
 
   /**
    * Czy trwa ładowanie danych z API
@@ -432,7 +405,7 @@ interface DeletePlanState {
   /**
    * Plan wybrany do usunięcia (null jeśli dialog zamknięty)
    */
-  selectedPlan: TripPlanViewModel | null;
+  selectedPlan: TripPlanDto | null;
 
   /**
    * Czy trwa operacja usuwania
@@ -453,11 +426,6 @@ type GetTripPlansResponse = ApiSuccessResponse<TripPlanDto[]>;
 type ApiError = ApiErrorResponse;
 ```
 
-**UWAGA**: API obecnie nie zwraca pól `source`, `created_at`, `updated_at` w TripPlanDto. Wymagana jest aktualizacja:
-
-1. `src/types.ts` - rozszerzenie TripPlanDto
-2. `src/pages/api/trip-plans/index.ts` - aktualizacja selecta w query
-
 ## 6. Zarządzanie stanem
 
 ### 6.1. Custom Hook: useTripPlans
@@ -471,7 +439,7 @@ Główny hook zarządzający stanem listy planów i operacjami na nich.
  * @returns {Object} Stan i metody do zarządzania planami
  */
 function useTripPlans() {
-  const [plans, setPlans] = useState<TripPlanViewModel[]>([]);
+  const [plans, setPlans] = useState<TripPlanDto[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -495,7 +463,7 @@ function useTripPlans() {
         throw new Error("Nie udało się pobrać planów");
       }
 
-      const data: ApiSuccessResponse<TripPlanViewModel[]> = await response.json();
+      const data: ApiSuccessResponse<TripPlanDto[]> = await response.json();
       setPlans(data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd");
@@ -611,7 +579,7 @@ toast({
 
 ```typescript
 {
-  data: TripPlanViewModel[] // po aktualizacji TripPlanDto
+  data: TripPlanDto[] // po aktualizacji TripPlanDto
 }
 ```
 
@@ -1166,16 +1134,16 @@ if (response.status === 404) {
 2. **Dodanie nowych typów ViewModel w `src/types.ts`** lub w osobnym pliku `src/types/dashboard.types.ts`:
 
    ```typescript
-   export type TripPlanViewModel = TripPlanDto;
+   export type TripPlanDto = TripPlanDto;
 
    export interface PlansListState {
-     plans: TripPlanViewModel[];
+     plans: TripPlanDto[];
      isLoading: boolean;
      error: string | null;
    }
 
    export interface DeletePlanState {
-     selectedPlan: TripPlanViewModel | null;
+     selectedPlan: TripPlanDto | null;
      isDeleting: boolean;
    }
    ```
