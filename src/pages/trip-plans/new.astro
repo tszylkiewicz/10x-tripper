@@ -1,0 +1,25 @@
+---
+/**
+ * Create New Trip Plan Page
+ *
+ * Strona umożliwiająca tworzenie nowego planu wycieczki przy użyciu AI.
+ * Zawiera formularz do wprowadzania parametrów oraz podgląd wygenerowanego planu.
+ *
+ * Route: /trip-plans/new
+ */
+
+import Layout from "../../layouts/Layout.astro";
+import { CreateTripPlanContent } from "../../components/trip-plans/create";
+
+// Check if user is authenticated
+// const user = Astro.locals.user;
+// if (!user) {
+//   return Astro.redirect("/login");
+// }
+---
+
+<Layout title="Nowy plan wycieczki - Tripper">
+  <main>
+    <CreateTripPlanContent client:load />
+  </main>
+</Layout>

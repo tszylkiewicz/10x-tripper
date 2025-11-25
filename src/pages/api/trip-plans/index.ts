@@ -39,27 +39,29 @@ export const prerender = false;
 export const GET: APIRoute = async ({ locals }) => {
   try {
     // 1. Verify authentication
-    const {
-      data: { user },
-      error: authError,
-    } = await locals.supabase.auth.getUser();
-
-    if (authError || !user) {
-      const errorResponse: ApiErrorResponse = {
-        error: {
-          code: "UNAUTHORIZED",
-          message: "Authentication required",
-        },
-      };
-      return new Response(JSON.stringify(errorResponse), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    // TODO: Replace hardcoded userId with auth session
+    // const {
+    //   data: { user },
+    //   error: authError,
+    // } = await locals.supabase.auth.getUser();
+    //
+    // if (authError || !user) {
+    //   const errorResponse: ApiErrorResponse = {
+    //     error: {
+    //       code: "UNAUTHORIZED",
+    //       message: "Authentication required",
+    //     },
+    //   };
+    //   return new Response(JSON.stringify(errorResponse), {
+    //     status: 401,
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    // }
+    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533"; // Hardcoded for MVP
 
     // 2. Fetch trip plans using service
     const tripPlanService = new TripPlanService(locals.supabase);
-    const tripPlans = await tripPlanService.getTripPlans(user.id);
+    const tripPlans = await tripPlanService.getTripPlans(userId);
 
     // 3. Return success response
     const successResponse: ApiSuccessResponse<TripPlanDto[]> = {

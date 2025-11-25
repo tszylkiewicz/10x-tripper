@@ -3,7 +3,7 @@ Twoim zadaniem jest zaimplementowanie widoku frontendu w oparciu o podany plan i
 Najpierw przejrzyj plan implementacji:
 
 <implementation_plan>
-@.ai/trip-plans/views/trip-plan-details-view-implementation-plan.md
+@.ai/trip-plans/views/create-trip-plan-view-implementation-plan.md
 </implementation_plan>
 
 Teraz przejrzyj zasady implementacji:

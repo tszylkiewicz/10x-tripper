@@ -26,11 +26,11 @@ export function DashboardContent({ userEmail }: DashboardContentProps) {
 
   // Navigation handlers
   const handlePlanClick = useCallback((planId: string) => {
-    window.location.href = `/plans/${planId}`;
+    window.location.href = `/trip-plans/${planId}`;
   }, []);
 
   const handleCreatePlan = useCallback(() => {
-    window.location.href = "/plans/new";
+    window.location.href = "/trip-plans/new";
   }, []);
 
   // Delete handlers
