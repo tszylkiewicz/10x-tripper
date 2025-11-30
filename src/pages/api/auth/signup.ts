@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       data: {
         user_id: data.user?.id || "",
         email: data.user?.email || "",
-        requires_confirmation: requiresConfirmation,
+        requires_confirmation: !!requiresConfirmation,
       },
     };
 
@@ -92,10 +92,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
 function mapAuthErrorCode(supabaseError: string): string {
   if (supabaseError.includes("User already registered")) return "USER_EXISTS";
-  if (supabaseError.includes("email") && supabaseError.includes("invalid"))
-    return "INVALID_EMAIL";
-  if (supabaseError.includes("password") && supabaseError.includes("weak"))
-    return "WEAK_PASSWORD";
+  if (supabaseError.includes("email") && supabaseError.includes("invalid")) return "INVALID_EMAIL";
+  if (supabaseError.includes("password") && supabaseError.includes("weak")) return "WEAK_PASSWORD";
   return "AUTH_ERROR";
 }
 

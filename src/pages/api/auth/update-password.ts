@@ -99,8 +99,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 };
 
 function mapAuthErrorCode(supabaseError: string): string {
-  if (supabaseError.includes("password") && supabaseError.includes("weak"))
-    return "WEAK_PASSWORD";
+  if (supabaseError.includes("password") && supabaseError.includes("weak")) return "WEAK_PASSWORD";
   if (supabaseError.includes("same password")) return "SAME_PASSWORD";
   return "AUTH_ERROR";
 }

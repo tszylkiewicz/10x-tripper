@@ -127,9 +127,7 @@ export function ForgotPasswordForm({ message, error: initialError }: ForgotPassw
                 disabled={loading}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Podaj adres email powiązany z Twoim kontem
-              </p>
+              <p className="text-xs text-muted-foreground">Podaj adres email powiązany z Twoim kontem</p>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
