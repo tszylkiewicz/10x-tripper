@@ -1,0 +1,21 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+
+// Server-side logic: Check if user is already logged in
+const {
+  data: { session },
+} = await Astro.locals.supabase.auth.getSession();
+
+if (session) {
+  return Astro.redirect("/");
+}
+
+// Get query parameters for messages/errors
+const message = Astro.url.searchParams.get("message");
+const error = Astro.url.searchParams.get("error");
+---
+
+<Layout title="Rejestracja" showNavigation={false}>
+  <RegisterForm client:load message={message} error={error} />
+</Layout>
