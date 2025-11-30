@@ -20,7 +20,9 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 ## 3. Wymagania funkcjonalne
 
 1. System kont użytkowników
-   - Rejestracja i logowanie (e-mail + hasło)
+   - Rejestracja (e-mail + hasło) z potwierdzeniem przez e-mail (double opt-in)
+   - Logowanie (e-mail + hasło)
+   - Resetowanie zapomnianego hasła
    - Sesje i zabezpieczenie endpointów API
 2. Profil użytkownika
    - Dodawanie, edycja, usuwanie szablonów preferencji (ogólne dane — brak informacji wrażliwych)
@@ -73,8 +75,11 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Opis: Jako niezarejestrowany użytkownik chcę założyć konto, aby móc tworzyć plany wycieczek.
 - Kryteria akceptacji:
   1. Formularz przyjmuje poprawny e-mail i hasło.
-  2. Po sukcesie konto zostaje utworzone, a użytkownik zalogowany.
-  3. Błędne dane zwracają komunikat o błędzie.
+  2. Po sukcesie konto zostaje utworzone i system wysyła e-mail z linkiem aktywacyjnym.
+  3. Wyświetlany jest komunikat informujący o konieczności potwierdzenia adresu e-mail.
+  4. Po kliknięciu w link aktywacyjny użytkownik jest przekierowywany na stronę logowania z komunikatem o potwierdzeniu konta.
+  5. Użytkownik może się zalogować dopiero po potwierdzeniu adresu e-mail.
+  6. Błędne dane zwracają komunikat o błędzie.
 
 ### US-002
 
@@ -83,8 +88,9 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Opis: Jako zarejestrowany użytkownik chcę się zalogować, aby uzyskać dostęp do moich danych.
 - Kryteria akceptacji:
   1. Formularz przyjmuje e-mail i hasło.
-  2. Poprawne dane logują i przekierowują na listę planów.
+  2. Poprawne dane logują i przekierowują na dashboard z listą planów (strona główna `/`).
   3. Niepoprawne dane wyświetlają komunikat o błędzie.
+  4. Próba logowania bez potwierdzenia adresu e-mail wyświetla komunikat z informacją o konieczności aktywacji konta.
 
 ### US-003
 
@@ -170,6 +176,21 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Kryteria akceptacji:
   1. Próba dostępu bez sesji zwraca błąd 401.
   2. Po zalogowaniu wszystkie funkcje są dostępne.
+
+### US-011
+
+- ID: US-011
+- Tytuł: Resetowanie zapomnianego hasła
+- Opis: Jako użytkownik, który zapomniał hasła, chcę móc je zresetować, aby odzyskać dostęp do konta.
+- Kryteria akceptacji:
+  1. Użytkownik może wejść na stronę "Zapomniałem hasła" z poziomu strony logowania.
+  2. Formularz przyjmuje adres e-mail.
+  3. System wysyła e-mail z linkiem resetującym (niezależnie od tego, czy konto istnieje - zapobieganie enumeracji adresów).
+  4. Wyświetlany jest komunikat o wysłaniu linku.
+  5. Po kliknięciu w link użytkownik jest przekierowywany na stronę ustawiania nowego hasła.
+  6. Formularz nowego hasła wymaga wprowadzenia hasła i jego potwierdzenia.
+  7. Po sukcesie użytkownik jest przekierowywany na stronę logowania z komunikatem o zmianie hasła.
+  8. Link resetujący wygasa po 24 godzinach.
 
 ## 6. Metryki sukcesu
 

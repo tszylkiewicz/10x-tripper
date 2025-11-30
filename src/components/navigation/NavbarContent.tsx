@@ -15,9 +15,9 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/auth/logout", { method: "POST" });
+      const response = await fetch("/api/auth/signout", { method: "POST" });
       if (response.ok) {
-        window.location.href = "/login";
+        window.location.href = "/login?message=logged-out";
       }
     } catch (error) {
       console.error("Logout failed:", error);

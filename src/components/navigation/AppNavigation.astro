@@ -7,10 +7,9 @@ interface Props {
 
 const { currentPath } = Astro.props;
 
-// TODO: Extract user email from Astro.locals.session when auth is implemented
-// const session = Astro.locals.session;
-// const userEmail = session?.user?.email;
-const userEmail = undefined;
+// Extract user email from session (set by middleware)
+const user = Astro.locals.user;
+const userEmail = user?.email;
 ---
 
 <NavbarContent client:load userEmail={userEmail} currentPath={currentPath || Astro.url.pathname} />
