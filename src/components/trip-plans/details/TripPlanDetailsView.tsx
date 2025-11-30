@@ -6,8 +6,6 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useTripPlanDetails } from "./useTripPlanDetails";
 import { LoadingState } from "./LoadingState";
 import { ErrorState } from "./ErrorState";
@@ -134,11 +132,6 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
     await deletePlan();
   }, [deletePlan]);
 
-  // Handle back navigation
-  const handleBackClick = useCallback(() => {
-    window.location.href = "/";
-  }, []);
-
   // Loading state
   if (isLoading) {
     return <LoadingState message="Ładowanie planu wycieczki..." />;
@@ -155,89 +148,85 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      {/* Back button */}
-      <Button variant="ghost" size="sm" onClick={handleBackClick} className="mb-4">
-        <ArrowLeft className="mr-1.5 size-4" />
-        Wróć do listy
-      </Button>
+    <main className="container mx-auto px-4 py-8">
+      <div className="mx-auto max-w-4xl">
+        {/* Header with metadata and actions */}
+        <TripPlanHeader
+          destination={displayPlan.destination}
+          startDate={displayPlan.start_date}
+          endDate={displayPlan.end_date}
+          peopleCount={displayPlan.people_count}
+          budgetType={displayPlan.budget_type}
+          isEditMode={isEditMode}
+          isSaving={isSaving}
+          validationErrors={validationErrors}
+          onEdit={enterEditMode}
+          onDelete={showDeleteDialog}
+          onSave={handleSave}
+          onCancel={exitEditMode}
+          onFieldChange={handleFieldChange}
+        />
 
-      {/* Header with metadata and actions */}
-      <TripPlanHeader
-        destination={displayPlan.destination}
-        startDate={displayPlan.start_date}
-        endDate={displayPlan.end_date}
-        peopleCount={displayPlan.people_count}
-        budgetType={displayPlan.budget_type}
-        isEditMode={isEditMode}
-        isSaving={isSaving}
-        validationErrors={validationErrors}
-        onEdit={enterEditMode}
-        onDelete={showDeleteDialog}
-        onSave={handleSave}
-        onCancel={exitEditMode}
-        onFieldChange={handleFieldChange}
-      />
+        {/* Plan structure validation errors */}
+        {isEditMode && (validationErrors.days || validationErrors.activities) && (
+          <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+            {validationErrors.days && <p>{validationErrors.days}</p>}
+            {validationErrors.activities && <p>{validationErrors.activities}</p>}
+          </div>
+        )}
 
-      {/* Plan structure validation errors */}
-      {isEditMode && (validationErrors.days || validationErrors.activities) && (
-        <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-          {validationErrors.days && <p>{validationErrors.days}</p>}
-          {validationErrors.activities && <p>{validationErrors.activities}</p>}
+        {/* Days list */}
+        <div className="space-y-2">
+          {displayPlan.plan_details.days.map((day, dayIndex) => (
+            <PlanDay
+              key={`day-${day.day}-${dayIndex}`}
+              day={day.day}
+              date={day.date}
+              activities={day.activities}
+              dayIndex={dayIndex}
+              isEditMode={isEditMode}
+              onUpdateActivity={updateActivity}
+              onDeleteActivity={deleteActivity}
+              onAddActivity={addActivity}
+              onDeleteDay={deleteDay}
+            />
+          ))}
         </div>
-      )}
 
-      {/* Days list */}
-      <div className="space-y-2">
-        {displayPlan.plan_details.days.map((day, dayIndex) => (
-          <PlanDay
-            key={`day-${day.day}-${dayIndex}`}
-            day={day.day}
-            date={day.date}
-            activities={day.activities}
-            dayIndex={dayIndex}
-            isEditMode={isEditMode}
-            onUpdateActivity={updateActivity}
-            onDeleteActivity={deleteActivity}
-            onAddActivity={addActivity}
-            onDeleteDay={deleteDay}
-          />
-        ))}
+        {/* Accommodation section */}
+        <AccommodationSection
+          accommodation={displayPlan.plan_details.accommodation}
+          isEditMode={isEditMode}
+          onUpdate={updateAccommodation}
+          onRemove={removeAccommodation}
+          onAdd={addAccommodation}
+        />
+
+        {/* Notes section (read-only for now) */}
+        {displayPlan.plan_details.notes && (
+          <div className="mt-6 rounded-lg border bg-muted/50 p-4">
+            <h3 className="mb-2 font-semibold">Notatki</h3>
+            <p className="text-sm text-muted-foreground">{displayPlan.plan_details.notes}</p>
+          </div>
+        )}
+
+        {/* Total estimated cost (read-only) */}
+        {displayPlan.plan_details.total_estimated_cost !== undefined && (
+          <div className="mt-4 text-right">
+            <span className="text-sm text-muted-foreground">Szacunkowy całkowity koszt: </span>
+            <span className="font-semibold">{displayPlan.plan_details.total_estimated_cost} PLN</span>
+          </div>
+        )}
+
+        {/* Delete confirmation dialog */}
+        <DeleteConfirmDialog
+          isOpen={isDeleteDialogOpen}
+          planName={displayPlan.destination}
+          isDeleting={isDeleting}
+          onConfirm={handleDeleteConfirm}
+          onCancel={hideDeleteDialog}
+        />
       </div>
-
-      {/* Accommodation section */}
-      <AccommodationSection
-        accommodation={displayPlan.plan_details.accommodation}
-        isEditMode={isEditMode}
-        onUpdate={updateAccommodation}
-        onRemove={removeAccommodation}
-        onAdd={addAccommodation}
-      />
-
-      {/* Notes section (read-only for now) */}
-      {displayPlan.plan_details.notes && (
-        <div className="mt-6 rounded-lg border bg-muted/50 p-4">
-          <h3 className="mb-2 font-semibold">Notatki</h3>
-          <p className="text-sm text-muted-foreground">{displayPlan.plan_details.notes}</p>
-        </div>
-      )}
-
-      {/* Total estimated cost (read-only) */}
-      {displayPlan.plan_details.total_estimated_cost !== undefined && (
-        <div className="mt-4 text-right">
-          <span className="text-sm text-muted-foreground">Szacunkowy całkowity koszt: </span>
-          <span className="font-semibold">{displayPlan.plan_details.total_estimated_cost} PLN</span>
-        </div>
-      )}
-
-      {/* Delete confirmation dialog */}
-      <DeleteConfirmDialog
-        isOpen={isDeleteDialogOpen}
-        planName={displayPlan.destination}
-        isDeleting={isDeleting}
-        onConfirm={handleDeleteConfirm}
-        onCancel={hideDeleteDialog}
-      />
-    </div>
+    </main>
   );
 }

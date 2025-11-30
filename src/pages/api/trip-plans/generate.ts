@@ -25,7 +25,7 @@ import {
   validateGenerateTripPlanRequest,
   createGeneratePlanCommand,
 } from "../../../lib/validators/tripPlans.validator";
-import { generateTripPlan, buildPrompt, MODEL } from "../../../lib/services/aiGeneration.service";
+import { generateTripPlan, buildMessages, messagesToPrompt, MODEL } from "../../../lib/services/aiGeneration.service";
 import { logGenerationSuccess, logGenerationError } from "../../../lib/services/planGenerationLogger.service";
 
 export const prerender = false;
@@ -184,7 +184,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // 7. Log success to plan_generations table and get database ID
     const duration = Date.now() - startTime;
-    const prompt = buildPrompt(command);
+    const messages = buildMessages(command);
+    const prompt = messagesToPrompt(messages);
 
     let generationId: string;
     try {

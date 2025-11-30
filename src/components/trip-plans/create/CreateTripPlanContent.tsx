@@ -6,8 +6,6 @@
  */
 
 import { useState, useCallback } from "react";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { TripPlanForm } from "./TripPlanForm";
 import { LoadingOverlay } from "./LoadingOverlay";
 import { ErrorDisplay } from "./ErrorDisplay";
@@ -92,18 +90,10 @@ export function CreateTripPlanContent() {
   }, [formData, generatePlan, resetGeneration]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <main className="container mx-auto px-4 py-8">
       {/* Header */}
       <header className="mb-8">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild className="gap-2">
-            <a href="/trip-plans">
-              <ArrowLeft className="size-4" />
-              Powrót do planów
-            </a>
-          </Button>
-        </div>
-        <h1 className="mt-4 text-2xl font-bold sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {showGeneratedPlan ? "Wygenerowany plan" : "Nowy plan wycieczki"}
         </h1>
         <p className="mt-2 text-muted-foreground">
@@ -130,14 +120,16 @@ export function CreateTripPlanContent() {
 
       {/* Generated plan section */}
       {showGeneratedPlan && editablePlan && (
-        <GeneratedPlanSection
-          plan={editablePlan}
-          onRegeneratePlan={handleRegenerate}
-          onAcceptPlan={handleAcceptPlan}
-          onPlanChange={handlePlanChange}
-          isAccepting={isAccepting}
-        />
+        <div className="mx-auto max-w-4xl">
+          <GeneratedPlanSection
+            plan={editablePlan}
+            onRegeneratePlan={handleRegenerate}
+            onAcceptPlan={handleAcceptPlan}
+            onPlanChange={handlePlanChange}
+            isAccepting={isAccepting}
+          />
+        </div>
       )}
-    </div>
+    </main>
   );
 }

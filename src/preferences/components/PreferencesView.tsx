@@ -52,11 +52,11 @@ export function PreferencesView() {
   }
 
   return (
-    <div className="container mx-auto max-w-7xl space-y-6 px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Moje Preferencje</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Moje Preferencje</h1>
           <p className="mt-2 text-muted-foreground">
             Zarządzaj szablonami preferencji dla szybszego planowania wyjazdów
           </p>

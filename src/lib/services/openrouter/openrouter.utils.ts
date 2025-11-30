@@ -1,0 +1,99 @@
+/**
+ * Utility functions for OpenRouter service
+ */
+
+import type { JSONSchemaObject } from "./openrouter.types";
+
+/**
+ * Removes markdown code blocks and extracts JSON from content
+ * Handles cases where model adds text before/after JSON
+ */
+export function cleanMarkdownCodeBlocks(content: string): string {
+  // First, try to remove markdown code blocks
+  let cleaned = content
+    .replace(/```json\n?/g, "")
+    .replace(/```\n?/g, "")
+    .trim();
+
+  // If content doesn't start with { or [, try to extract JSON
+  if (!cleaned.startsWith("{") && !cleaned.startsWith("[")) {
+    // Find the first { or [ and last } or ]
+    const firstBrace = cleaned.indexOf("{");
+    const firstBracket = cleaned.indexOf("[");
+    const lastBrace = cleaned.lastIndexOf("}");
+    const lastBracket = cleaned.lastIndexOf("]");
+
+    // Determine which comes first: { or [
+    let startIndex = -1;
+    let endIndex = -1;
+
+    if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+      // Object starts first
+      startIndex = firstBrace;
+      endIndex = lastBrace;
+    } else if (firstBracket !== -1) {
+      // Array starts first
+      startIndex = firstBracket;
+      endIndex = lastBracket;
+    }
+
+    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+      cleaned = cleaned.substring(startIndex, endIndex + 1);
+    }
+  }
+
+  return cleaned.trim();
+}
+
+/**
+ * Checks if an error is retry-able based on status code or error type
+ */
+export function isRetryableError(error: any): boolean {
+  // HTTP status codes that should be retried
+  if (error.status) {
+    const retryableStatuses = [429, 500, 502, 503, 504];
+    return retryableStatuses.includes(error.status);
+  }
+
+  // Network errors that should be retried
+  if (error.code) {
+    const retryableCodes = ["ECONNRESET", "ETIMEDOUT", "ENOTFOUND"];
+    return retryableCodes.includes(error.code);
+  }
+
+  return false;
+}
+
+/**
+ * Calculates retry delay with exponential backoff
+ */
+export function calculateRetryDelay(baseDelay: number, attemptNumber: number): number {
+  return baseDelay * Math.pow(2, attemptNumber);
+}
+
+/**
+ * Validates OpenRouter configuration
+ */
+export function validateConfig(config: any): void {
+  if (config.timeout && (config.timeout < 1000 || config.timeout > 600000)) {
+    throw new Error("Timeout must be between 1000ms and 600000ms");
+  }
+
+  if (config.maxRetries && (config.maxRetries < 0 || config.maxRetries > 10)) {
+    throw new Error("maxRetries must be between 0 and 10");
+  }
+
+  if (config.temperature && (config.temperature < 0 || config.temperature > 2)) {
+    throw new Error("temperature must be between 0 and 2");
+  }
+}
+
+/**
+ * Converts Zod schema to JSON Schema (simplified version)
+ * Note: For production, consider using @sodaru/zod-to-json-schema
+ */
+export function zodToJsonSchema(zodSchema: any): JSONSchemaObject {
+  // This is a placeholder implementation
+  // Use a proper library like @sodaru/zod-to-json-schema in production
+  throw new Error("zodToJsonSchema not implemented. Use @sodaru/zod-to-json-schema library.");
+}

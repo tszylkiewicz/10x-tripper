@@ -1,0 +1,16 @@
+---
+import { NavbarContent } from "./NavbarContent";
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath } = Astro.props;
+
+// TODO: Extract user email from Astro.locals.session when auth is implemented
+// const session = Astro.locals.session;
+// const userEmail = session?.user?.email;
+const userEmail = undefined;
+---
+
+<NavbarContent client:load userEmail={userEmail} currentPath={currentPath || Astro.url.pathname} />

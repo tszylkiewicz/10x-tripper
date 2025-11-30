@@ -1,20 +1,15 @@
 import { useState, useCallback } from "react";
 import { useTripPlans } from "../hooks/useTripPlans";
-import { Navbar } from "./Navbar";
 import { PlansList } from "./PlansList";
 import { CreatePlanButton } from "./CreatePlanButton";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import type { TripPlanDto } from "../../types";
 
-interface DashboardContentProps {
-  userEmail?: string;
-}
-
 /**
  * DashboardContent component
  * Main container component that orchestrates the dashboard view
  */
-export function DashboardContent({ userEmail }: DashboardContentProps) {
+export function DashboardContent() {
   const { plans, isLoading, error, deletePlan, refetch } = useTripPlans();
 
   // Delete dialog state
@@ -68,9 +63,7 @@ export function DashboardContent({ userEmail }: DashboardContentProps) {
   }, [isDeleting]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar userEmail={userEmail} />
-
+    <>
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -105,6 +98,6 @@ export function DashboardContent({ userEmail }: DashboardContentProps) {
         onCancel={handleDeleteCancel}
         isDeleting={isDeleting}
       />
-    </div>
+    </>
   );
 }
