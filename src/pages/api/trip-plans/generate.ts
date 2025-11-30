@@ -27,6 +27,7 @@ import {
 } from "../../../lib/validators/tripPlans.validator";
 import { generateTripPlan, buildMessages, messagesToPrompt, MODEL } from "../../../lib/services/aiGeneration.service";
 import { logGenerationSuccess, logGenerationError } from "../../../lib/services/planGenerationLogger.service";
+import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
 
 export const prerender = false;
 
@@ -96,25 +97,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       throw e;
     }
 
-    // 4. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
-
-    // For production, use:
-    // const { data: { user }, error: authError } = await locals.supabase.auth.getUser();
-    // if (authError || !user) {
-    //   const errorResponse: ApiErrorResponse = {
-    //     error: {
-    //       code: "UNAUTHORIZED",
-    //       message: "Authentication required"
-    //     }
-    //   };
-    //   return new Response(JSON.stringify(errorResponse), {
-    //     status: 401,
-    //     headers: { "Content-Type": "application/json" }
-    //   });
-    // }
-    // const userId = user.id;
+    // 4. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 5. Create command object
     const command = createGeneratePlanCommand(validatedData, userId);
@@ -216,7 +200,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // 10. Handle unexpected errors
+    // 10. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 11. Handle unexpected errors
     console.error("Unexpected error in POST /api/trip-plans/generate:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),

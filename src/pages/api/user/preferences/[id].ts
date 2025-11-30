@@ -8,7 +8,7 @@
  * DELETE /api/user/preferences/:id
  * Deletes a single user preference template by ID.
  *
- * Requires authentication (to be added later).
+ * Requires authentication.
  */
 
 import type { APIRoute } from "astro";
@@ -16,6 +16,7 @@ import { UserPreferencesService } from "../../../../lib/services/userPreferences
 import { isValidUUID } from "../../../../lib/validators/uuid.validator";
 import { updateUserPreferenceSchema } from "../../../../lib/validators/preferences.validator";
 import { ValidationError } from "../../../../errors/validation.error";
+import { requireAuth, createUnauthorizedResponse } from "../../../../lib/auth.utils";
 import type {
   ApiSuccessResponse,
   ApiErrorResponse,
@@ -48,9 +49,8 @@ export const GET: APIRoute = async ({ params, locals }) => {
       });
     }
 
-    // 2. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
+    // 2. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 3. Fetch preference from database using service
     const preferencesService = new UserPreferencesService(locals.supabase);
@@ -80,13 +80,18 @@ export const GET: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // 6. Log unexpected errors (without exposing sensitive data)
+    // 6. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 7. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in GET /api/user/preferences/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 7. Return generic server error
+    // 8. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -157,9 +162,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       });
     }
 
-    // 4. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
+    // 4. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 5. Build update command
     const command: UpdatePreferenceCommand = {
@@ -196,7 +200,12 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // 9. Handle validation errors
+    // 9. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 10. Handle validation errors
     if (error instanceof ValidationError) {
       const errorResponse: ApiErrorResponse = {
         error: {
@@ -211,7 +220,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       });
     }
 
-    // 10. Handle database errors (e.g., unique constraint violation)
+    // 11. Handle database errors (e.g., unique constraint violation)
     if (error && typeof error === "object" && "code" in error) {
       const dbError = error as { code: string; message: string };
 
@@ -231,13 +240,13 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       }
     }
 
-    // 11. Log unexpected errors (without exposing sensitive data)
+    // 12. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in PUT /api/user/preferences/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 12. Return generic server error
+    // 13. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -274,9 +283,8 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       });
     }
 
-    // 2. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
+    // 2. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 3. Create command and execute deletion
     const command: DeletePreferenceCommand = {
@@ -306,13 +314,18 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       status: 204,
     });
   } catch (error) {
-    // 6. Log unexpected errors (without exposing sensitive data)
+    // 6. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 7. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in DELETE /api/user/preferences/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 7. Return generic server error
+    // 8. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",

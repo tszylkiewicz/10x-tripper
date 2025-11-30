@@ -5,7 +5,7 @@
  * POST /api/user/preferences
  * Creates a new user preference template.
  *
- * Requires authentication (to be added later).
+ * Requires authentication.
  */
 
 import type { APIRoute } from "astro";
@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 import { UserPreferencesService } from "../../../lib/services/userPreferences.service";
 import { createUserPreferenceSchema } from "../../../lib/validators/preferences.validator";
 import { ValidationError } from "../../../errors/validation.error";
+import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
 import type { ApiSuccessResponse, ApiErrorResponse, UserPreferenceDto } from "../../../types";
 
 export const prerender = false;
@@ -22,9 +23,8 @@ export const prerender = false;
  */
 export const GET: APIRoute = async ({ locals }) => {
   try {
-    // TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
+    // Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // Fetch preferences using service
     const preferencesService = new UserPreferencesService(locals.supabase);
@@ -40,6 +40,11 @@ export const GET: APIRoute = async ({ locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    // Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
     // Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in GET /api/user/preferences:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
@@ -111,9 +116,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       throw e;
     }
 
-    // 3. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
+    // 3. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 4. Create command object
     const command = {
@@ -137,7 +141,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // 7. Handle service-level ValidationError
+    // 7. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 8. Handle service-level ValidationError
     if (error instanceof ValidationError) {
       const errorResponse: ApiErrorResponse = {
         error: {
@@ -152,7 +161,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // 8. Handle UNIQUE constraint violation (PostgreSQL error code 23505)
+    // 9. Handle UNIQUE constraint violation (PostgreSQL error code 23505)
     if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") {
       const errorResponse: ApiErrorResponse = {
         error: {
@@ -166,13 +175,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // 9. Log unexpected errors (without exposing sensitive data)
+    // 10. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in POST /api/user/preferences:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 10. Return generic server error
+    // 11. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",

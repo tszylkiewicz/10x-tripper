@@ -14,6 +14,7 @@ import { TripPlanService } from "../../../lib/services/tripPlan.service";
 import { isValidUUID } from "../../../lib/validators/uuid.validator";
 import { updateTripPlanSchema } from "../../../lib/validators/tripPlans.validator";
 import { ValidationError } from "../../../errors/validation.error";
+import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
 import type {
   ApiSuccessResponse,
   ApiErrorResponse,
@@ -29,9 +30,8 @@ export const prerender = false;
  */
 export const GET: APIRoute = async ({ params, locals }) => {
   try {
-    // 1. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
+    // 1. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 2. Extract and validate ID parameter
     const id = params.id;
@@ -106,13 +106,18 @@ export const GET: APIRoute = async ({ params, locals }) => {
       throw error;
     }
   } catch (error) {
-    // 7. Log unexpected errors (without exposing sensitive data)
+    // 7. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 8. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in GET /api/trip-plans/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 8. Return generic server error
+    // 9. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_ERROR",
@@ -184,25 +189,8 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
       });
     }
 
-    // 4. TODO: Get user_id from authenticated session
-    // For now, using a placeholder - will be replaced with actual auth
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
-
-    // For production, use:
-    // const { data: { user }, error: authError } = await locals.supabase.auth.getUser();
-    // if (authError || !user) {
-    //   const errorResponse: ApiErrorResponse = {
-    //     error: {
-    //       code: "UNAUTHORIZED",
-    //       message: "Authentication required"
-    //     }
-    //   };
-    //   return new Response(JSON.stringify(errorResponse), {
-    //     status: 401,
-    //     headers: { "Content-Type": "application/json" }
-    //   });
-    // }
-    // const userId = user.id;
+    // 4. Get user_id from authenticated session
+    const userId = await requireAuth(locals.supabase);
 
     // 5. Build update command
     const command: UpdatePlanCommand = {
@@ -239,7 +227,12 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // 9. Handle validation errors
+    // 9. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 10. Handle validation errors
     if (error instanceof ValidationError) {
       const errorResponse: ApiErrorResponse = {
         error: {
@@ -254,13 +247,13 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
       });
     }
 
-    // 10. Log unexpected errors (without exposing sensitive data)
+    // 11. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in PATCH /api/trip-plans/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 11. Return generic server error
+    // 12. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -298,24 +291,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // 2. Get user_id from authenticated session
-    // TODO: Replace placeholder with actual auth when implemented
-    const userId = "20eaee6f-d503-41d9-8ce9-4219f2c06533";
-
-    // For production, use:
-    // const { data: { user }, error: authError } = await locals.supabase.auth.getUser();
-    // if (authError || !user) {
-    //   const errorResponse: ApiErrorResponse = {
-    //     error: {
-    //       code: "UNAUTHORIZED",
-    //       message: "Authentication required"
-    //     }
-    //   };
-    //   return new Response(JSON.stringify(errorResponse), {
-    //     status: 401,
-    //     headers: { "Content-Type": "application/json" }
-    //   });
-    // }
-    // const userId = user.id;
+    const userId = await requireAuth(locals.supabase);
 
     // 3. Create command and execute soft deletion
     const command: DeleteTripPlanCommand = {
@@ -345,13 +321,18 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       status: 204,
     });
   } catch (error) {
-    // 6. Log unexpected errors (without exposing sensitive data)
+    // 6. Handle authentication errors
+    if (error instanceof Error && error.name === "AuthenticationError") {
+      return createUnauthorizedResponse();
+    }
+
+    // 7. Log unexpected errors (without exposing sensitive data)
     console.error("Unexpected error in DELETE /api/trip-plans/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
 
-    // 7. Return generic server error
+    // 8. Return generic server error
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",
