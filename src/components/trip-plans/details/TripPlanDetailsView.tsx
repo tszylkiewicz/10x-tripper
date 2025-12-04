@@ -10,8 +10,8 @@ import { useTripPlanDetails } from "./useTripPlanDetails";
 import { LoadingState } from "./LoadingState";
 import { ErrorState } from "./ErrorState";
 import { TripPlanHeader } from "./TripPlanHeader";
-import { PlanDay } from "./PlanDay";
-import { AccommodationSection } from "./AccommodationSection";
+import { DayCard } from "../shared/DayCard";
+import { AccommodationCard } from "../shared/AccommodationCard";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import type { TripPlanMetadata, ValidationErrors } from "./types";
 
@@ -178,11 +178,9 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
         {/* Days list */}
         <div className="space-y-2">
           {displayPlan.plan_details.days.map((day, dayIndex) => (
-            <PlanDay
+            <DayCard
               key={`day-${day.day}-${dayIndex}`}
-              day={day.day}
-              date={day.date}
-              activities={day.activities}
+              day={day}
               dayIndex={dayIndex}
               isEditMode={isEditMode}
               onUpdateActivity={updateActivity}
@@ -194,7 +192,7 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
         </div>
 
         {/* Accommodation section */}
-        <AccommodationSection
+        <AccommodationCard
           accommodation={displayPlan.plan_details.accommodation}
           isEditMode={isEditMode}
           onUpdate={updateAccommodation}

@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { PlanHeader } from "./PlanHeader";
 import { PlanActions } from "./PlanActions";
-import { DayCard } from "./DayCard";
-import { AccommodationCard } from "./AccommodationCard";
+import { DayCard } from "../shared/DayCard";
+import { AccommodationCard } from "../shared/AccommodationCard";
 import type { DayDto, AccommodationDto } from "../../../types";
 import type { GeneratedPlanSectionProps, EditableGeneratedPlan } from "./types";
 
@@ -136,8 +136,9 @@ export function GeneratedPlanSection({
           <DayCard
             key={`day-${day.day}-${day.date}`}
             day={day}
+            dayIndex={index}
             onUpdate={(updatedDay) => handleDayUpdate(index, updatedDay)}
-            onRemove={() => handleDayRemove(index)}
+            onDeleteDay={() => handleDayRemove(index)}
           />
         ))}
       </div>

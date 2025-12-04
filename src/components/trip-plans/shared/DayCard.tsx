@@ -1,6 +1,12 @@
 /**
- * PlanDay component
- * Displays a single day with its activities
+ * Shared DayCard component
+ *
+ * Universal day container used in both create and details flows.
+ * Manages activities with add/edit/delete operations.
+ *
+ * Usage:
+ * - Create flow: <DayCard onUpdate={(day) => ...} onRemove={() => ...} />
+ * - Details flow: <DayCard onUpdateActivity={(dayIdx, actIdx, act) => ...} ... />
  */
 
 import { memo, useState, useCallback, useId } from "react";
@@ -9,72 +15,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/date-formatting";
+import { validateActivity } from "@/lib/utils/activity-validation";
+import { EMPTY_ACTIVITY, MIN_ACTIVITIES_PER_DAY } from "@/lib/utils/trip-plan-constants";
 import { ActivityCard } from "./ActivityCard";
 import type { ActivityDto } from "../../../types";
-import type { PlanDayProps, ValidationErrors } from "./types";
+import type { DayCardProps, ValidationErrors } from "./types";
 
-/**
- * Formats date to Polish locale display
- */
-function formatDate(dateString: string): string {
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-    return date.toLocaleDateString("pl-PL", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-    });
-  } catch {
-    return dateString;
-  }
-}
-
-/**
- * Empty activity template
- */
-const emptyActivity: ActivityDto = {
-  time: "09:00",
-  title: "",
-  description: "",
-  location: "",
-};
-
-/**
- * Validates new activity
- */
-function validateNewActivity(activity: ActivityDto): ValidationErrors {
-  const errors: ValidationErrors = {};
-
-  if (!activity.time?.trim()) {
-    errors.time = "Godzina jest wymagana";
-  }
-  if (!activity.title?.trim()) {
-    errors.title = "Tytuł jest wymagany";
-  }
-  if (!activity.description?.trim()) {
-    errors.description = "Opis jest wymagany";
-  }
-  if (!activity.location?.trim()) {
-    errors.location = "Lokalizacja jest wymagana";
-  }
-
-  return errors;
-}
-
-function PlanDayComponent({
+function DayCardComponent({
   day,
-  date,
-  activities,
-  dayIndex,
-  isEditMode,
+  dayIndex = 0,
+  isEditMode = true,
+  showDeleteButton,
+  onUpdate,
   onUpdateActivity,
   onDeleteActivity,
   onAddActivity,
   onDeleteDay,
-}: PlanDayProps) {
+  className,
+}: DayCardProps) {
   const [isAddingActivity, setIsAddingActivity] = useState(false);
-  const [newActivity, setNewActivity] = useState<ActivityDto>(emptyActivity);
+  const [newActivity, setNewActivity] = useState<ActivityDto>(EMPTY_ACTIVITY);
   const [newActivityErrors, setNewActivityErrors] = useState<ValidationErrors>({});
 
   const timeId = useId();
@@ -82,33 +44,55 @@ function PlanDayComponent({
   const descriptionId = useId();
   const locationId = useId();
 
+  // Determine which callback pattern to use
+  const isUnifiedMode = !!onUpdate; // Create flow uses single onUpdate callback
+  const isGranularMode = !!onUpdateActivity; // Details flow uses granular callbacks
+
+  // Adapter: Convert granular operation to unified update
   const handleActivityUpdate = useCallback(
     (activityIndex: number, activity: ActivityDto) => {
-      onUpdateActivity(dayIndex, activityIndex, activity);
+      if (isUnifiedMode && onUpdate) {
+        // Create flow - update entire day
+        const updatedActivities = [...day.activities];
+        updatedActivities[activityIndex] = activity;
+        onUpdate({ ...day, activities: updatedActivities });
+      } else if (isGranularMode && onUpdateActivity) {
+        // Details flow - granular callback
+        onUpdateActivity(dayIndex, activityIndex, activity);
+      }
     },
-    [dayIndex, onUpdateActivity]
+    [day, dayIndex, isUnifiedMode, isGranularMode, onUpdate, onUpdateActivity]
   );
 
+  // Adapter: Convert granular delete to unified update
   const handleActivityDelete = useCallback(
     (activityIndex: number) => {
-      // Prevent deleting last activity
-      if (activities.length <= 1) {
+      // Business rule: prevent deleting last activity
+      if (day.activities.length <= MIN_ACTIVITIES_PER_DAY) {
         return;
       }
-      onDeleteActivity(dayIndex, activityIndex);
+
+      if (isUnifiedMode && onUpdate) {
+        // Create flow - update entire day
+        const updatedActivities = day.activities.filter((_, i) => i !== activityIndex);
+        onUpdate({ ...day, activities: updatedActivities });
+      } else if (isGranularMode && onDeleteActivity) {
+        // Details flow - granular callback
+        onDeleteActivity(dayIndex, activityIndex);
+      }
     },
-    [dayIndex, activities.length, onDeleteActivity]
+    [day, dayIndex, isUnifiedMode, isGranularMode, onUpdate, onDeleteActivity]
   );
 
   const handleStartAddActivity = useCallback(() => {
-    setNewActivity({ ...emptyActivity });
+    setNewActivity({ ...EMPTY_ACTIVITY });
     setNewActivityErrors({});
     setIsAddingActivity(true);
   }, []);
 
   const handleCancelAddActivity = useCallback(() => {
     setIsAddingActivity(false);
-    setNewActivity(emptyActivity);
+    setNewActivity(EMPTY_ACTIVITY);
     setNewActivityErrors({});
   }, []);
 
@@ -118,32 +102,45 @@ function PlanDayComponent({
   }, []);
 
   const handleSaveNewActivity = useCallback(() => {
-    const errors = validateNewActivity(newActivity);
+    const errors = validateActivity(newActivity);
     if (Object.keys(errors).length > 0) {
       setNewActivityErrors(errors);
       return;
     }
-    onAddActivity(dayIndex, newActivity);
+
+    if (isUnifiedMode && onUpdate) {
+      // Create flow - update entire day
+      onUpdate({ ...day, activities: [...day.activities, newActivity] });
+    } else if (isGranularMode && onAddActivity) {
+      // Details flow - granular callback
+      onAddActivity(dayIndex, newActivity);
+    }
+
     setIsAddingActivity(false);
-    setNewActivity(emptyActivity);
+    setNewActivity(EMPTY_ACTIVITY);
     setNewActivityErrors({});
-  }, [dayIndex, newActivity, onAddActivity]);
+  }, [day, dayIndex, newActivity, isUnifiedMode, isGranularMode, onUpdate, onAddActivity]);
 
   const handleDeleteDay = useCallback(() => {
-    onDeleteDay(dayIndex);
+    if (onDeleteDay) {
+      onDeleteDay(dayIndex);
+    }
   }, [dayIndex, onDeleteDay]);
 
+  // Determine if delete button should be shown
+  const shouldShowDeleteButton = showDeleteButton ?? isEditMode;
+
   return (
-    <Card className="mb-6">
+    <Card className={cn("mb-6", className)}>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Calendar className="size-5 text-primary" />
             <span>
-              Dzień {day} - {formatDate(date)}
+              Dzień {day.day} - {formatDate(day.date)}
             </span>
           </CardTitle>
-          {isEditMode && (
+          {shouldShowDeleteButton && onDeleteDay && (
             <Button
               variant="ghost"
               size="sm"
@@ -156,11 +153,12 @@ function PlanDayComponent({
           )}
         </div>
       </CardHeader>
+
       <CardContent className="space-y-3">
         {/* Activities list */}
-        {activities.map((activity, activityIndex) => (
+        {day.activities.map((activity, activityIndex) => (
           <ActivityCard
-            key={`${dayIndex}-${activityIndex}-${activity.time}`}
+            key={`${day.day}-${activityIndex}-${activity.time}`}
             activity={activity}
             isEditMode={isEditMode}
             onUpdate={(updated) => handleActivityUpdate(activityIndex, updated)}
@@ -265,4 +263,4 @@ function PlanDayComponent({
   );
 }
 
-export const PlanDay = memo(PlanDayComponent);
+export const DayCard = memo(DayCardComponent);

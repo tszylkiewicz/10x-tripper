@@ -1,51 +1,33 @@
 /**
- * ActivityCard component
- * Displays a single activity with view/edit modes
+ * Shared ActivityCard component
+ *
+ * Universal activity card used in both create and details flows.
+ * Supports view and edit modes with validation.
+ *
+ * Usage:
+ * - Create flow: <ActivityCard isEditMode={true} showEditButton={true} ... />
+ * - Details flow: <ActivityCard isEditMode={globalEditMode} ... />
  */
 
-import { memo, useState, useId, useCallback } from "react";
-import { Clock, MapPin, Timer, DollarSign, Tag, Trash2, Save, X } from "lucide-react";
+import { memo, useState, useCallback, useId } from "react";
+import { Clock, MapPin, Timer, DollarSign, Tag, Trash2, Save, X, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { validateActivity } from "@/lib/utils/activity-validation";
 import type { ActivityDto } from "../../../types";
 import type { ActivityCardProps, ValidationErrors } from "./types";
 
-/**
- * Validates activity fields
- */
-function validateActivity(activity: ActivityDto): ValidationErrors {
-  const errors: ValidationErrors = {};
-
-  if (!activity.time?.trim()) {
-    errors.time = "Godzina jest wymagana";
-  } else if (!/^\d{2}:\d{2}$/.test(activity.time)) {
-    errors.time = "Nieprawidłowy format (HH:MM)";
-  }
-
-  if (!activity.title?.trim()) {
-    errors.title = "Tytuł jest wymagany";
-  } else if (activity.title.length > 200) {
-    errors.title = "Tytuł może mieć max 200 znaków";
-  }
-
-  if (!activity.description?.trim()) {
-    errors.description = "Opis jest wymagany";
-  }
-
-  if (!activity.location?.trim()) {
-    errors.location = "Lokalizacja jest wymagana";
-  }
-
-  if (activity.estimated_cost !== undefined && activity.estimated_cost < 0) {
-    errors.estimated_cost = "Koszt musi być >= 0";
-  }
-
-  return errors;
-}
-
-function ActivityCardComponent({ activity, isEditMode, onUpdate, onDelete }: ActivityCardProps) {
+function ActivityCardComponent({
+  activity,
+  isEditMode = true,
+  showEditButton = true,
+  onUpdate,
+  onDelete,
+  className,
+}: ActivityCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivity, setEditedActivity] = useState<ActivityDto>(activity);
   const [localErrors, setLocalErrors] = useState<ValidationErrors>({});
@@ -86,10 +68,10 @@ function ActivityCardComponent({ activity, isEditMode, onUpdate, onDelete }: Act
     setIsEditing(true);
   }, [activity]);
 
-  // View mode (when not in global edit mode or not editing this card)
+  // View mode - when not in global edit mode OR not editing this specific card
   if (!isEditMode || !isEditing) {
     return (
-      <Card className="group relative">
+      <Card className={cn("group relative", className)}>
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             {/* Time badge */}
@@ -129,15 +111,15 @@ function ActivityCardComponent({ activity, isEditMode, onUpdate, onDelete }: Act
               </div>
             </div>
 
-            {/* Edit button - only visible in edit mode */}
-            {isEditMode && (
+            {/* Edit button - only visible when in edit mode and showEditButton is true */}
+            {isEditMode && showEditButton && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleStartEdit}
                 className="opacity-0 transition-opacity group-hover:opacity-100"
               >
-                Edytuj
+                <Pencil className="size-4" />
               </Button>
             )}
           </div>
@@ -146,9 +128,9 @@ function ActivityCardComponent({ activity, isEditMode, onUpdate, onDelete }: Act
     );
   }
 
-  // Edit mode (editing this specific activity)
+  // Edit mode - editing this specific activity
   return (
-    <Card className="border-primary">
+    <Card className={cn("border-primary", className)}>
       <CardContent className="p-4">
         <div className="grid gap-3 sm:grid-cols-2">
           {/* Time */}

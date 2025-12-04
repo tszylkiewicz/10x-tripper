@@ -9,12 +9,14 @@ export { TripPlanDetailsView } from "./TripPlanDetailsView";
 
 // Sub-components
 export { TripPlanHeader } from "./TripPlanHeader";
-export { PlanDay } from "./PlanDay";
-export { ActivityCard } from "./ActivityCard";
-export { AccommodationSection } from "./AccommodationSection";
 export { LoadingState } from "./LoadingState";
 export { ErrorState } from "./ErrorState";
 export { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+
+// Re-export shared components for backwards compatibility
+export { DayCard as PlanDay } from "../shared/DayCard";
+export { ActivityCard } from "../shared/ActivityCard";
+export { AccommodationCard as AccommodationSection } from "../shared/AccommodationCard";
 
 // Hook
 export { useTripPlanDetails } from "./useTripPlanDetails";

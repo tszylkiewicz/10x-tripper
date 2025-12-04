@@ -9,8 +9,10 @@ export { ErrorDisplay } from "./ErrorDisplay";
 export { GeneratedPlanSection } from "./GeneratedPlanSection";
 export { PlanHeader } from "./PlanHeader";
 export { PlanActions } from "./PlanActions";
-export { DayCard } from "./DayCard";
-export { AccommodationCard } from "./AccommodationCard";
+
+// Re-export shared components for backwards compatibility
+export { DayCard } from "../shared/DayCard";
+export { AccommodationCard } from "../shared/AccommodationCard";
 
 // Re-export hooks
 export { useTripPlanGeneration, usePlanEditor, useAcceptPlan } from "./hooks";
