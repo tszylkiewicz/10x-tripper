@@ -25,3 +25,9 @@ pnpm-debug.log*
 
 # vscode setting folder
 /.vscode/
+/.env.test
+
+# Playwright
+playwright/.auth/
+playwright-report/
+test-results/

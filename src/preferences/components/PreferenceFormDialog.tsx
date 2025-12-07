@@ -63,13 +63,13 @@ export function PreferenceFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px]" data-testid="preference-form-dialog">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle data-testid="preference-form-title">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} data-testid="preference-form">
           <div className="space-y-4 py-4">
             {/* Pole: Nazwa */}
             <div className="space-y-2">
@@ -79,6 +79,7 @@ export function PreferenceFormDialog({
               <Input
                 id="name"
                 name="name"
+                data-testid="preference-name-input"
                 placeholder="np. Wakacje rodzinne"
                 value={formData.name}
                 onChange={(e) => handleChange("name", e.target.value)}
@@ -89,11 +90,16 @@ export function PreferenceFormDialog({
               />
               <div className="flex items-center justify-between">
                 {errors.name && touched.name ? (
-                  <p className="text-sm text-destructive">{errors.name}</p>
+                  <p className="text-sm text-destructive" data-testid="preference-name-error">
+                    {errors.name}
+                  </p>
                 ) : (
                   <p className="text-sm text-muted-foreground">Wymagane, max 256 znaków</p>
                 )}
-                <p className={`text-xs ${nameCharCount > 256 ? "text-destructive" : "text-muted-foreground"}`}>
+                <p
+                  className={`text-xs ${nameCharCount > 256 ? "text-destructive" : "text-muted-foreground"}`}
+                  data-testid="preference-name-char-count"
+                >
                   {nameCharCount}/256
                 </p>
               </div>
@@ -105,6 +111,7 @@ export function PreferenceFormDialog({
               <Input
                 id="people_count"
                 name="people_count"
+                data-testid="preference-people-count-input"
                 type="number"
                 min="1"
                 step="1"
@@ -116,7 +123,9 @@ export function PreferenceFormDialog({
                 disabled={isSubmitting}
               />
               {errors.people_count && touched.people_count ? (
-                <p className="text-sm text-destructive">{errors.people_count}</p>
+                <p className="text-sm text-destructive" data-testid="preference-people-count-error">
+                  {errors.people_count}
+                </p>
               ) : (
                 <p className="text-sm text-muted-foreground">Opcjonalne, minimum 1</p>
               )}
@@ -130,7 +139,7 @@ export function PreferenceFormDialog({
                 onValueChange={(value) => handleChange("budget_type", value)}
                 disabled={isSubmitting}
               >
-                <SelectTrigger id="budget_type">
+                <SelectTrigger id="budget_type" data-testid="preference-budget-type-select">
                   <SelectValue placeholder="Wybierz typ budżetu" />
                 </SelectTrigger>
                 <SelectContent>
@@ -146,10 +155,16 @@ export function PreferenceFormDialog({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              data-testid="preference-form-cancel-button"
+            >
               Anuluj
             </Button>
-            <Button type="submit" disabled={isSubmitting || hasErrors()}>
+            <Button type="submit" disabled={isSubmitting || hasErrors()} data-testid="preference-form-submit-button">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

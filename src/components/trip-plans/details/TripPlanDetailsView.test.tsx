@@ -13,9 +13,7 @@ import type { TripPlanDto, ActivityDto, AccommodationDto } from "../../../types"
 
 // Mock child components
 vi.mock("./LoadingState", () => ({
-  LoadingState: ({ message }: { message?: string }) => (
-    <div data-testid="loading-state">{message || "Loading..."}</div>
-  ),
+  LoadingState: ({ message }: { message?: string }) => <div data-testid="loading-state">{message || "Loading..."}</div>,
 }));
 
 vi.mock("./ErrorState", () => ({
@@ -1018,9 +1016,7 @@ describe("TripPlanDetailsView", () => {
 
       // Should not call savePlan due to validation error
       expect(mockSavePlan).not.toHaveBeenCalled();
-      expect(screen.getByTestId("validation-error-destination")).toHaveTextContent(
-        "Cel podróży jest wymagany"
-      );
+      expect(screen.getByTestId("validation-error-destination")).toHaveTextContent("Cel podróży jest wymagany");
     });
 
     it("should not save when end_date is before start_date", async () => {
@@ -1107,9 +1103,7 @@ describe("TripPlanDetailsView", () => {
       await user.click(saveButton);
 
       expect(mockSavePlan).not.toHaveBeenCalled();
-      expect(screen.getByTestId("validation-error-people_count")).toHaveTextContent(
-        "Liczba osób musi być >= 1"
-      );
+      expect(screen.getByTestId("validation-error-people_count")).toHaveTextContent("Liczba osób musi być >= 1");
     });
 
     it("should not save when plan has no days", async () => {

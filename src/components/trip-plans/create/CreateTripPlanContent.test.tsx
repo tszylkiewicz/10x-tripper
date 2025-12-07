@@ -116,17 +116,10 @@ vi.mock("./GeneratedPlanSection", () => ({
       <button data-testid="regenerate-button" onClick={onRegeneratePlan} disabled={isAccepting}>
         Regenerate
       </button>
-      <button
-        data-testid="accept-button"
-        onClick={() => onAcceptPlan(plan)}
-        disabled={isAccepting}
-      >
+      <button data-testid="accept-button" onClick={() => onAcceptPlan(plan)} disabled={isAccepting}>
         Accept Plan
       </button>
-      <button
-        data-testid="edit-plan-button"
-        onClick={() => onPlanChange({ ...plan, isEdited: true })}
-      >
+      <button data-testid="edit-plan-button" onClick={() => onPlanChange({ ...plan, isEdited: true })}>
         Edit Plan
       </button>
     </div>

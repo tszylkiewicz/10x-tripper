@@ -2,12 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TripPlanService } from "./tripPlan.service";
 import { ValidationError } from "../../errors/validation.error";
 import type { SupabaseClient } from "../../db/supabase.client";
-import type {
-  AcceptPlanCommand,
-  DeleteTripPlanCommand,
-  UpdatePlanCommand,
-  PlanDetailsDto,
-} from "../../types";
+import type { AcceptPlanCommand, DeleteTripPlanCommand, UpdatePlanCommand, PlanDetailsDto } from "../../types";
 
 describe("TripPlanService", () => {
   let service: TripPlanService;
@@ -857,9 +852,7 @@ describe("TripPlanService", () => {
         };
 
         await expect(service.updateTripPlan(command)).rejects.toThrow(ValidationError);
-        await expect(service.updateTripPlan(command)).rejects.toThrow(
-          "At least one field must be provided for update"
-        );
+        await expect(service.updateTripPlan(command)).rejects.toThrow("At least one field must be provided for update");
       });
 
       it("should reject empty destination", async () => {
@@ -893,9 +886,7 @@ describe("TripPlanService", () => {
         };
 
         await expect(service.updateTripPlan(command)).rejects.toThrow(ValidationError);
-        await expect(service.updateTripPlan(command)).rejects.toThrow(
-          "People count must be a positive integer (>= 1)"
-        );
+        await expect(service.updateTripPlan(command)).rejects.toThrow("People count must be a positive integer (>= 1)");
       });
 
       it("should reject non-integer people_count", async () => {
@@ -906,9 +897,7 @@ describe("TripPlanService", () => {
         };
 
         await expect(service.updateTripPlan(command)).rejects.toThrow(ValidationError);
-        await expect(service.updateTripPlan(command)).rejects.toThrow(
-          "People count must be a positive integer (>= 1)"
-        );
+        await expect(service.updateTripPlan(command)).rejects.toThrow("People count must be a positive integer (>= 1)");
       });
 
       it("should reject empty budget_type", async () => {
@@ -930,9 +919,7 @@ describe("TripPlanService", () => {
         };
 
         await expect(service.updateTripPlan(command)).rejects.toThrow(ValidationError);
-        await expect(service.updateTripPlan(command)).rejects.toThrow(
-          "Plan details must contain at least one day"
-        );
+        await expect(service.updateTripPlan(command)).rejects.toThrow("Plan details must contain at least one day");
       });
 
       it("should reject plan_details with day that has no activities", async () => {

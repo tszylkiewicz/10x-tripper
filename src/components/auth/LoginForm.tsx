@@ -89,6 +89,7 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
               <Input
                 id="email"
                 type="email"
+                data-testid="login-email-input"
                 placeholder="twoj@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -102,6 +103,7 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
               <Input
                 id="password"
                 type="password"
+                data-testid="login-password-input"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -110,7 +112,7 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading} data-testid="login-submit-button">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Logowanie..." : "Zaloguj się"}
             </Button>

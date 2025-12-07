@@ -49,9 +49,15 @@ function getBudgetTypeColor(budgetType: string | null): string {
 
 export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardProps) {
   return (
-    <Card className="transition-shadow hover:shadow-md">
+    <Card
+      className="transition-shadow hover:shadow-md"
+      data-testid="preference-card"
+      data-preference-id={preference.id}
+    >
       <CardHeader>
-        <CardTitle className="text-xl">{preference.name}</CardTitle>
+        <CardTitle className="text-xl" data-testid="preference-card-title">
+          {preference.name}
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-3">
@@ -59,7 +65,9 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
         <div className="flex items-center gap-2 text-sm">
           <Users className="h-4 w-4 text-muted-foreground" />
           <span className="text-muted-foreground">Liczba osób:</span>
-          <span className="font-medium">{preference.people_count ?? "Nie określono"}</span>
+          <span className="font-medium" data-testid="preference-card-people-count">
+            {preference.people_count ?? "Nie określono"}
+          </span>
         </div>
 
         {/* Typ budżetu */}
@@ -69,6 +77,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
             className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${getBudgetTypeColor(
               preference.budget_type
             )}`}
+            data-testid="preference-card-budget-badge"
           >
             {getBudgetTypeLabel(preference.budget_type)}
           </span>
@@ -76,7 +85,13 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
       </CardContent>
 
       <CardFooter className="flex justify-end gap-2 border-t pt-4">
-        <Button variant="outline" size="sm" onClick={() => onEdit(preference)} className="gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(preference)}
+          className="gap-2"
+          data-testid="preference-card-edit-button"
+        >
           <Pencil className="h-4 w-4" />
           Edytuj
         </Button>
@@ -85,6 +100,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
           size="sm"
           onClick={() => onDelete(preference)}
           className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+          data-testid="preference-card-delete-button"
         >
           <Trash2 className="h-4 w-4" />
           Usuń

@@ -39,23 +39,26 @@ export function DeleteConfirmationDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-      <AlertDialogContent>
+      <AlertDialogContent data-testid="delete-confirmation-dialog">
         <AlertDialogHeader>
-          <AlertDialogTitle>Czy na pewno chcesz usunąć?</AlertDialogTitle>
+          <AlertDialogTitle data-testid="delete-dialog-title">Czy na pewno chcesz usunąć?</AlertDialogTitle>
           <AlertDialogDescription>
             Ta akcja jest nieodwracalna. Preferencja{" "}
-            <strong className="font-semibold text-foreground">{preference?.name}</strong> zostanie trwale usunięta z
-            twojego konta.
+            <strong className="font-semibold text-foreground" data-testid="delete-dialog-preference-name">
+              {preference?.name}
+            </strong>{" "}
+            zostanie trwale usunięta z twojego konta.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel} disabled={isDeleting}>
+          <AlertDialogCancel onClick={onCancel} disabled={isDeleting} data-testid="delete-dialog-cancel-button">
             Anuluj
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            data-testid="delete-dialog-confirm-button"
           >
             {isDeleting ? (
               <>

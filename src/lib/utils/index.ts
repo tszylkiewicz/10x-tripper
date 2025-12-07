@@ -6,11 +6,7 @@
  */
 
 // Date formatting
-export {
-  formatDate,
-  formatAccommodationDate,
-  formatDateRange,
-} from "./date-formatting";
+export { formatDate, formatAccommodationDate, formatDateRange } from "./date-formatting";
 
 // Activity validation
 export {

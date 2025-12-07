@@ -19,10 +19,7 @@
  * formatDate("2025-06-01", { year: "numeric" })
  * // Returns: "sobota, 1 czerwca 2025"
  */
-export function formatDate(
-  dateString: string,
-  options?: Intl.DateTimeFormatOptions
-): string {
+export function formatDate(dateString: string, options?: Intl.DateTimeFormatOptions): string {
   try {
     const date = new Date(dateString);
 

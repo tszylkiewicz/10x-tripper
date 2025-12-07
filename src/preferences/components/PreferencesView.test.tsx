@@ -19,21 +19,11 @@ import type { PreferencesViewState } from "../types";
 
 // Mock child components
 vi.mock("./LoadingSpinner", () => ({
-  LoadingSpinner: ({ message }: { message: string }) => (
-    <div data-testid="loading-spinner">{message}</div>
-  ),
+  LoadingSpinner: ({ message }: { message: string }) => <div data-testid="loading-spinner">{message}</div>,
 }));
 
 vi.mock("./ErrorAlert", () => ({
-  ErrorAlert: ({
-    message,
-    onDismiss,
-    onRetry,
-  }: {
-    message: string;
-    onDismiss: () => void;
-    onRetry: () => void;
-  }) => (
+  ErrorAlert: ({ message, onDismiss, onRetry }: { message: string; onDismiss: () => void; onRetry: () => void }) => (
     <div data-testid="error-alert">
       <p>{message}</p>
       <button data-testid="dismiss-error" onClick={onDismiss}>

@@ -61,12 +61,7 @@ const [newActivity, setNewActivity] = useState(EMPTY_ACTIVITY);
 ### Accommodation Validation
 
 ```typescript
-import {
-  validateAccommodation,
-  isAccommodationValid,
-  validateDateRange,
-  EMPTY_ACCOMMODATION
-} from "@/lib/utils";
+import { validateAccommodation, isAccommodationValid, validateDateRange, EMPTY_ACCOMMODATION } from "@/lib/utils";
 
 // Validate accommodation
 const errors = validateAccommodation(accommodation);
@@ -136,24 +131,24 @@ All utilities have >95% code coverage.
 
 ### Activity
 
-| Field | Rules |
-|-------|-------|
-| `time` | Required, format: `HH:MM` |
-| `title` | Required, max 200 characters |
-| `description` | Required |
-| `location` | Required |
-| `estimated_cost` | Optional, must be >= 0 |
+| Field            | Rules                        |
+| ---------------- | ---------------------------- |
+| `time`           | Required, format: `HH:MM`    |
+| `title`          | Required, max 200 characters |
+| `description`    | Required                     |
+| `location`       | Required                     |
+| `estimated_cost` | Optional, must be >= 0       |
 
 ### Accommodation
 
-| Field | Rules |
-|-------|-------|
-| `name` | Required |
-| `address` | Required |
-| `check_in` | Required |
-| `check_out` | Required, must be >= `check_in` |
-| `estimated_cost` | Optional, must be >= 0 |
-| `booking_url` | Optional, must be valid URL |
+| Field            | Rules                           |
+| ---------------- | ------------------------------- |
+| `name`           | Required                        |
+| `address`        | Required                        |
+| `check_in`       | Required                        |
+| `check_out`      | Required, must be >= `check_in` |
+| `estimated_cost` | Optional, must be >= 0          |
+| `booking_url`    | Optional, must be valid URL     |
 
 ## 🔧 Migration Guide
 
@@ -195,6 +190,7 @@ const errors = validateActivity(activity);
 
 1. **Always use shared constants** instead of hardcoding values
 2. **Import from index.ts** for better tree-shaking:
+
    ```typescript
    // ✅ Good
    import { validateActivity, EMPTY_ACTIVITY } from "@/lib/utils";
@@ -202,6 +198,7 @@ const errors = validateActivity(activity);
    // ❌ Avoid
    import { validateActivity } from "@/lib/utils/activity-validation";
    ```
+
 3. **Use typed errors** from validation functions
 4. **Reuse error messages** from `ERROR_MESSAGES` constant
 

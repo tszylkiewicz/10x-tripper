@@ -14,7 +14,10 @@ interface EmptyStateProps {
 
 export function EmptyState({ onCreateClick }: EmptyStateProps) {
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 text-center">
+    <div
+      className="flex min-h-[400px] flex-col items-center justify-center gap-4 text-center"
+      data-testid="preferences-empty-state"
+    >
       <div className="rounded-full bg-muted p-6">
         <FileHeart className="h-12 w-12 text-muted-foreground" />
       </div>
@@ -25,7 +28,7 @@ export function EmptyState({ onCreateClick }: EmptyStateProps) {
           łatwiej konfigurować parametry planów podróży.
         </p>
       </div>
-      <Button onClick={onCreateClick} className="mt-4">
+      <Button onClick={onCreateClick} className="mt-4" data-testid="empty-state-create-button">
         Utwórz pierwszą preferencję
       </Button>
     </div>

@@ -52,16 +52,18 @@ export function PreferencesView() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8" data-testid="preferences-view">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Moje Preferencje</h1>
+          <h1 className="text-2xl font-bold tracking-tight" data-testid="preferences-page-title">
+            Moje Preferencje
+          </h1>
           <p className="mt-2 text-muted-foreground">
             Zarządzaj szablonami preferencji dla szybszego planowania wyjazdów
           </p>
         </div>
-        <Button onClick={openCreateDialog} className="gap-2">
+        <Button onClick={openCreateDialog} className="gap-2" data-testid="create-preference-button">
           <Plus className="h-4 w-4" />
           Nowa preferencja
         </Button>
@@ -74,7 +76,7 @@ export function PreferencesView() {
       {state.preferences.length === 0 ? (
         <EmptyState onCreateClick={openCreateDialog} />
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="preferences-grid">
           {state.preferences.map((preference) => (
             <PreferenceCard
               key={preference.id}

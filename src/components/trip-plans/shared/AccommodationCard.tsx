@@ -442,7 +442,12 @@ function AccommodationCardComponent({
         {/* Action buttons */}
         <div className="mt-4 flex justify-between">
           {showRemoveButton && onRemove && (
-            <Button variant="ghost" size="sm" onClick={handleRemove} className="text-destructive hover:text-destructive">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleRemove}
+              className="text-destructive hover:text-destructive"
+            >
               <Trash2 className="mr-1 size-4" />
               Usuń
             </Button>

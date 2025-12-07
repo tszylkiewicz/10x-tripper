@@ -13,7 +13,7 @@ interface LoadingSpinnerProps {
 
 export function LoadingSpinner({ message = "Ładowanie..." }: LoadingSpinnerProps) {
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
+    <div className="flex min-h-[400px] flex-col items-center justify-center gap-4" data-testid="loading-spinner">
       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       {message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>

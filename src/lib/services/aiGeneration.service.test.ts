@@ -273,9 +273,7 @@ describe("AI Generation Service", () => {
     });
 
     it("should handle messages with special characters", () => {
-      const messages = [
-        { role: "user" as const, content: "Plan for 2-3 people, budget: $500-$1000" },
-      ];
+      const messages = [{ role: "user" as const, content: "Plan for 2-3 people, budget: $500-$1000" }];
 
       const result = messagesToPrompt(messages);
 
