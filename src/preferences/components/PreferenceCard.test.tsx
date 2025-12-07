@@ -13,7 +13,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PreferenceCard } from "./PreferenceCard";
-import type { UserPreferenceDto } from "../../types";
+import type { UserPreferenceDto } from "@/types.ts";
 
 // Helper to create mock preference
 function createMockPreference(overrides?: Partial<UserPreferenceDto>): UserPreferenceDto {
@@ -473,8 +473,8 @@ describe("PreferenceCard", () => {
 
       render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
-      // Should display raw value since it doesn't exactly match "medium"
-      expect(screen.getByText(" medium ")).toBeInTheDocument();
+      // Should trim whitespace and display the label for "medium"
+      expect(screen.getByText("Średni")).toBeInTheDocument();
     });
   });
 

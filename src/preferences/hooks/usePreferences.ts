@@ -8,7 +8,7 @@
 import { usePreferencesData } from "./usePreferencesData";
 import { usePreferencesDialogs } from "./usePreferencesDialogs";
 import type { PreferencesViewState } from "../types";
-import type { CreateUserPreferenceDto, UpdateUserPreferenceDto } from "../../types";
+import type { CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@/types.ts";
 
 /**
  * Hook łączący zarządzanie danymi i dialogami dla widoku preferencji

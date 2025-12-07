@@ -21,30 +21,32 @@ interface PreferenceCardProps {
  * Pomocnicza funkcja do mapowania typu budżetu na label
  */
 function getBudgetTypeLabel(budgetType: string | null): string {
-  if (!budgetType) return "Nie określono";
+  if (!budgetType?.trim()) return "Nie określono";
 
+  const trimmed = budgetType.trim();
   const labels: Record<string, string> = {
     low: "Niski",
     medium: "Średni",
     high: "Wysoki",
   };
 
-  return labels[budgetType] || budgetType;
+  return labels[trimmed] || trimmed;
 }
 
 /**
  * Pomocnicza funkcja do mapowania typu budżetu na kolor badge
  */
 function getBudgetTypeColor(budgetType: string | null): string {
-  if (!budgetType) return "bg-muted text-muted-foreground";
+  if (!budgetType?.trim()) return "bg-muted text-muted-foreground";
 
+  const trimmed = budgetType.trim();
   const colors: Record<string, string> = {
     low: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
     medium: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
     high: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
   };
 
-  return colors[budgetType] || "bg-muted text-muted-foreground";
+  return colors[trimmed] || "bg-muted text-muted-foreground";
 }
 
 export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardProps) {

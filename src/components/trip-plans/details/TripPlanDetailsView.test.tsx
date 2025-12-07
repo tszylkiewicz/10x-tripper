@@ -8,8 +8,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TripPlanDetailsView } from "./TripPlanDetailsView";
-import type { TripPlanViewState, ViewError } from "./types";
-import type { TripPlanDto, ActivityDto, AccommodationDto } from "../../../types";
+import type { ViewError } from "./types";
+import type { TripPlanDto } from "@types";
 
 // Mock child components
 vi.mock("./LoadingState", () => ({
@@ -78,11 +78,11 @@ vi.mock("./TripPlanHeader", () => ({
   ),
 }));
 
-vi.mock("./PlanDay", () => ({
-  PlanDay: ({ day, activities, dayIndex, isEditMode, onDeleteDay }: any) => (
+vi.mock("../shared/DayCard", () => ({
+  DayCard: ({ day, dayIndex, isEditMode, onDeleteDay }: any) => (
     <div data-testid={`plan-day-${dayIndex}`}>
-      <p data-testid={`day-number-${dayIndex}`}>Day {day}</p>
-      <p data-testid={`activities-count-${dayIndex}`}>{activities.length} activities</p>
+      <p data-testid={`day-number-${dayIndex}`}>Day {day.day}</p>
+      <p data-testid={`activities-count-${dayIndex}`}>{day.activities.length} activities</p>
       <p data-testid={`day-edit-mode-${dayIndex}`}>{isEditMode ? "Editable" : "Read-only"}</p>
       {isEditMode && (
         <button data-testid={`delete-day-${dayIndex}`} onClick={() => onDeleteDay(dayIndex)}>
@@ -93,8 +93,8 @@ vi.mock("./PlanDay", () => ({
   ),
 }));
 
-vi.mock("./AccommodationSection", () => ({
-  AccommodationSection: ({ accommodation, isEditMode }: any) => (
+vi.mock("../shared/AccommodationCard", () => ({
+  AccommodationCard: ({ accommodation, isEditMode }: any) => (
     <div data-testid="accommodation-section">
       {accommodation ? (
         <p data-testid="accommodation-name">{accommodation.name}</p>
