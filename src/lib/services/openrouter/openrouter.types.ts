@@ -117,14 +117,14 @@ export interface OpenRouterRequestBody {
 export interface OpenRouterResponse {
   id: string;
   model: string;
-  choices: Array<{
+  choices: {
     message: {
       role: "assistant";
       content: string;
     };
     finish_reason: string;
     index: number;
-  }>;
+  }[];
   usage: {
     prompt_tokens: number;
     completion_tokens: number;

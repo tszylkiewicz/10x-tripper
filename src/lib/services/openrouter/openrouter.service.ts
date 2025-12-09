@@ -199,7 +199,7 @@ export class OpenRouterService {
   /**
    * Retry logic with exponential backoff
    */
-  private async retryWithBackoff<T>(operation: () => Promise<T>, attemptNumber: number = 0): Promise<T> {
+  private async retryWithBackoff<T>(operation: () => Promise<T>, attemptNumber = 0): Promise<T> {
     try {
       return await operation();
     } catch (error) {
