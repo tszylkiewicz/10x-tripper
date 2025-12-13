@@ -17,6 +17,7 @@ import { isValidUUID } from "../../../../lib/validators/uuid.validator";
 import { updateUserPreferenceSchema } from "../../../../lib/validators/preferences.validator";
 import { ValidationError } from "../../../../errors/validation.error";
 import { requireAuth, createUnauthorizedResponse } from "../../../../lib/auth.utils";
+import { guardFeature } from "../../../../features";
 import type {
   ApiSuccessResponse,
   ApiErrorResponse,
@@ -31,6 +32,10 @@ export const prerender = false;
  * GET handler - Retrieve a single user preference by ID
  */
 export const GET: APIRoute = async ({ params, locals }) => {
+  // Check feature flag
+  const guardResponse = guardFeature("preferences");
+  if (guardResponse) return guardResponse;
+
   try {
     // 1. Extract and validate ID parameter
     const id = params.id;
@@ -110,6 +115,10 @@ export const GET: APIRoute = async ({ params, locals }) => {
  * PUT handler - Update a single user preference by ID
  */
 export const PUT: APIRoute = async ({ params, request, locals }) => {
+  // Check feature flag
+  const guardResponse = guardFeature("preferences");
+  if (guardResponse) return guardResponse;
+
   try {
     // 1. Extract and validate ID parameter
     const id = params.id;
@@ -265,6 +274,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
  * DELETE handler - Delete a single user preference by ID
  */
 export const DELETE: APIRoute = async ({ params, locals }) => {
+  // Check feature flag
+  const guardResponse = guardFeature("preferences");
+  if (guardResponse) return guardResponse;
+
   try {
     // 1. Extract and validate ID parameter
     const id = params.id;

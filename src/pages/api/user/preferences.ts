@@ -14,6 +14,7 @@ import { UserPreferencesService } from "../../../lib/services/userPreferences.se
 import { createUserPreferenceSchema } from "../../../lib/validators/preferences.validator";
 import { ValidationError } from "../../../errors/validation.error";
 import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
+import { guardFeature } from "../../../features";
 import type { ApiSuccessResponse, ApiErrorResponse, UserPreferenceDto } from "../../../types";
 
 export const prerender = false;
@@ -22,6 +23,10 @@ export const prerender = false;
  * GET handler - Retrieve all user preferences
  */
 export const GET: APIRoute = async ({ locals }) => {
+  // Check feature flag
+  const guardResponse = guardFeature("preferences");
+  if (guardResponse) return guardResponse;
+
   try {
     // Get user_id from authenticated session
     const userId = await requireAuth(locals.supabase);
@@ -68,6 +73,10 @@ export const GET: APIRoute = async ({ locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  // Check feature flag
+  const guardResponse = guardFeature("preferences");
+  if (guardResponse) return guardResponse;
+
   try {
     // 1. Parse request body
     let body: unknown;

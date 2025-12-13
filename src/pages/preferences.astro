@@ -10,12 +10,12 @@
 
 import Layout from "../layouts/Layout.astro";
 import { PreferencesView } from "../preferences/components/PreferencesView";
+import { shouldRenderPage } from "../features";
 
-// TODO: Dodać sprawdzenie uwierzytelnienia gdy będzie dostępne
-// const session = Astro.locals.session;
-// if (!session) {
-//   return Astro.redirect('/login');
-// }
+// Check feature flag - redirect to home if preferences feature is disabled
+if (!shouldRenderPage("preferences")) {
+  return Astro.redirect("/");
+}
 ---
 
 <Layout title="Moje Preferencje - Tripper">

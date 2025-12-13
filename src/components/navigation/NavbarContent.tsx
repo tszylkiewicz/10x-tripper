@@ -3,6 +3,7 @@ import { MapPin, Menu, Plus, User, LogOut, List, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useFeatureFlag } from "@/features";
 
 interface NavbarContentProps {
   userEmail?: string;
@@ -12,6 +13,7 @@ interface NavbarContentProps {
 export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const preferencesEnabled = useFeatureFlag("preferences");
 
   const handleLogout = async () => {
     try {
@@ -46,17 +48,19 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
           >
             Plany
           </a>
-          <a
-            href="/preferences"
-            className={cn(
-              "px-4 py-2 rounded-md text-sm font-medium transition-colors",
-              "hover:bg-accent hover:text-accent-foreground",
-              currentPath === "/preferences" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-            )}
-            aria-current={currentPath === "/preferences" ? "page" : undefined}
-          >
-            Preferencje
-          </a>
+          {preferencesEnabled && (
+            <a
+              href="/preferences"
+              className={cn(
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "hover:bg-accent hover:text-accent-foreground",
+                currentPath === "/preferences" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              )}
+              aria-current={currentPath === "/preferences" ? "page" : undefined}
+            >
+              Preferencje
+            </a>
+          )}
         </nav>
 
         {/* Right side actions */}
@@ -137,21 +141,23 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                     <List className="size-5" />
                     Plany
                   </a>
-                  <a
-                    href="/preferences"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-md text-base transition-colors",
-                      "hover:bg-accent hover:text-accent-foreground",
-                      currentPath === "/preferences"
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground"
-                    )}
-                    aria-current={currentPath === "/preferences" ? "page" : undefined}
-                  >
-                    <Settings className="size-5" />
-                    Preferencje
-                  </a>
+                  {preferencesEnabled && (
+                    <a
+                      href="/preferences"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-md text-base transition-colors",
+                        "hover:bg-accent hover:text-accent-foreground",
+                        currentPath === "/preferences"
+                          ? "bg-accent text-accent-foreground font-medium"
+                          : "text-muted-foreground"
+                      )}
+                      aria-current={currentPath === "/preferences" ? "page" : undefined}
+                    >
+                      <Settings className="size-5" />
+                      Preferencje
+                    </a>
+                  )}
                 </div>
               </nav>
             </SheetContent>
