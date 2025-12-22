@@ -18,7 +18,7 @@ import type { EnvironmentName, FeatureFlagsConfig } from "./types";
 export const featureFlagsConfig: FeatureFlagsConfig = {
   local: {
     preferences: {
-      enabled: false,
+      enabled: true,
       description: "User preferences management feature",
     },
   },
@@ -30,7 +30,7 @@ export const featureFlagsConfig: FeatureFlagsConfig = {
   },
   prod: {
     preferences: {
-      enabled: true,
+      enabled: false,
       description: "User preferences management feature",
     },
   },
