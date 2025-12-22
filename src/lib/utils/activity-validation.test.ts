@@ -3,12 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import {
-  validateActivity,
-  validateActivityRequired,
-  isActivityValid,
-  type ValidationErrors,
-} from "./activity-validation";
+import { validateActivity, validateActivityRequired, isActivityValid } from "./activity-validation";
 import type { ActivityDto } from "../../types";
 
 // Helper to create mock activity

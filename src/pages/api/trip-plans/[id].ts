@@ -15,6 +15,7 @@ import { isValidUUID } from "../../../lib/validators/uuid.validator";
 import { updateTripPlanSchema } from "../../../lib/validators/tripPlans.validator";
 import { ValidationError } from "../../../errors/validation.error";
 import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
+import { logger } from "../../../lib/utils/logger";
 import type {
   ApiSuccessResponse,
   ApiErrorResponse,
@@ -112,7 +113,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }
 
     // 8. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in GET /api/trip-plans/:id:", {
+    logger.error("Unexpected error in GET /api/trip-plans/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
@@ -248,7 +249,7 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
     }
 
     // 11. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in PATCH /api/trip-plans/:id:", {
+    logger.error("Unexpected error in PATCH /api/trip-plans/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
@@ -327,7 +328,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // 7. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in DELETE /api/trip-plans/:id:", {
+    logger.error("Unexpected error in DELETE /api/trip-plans/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });

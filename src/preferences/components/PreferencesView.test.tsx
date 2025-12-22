@@ -149,6 +149,7 @@ const mockOpenEditDialog = vi.fn();
 const mockOpenDeleteDialog = vi.fn();
 const mockCloseFormDialog = vi.fn();
 const mockCloseDeleteDialog = vi.fn();
+const mockCloseAllDialogs = vi.fn();
 
 vi.mock("../hooks/usePreferences", () => ({
   usePreferences: vi.fn(() => ({
@@ -173,6 +174,7 @@ vi.mock("../hooks/usePreferences", () => ({
     openDeleteDialog: mockOpenDeleteDialog,
     closeFormDialog: mockCloseFormDialog,
     closeDeleteDialog: mockCloseDeleteDialog,
+    closeAllDialogs: mockCloseAllDialogs,
   })),
 }));
 
@@ -217,6 +219,7 @@ describe("PreferencesView", () => {
       openDeleteDialog: mockOpenDeleteDialog,
       closeFormDialog: mockCloseFormDialog,
       closeDeleteDialog: mockCloseDeleteDialog,
+      closeAllDialogs: mockCloseAllDialogs,
     });
   });
 
@@ -248,6 +251,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -279,6 +283,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -358,6 +363,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -392,6 +398,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -429,6 +436,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -473,6 +481,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -506,6 +515,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -546,6 +556,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -579,6 +590,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -617,6 +629,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -653,6 +666,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -688,6 +702,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -730,6 +745,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -770,6 +786,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -806,6 +823,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -840,6 +858,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -878,6 +897,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -915,6 +935,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -949,6 +970,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -984,6 +1006,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -1017,6 +1040,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -1052,6 +1076,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -1087,6 +1112,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -1102,8 +1128,8 @@ describe("PreferencesView", () => {
       const preference = createMockPreference({
         id: "pref-1",
         name: "Minimal Preference",
-        people_count: null as any,
-        budget_type: null as any,
+        people_count: null as unknown as number,
+        budget_type: null as unknown as string,
       });
 
       vi.mocked(usePreferences).mockReturnValue({
@@ -1128,6 +1154,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -1162,6 +1189,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);
@@ -1225,6 +1253,7 @@ describe("PreferencesView", () => {
         openDeleteDialog: mockOpenDeleteDialog,
         closeFormDialog: mockCloseFormDialog,
         closeDeleteDialog: mockCloseDeleteDialog,
+        closeAllDialogs: mockCloseAllDialogs,
       });
 
       render(<PreferencesView />);

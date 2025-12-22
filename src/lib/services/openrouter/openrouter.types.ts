@@ -38,10 +38,10 @@ export interface JSONSchemaObject {
   items?: JSONSchemaObject;
   required?: string[];
   additionalProperties?: boolean;
-  enum?: any[];
-  const?: any;
+  enum?: unknown[];
+  const?: unknown;
   description?: string;
-  default?: any;
+  default?: unknown;
   minimum?: number;
   maximum?: number;
   minLength?: number;

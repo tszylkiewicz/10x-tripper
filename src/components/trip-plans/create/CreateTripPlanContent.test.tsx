@@ -10,6 +10,9 @@ import userEvent from "@testing-library/user-event";
 import { CreateTripPlanContent } from "./CreateTripPlanContent";
 import type { TripPlanFormData, EditableGeneratedPlan } from "./types";
 import type { GeneratedTripPlanDto, TripPlanDto, ApiErrorResponse } from "../../../types";
+import type { UsePlanEditorReturn } from "./hooks/usePlanEditor";
+import type { UseTripPlanGenerationReturn } from "./hooks/useTripPlanGeneration";
+import type { UseAcceptPlanReturn } from "./hooks/useAcceptPlan";
 
 // Create a mock function to control TripPlanForm behavior
 const mockTripPlanFormSubmit = vi.fn();
@@ -221,7 +224,7 @@ describe("CreateTripPlanContent", () => {
     vi.mocked(usePlanEditor).mockReturnValue({
       editablePlan: null,
       setEditablePlan: mockSetEditablePlan,
-    } as any);
+    } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
     vi.mocked(useAcceptPlan).mockReturnValue({
       acceptPlan: mockAcceptPlan,
@@ -349,7 +352,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: { ...mockPlan, isEdited: false },
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -371,7 +374,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: { ...mockPlan, isEdited: false },
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -392,7 +395,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: { ...mockPlan, isEdited: false },
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -417,7 +420,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -448,7 +451,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -479,7 +482,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       // Rerender with updated hooks
       rerender(<CreateTripPlanContent />);
@@ -512,7 +515,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       // Render without submitting form first (no formData stored)
       render(<CreateTripPlanContent />);
@@ -531,16 +534,12 @@ describe("CreateTripPlanContent", () => {
       const mockPlan = createMockEditablePlan();
       const savedPlan: TripPlanDto = {
         id: "plan-123",
-        user_id: "user-123",
         destination: "Paris",
         start_date: "2025-06-01",
         end_date: "2025-06-03",
         people_count: 2,
         budget_type: "medium",
         plan_details: mockPlan.plan_details,
-        source: "ai",
-        created_at: "2025-06-01T10:00:00Z",
-        updated_at: "2025-06-01T10:00:00Z",
       };
 
       mockAcceptPlan.mockResolvedValueOnce(savedPlan);
@@ -556,7 +555,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -574,21 +573,17 @@ describe("CreateTripPlanContent", () => {
       const mockPlan = createMockEditablePlan();
       const savedPlan: TripPlanDto = {
         id: "plan-456",
-        user_id: "user-123",
         destination: "Paris",
         start_date: "2025-06-01",
         end_date: "2025-06-03",
         people_count: 2,
         budget_type: "medium",
         plan_details: mockPlan.plan_details,
-        source: "ai",
-        created_at: "2025-06-01T10:00:00Z",
-        updated_at: "2025-06-01T10:00:00Z",
       };
 
       // Mock window.location.href
-      delete (window as any).location;
-      (window as any).location = { href: "" };
+      delete (window as unknown as { location: unknown }).location;
+      (window as unknown as { location: { href: string } }).location = { href: "" };
 
       mockAcceptPlan.mockResolvedValueOnce(savedPlan);
 
@@ -603,7 +598,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -620,8 +615,8 @@ describe("CreateTripPlanContent", () => {
       const mockPlan = createMockEditablePlan();
 
       // Mock window.location.href
-      delete (window as any).location;
-      (window as any).location = { href: "" };
+      delete (window as unknown as { location: unknown }).location;
+      (window as unknown as { location: { href: string } }).location = { href: "" };
 
       mockAcceptPlan.mockResolvedValueOnce(null);
 
@@ -636,7 +631,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -664,7 +659,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       vi.mocked(useAcceptPlan).mockReturnValue({
         acceptPlan: mockAcceptPlan,
@@ -713,7 +708,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       vi.mocked(useAcceptPlan).mockReturnValue({
         acceptPlan: mockAcceptPlan,
@@ -813,7 +808,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: null,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 
@@ -908,7 +903,7 @@ describe("CreateTripPlanContent", () => {
       vi.mocked(usePlanEditor).mockReturnValue({
         editablePlan: mockPlan,
         setEditablePlan: mockSetEditablePlan,
-      } as any);
+      } as Partial<UsePlanEditorReturn> as UsePlanEditorReturn);
 
       render(<CreateTripPlanContent />);
 

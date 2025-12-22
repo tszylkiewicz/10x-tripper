@@ -13,6 +13,7 @@ import type {
   UserPreferenceDto,
 } from "../../types";
 import { ValidationError } from "../../errors/validation.error";
+import { logger } from "../utils/logger";
 
 export class UserPreferencesService {
   constructor(private supabase: SupabaseClient) {}
@@ -32,7 +33,7 @@ export class UserPreferencesService {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getPreferences:", error);
+      logger.error("Database error in getPreferences:", error);
       throw new Error("Failed to fetch preferences");
     }
 
@@ -92,7 +93,7 @@ export class UserPreferencesService {
         return null;
       }
       // Any other error is unexpected and should be thrown
-      console.error("Database error in getPreferenceById:", error);
+      logger.error("Database error in getPreferenceById:", error);
       throw error;
     }
 
@@ -137,7 +138,7 @@ export class UserPreferencesService {
       if (error.code === "PGRST116") {
         return null;
       }
-      console.error("Database error in updatePreference:", error);
+      logger.error("Database error in updatePreference:", error);
       throw error;
     }
 
@@ -161,7 +162,7 @@ export class UserPreferencesService {
       .select("id");
 
     if (error) {
-      console.error("Database error in deletePreference:", error);
+      logger.error("Database error in deletePreference:", error);
       throw new Error("Failed to delete preference");
     }
 

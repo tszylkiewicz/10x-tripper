@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { TripPlanDto, ApiSuccessResponse } from "../../types";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * State interface for the trip plans list
@@ -96,7 +97,7 @@ export function useTripPlans(): UseTripPlansReturn {
 
       return true;
     } catch (err) {
-      console.error("Error deleting plan:", err);
+      logger.error("Error deleting plan:", err);
       return false;
     }
   }, []);

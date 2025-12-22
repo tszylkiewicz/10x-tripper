@@ -6,7 +6,7 @@ export class OpenRouterError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly metadata?: Record<string, any>
+    public readonly metadata?: Record<string, unknown>
   ) {
     super(message);
     this.name = "OpenRouterError";
@@ -49,7 +49,7 @@ export class OpenRouterParseError extends OpenRouterError {
 export class OpenRouterValidationError extends OpenRouterError {
   constructor(
     message: string,
-    public readonly validationErrors: any[]
+    public readonly validationErrors: unknown[]
   ) {
     super(message, "VALIDATION_ERROR", { validationErrors });
     this.name = "OpenRouterValidationError";

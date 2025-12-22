@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { loginSchema } from "@/lib/validators/auth.validator";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
+import { logger } from "@/lib/utils/logger";
 
 export const prerender = false;
 
@@ -91,7 +92,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     // Generic error
-    console.error("Login error:", error);
+    logger.error("Login error:", error);
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",

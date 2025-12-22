@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { validateAccommodation } from "@/lib/utils/accommodation-validation";
-import { formatAccommodationDate, formatDateRange } from "@/lib/utils/date-formatting";
+import { formatDateRange } from "@/lib/utils/date-formatting";
 import { EMPTY_ACCOMMODATION } from "@/lib/utils/trip-plan-constants";
 import type { AccommodationDto } from "../../../types";
 import type { AccommodationCardProps, ValidationErrors } from "./types";

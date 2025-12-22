@@ -66,7 +66,7 @@ function validatePlan(plan: {
   return errors;
 }
 
-export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps): JSX.Element {
+export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
   const {
     state,
     enterEditMode,

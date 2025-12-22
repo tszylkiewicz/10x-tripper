@@ -7,6 +7,7 @@
 
 import type { SupabaseClient } from "../../db/supabase.client";
 import type { PlanGenerationInsert, PlanGenerationErrorLogInsert } from "../../types";
+import { logger } from "../utils/logger";
 
 /**
  * Calculates SHA-256 hash of the prompt text
@@ -54,7 +55,7 @@ export async function logGenerationSuccess(
   const { data, error } = await supabase.from("plan_generations").insert(insert).select("id").single();
 
   if (error) {
-    console.error("Failed to log generation success:", error);
+    logger.error("Failed to log generation success:", error);
     throw new Error("Failed to log generation");
   }
 
@@ -96,7 +97,7 @@ export async function logGenerationError(
   const { error } = await supabase.from("plan_generation_error_logs").insert(insert);
 
   if (error) {
-    console.error("Failed to log generation error:", error);
+    logger.error("Failed to log generation error:", error);
     // Don't throw - this is already error handling
   }
 }

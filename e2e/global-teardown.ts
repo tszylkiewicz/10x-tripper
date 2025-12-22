@@ -1,7 +1,8 @@
+/* eslint-disable no-console, @typescript-eslint/no-unused-vars */
 import type { FullConfig } from "@playwright/test";
 import { cleanupUserPreferences, TEST_USER_ID } from "./utils/database.helpers";
 
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown(_config: FullConfig) {
   try {
     await cleanupUserPreferences(TEST_USER_ID);
   } catch (error) {

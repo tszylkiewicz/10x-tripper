@@ -50,7 +50,7 @@ export function usePreferencesData() {
 
       const result: ApiSuccessResponse<UserPreferenceDto[]> = await response.json();
       setState((prev) => ({ ...prev, preferences: result.data, isLoading: false }));
-    } catch (error) {
+    } catch {
       setState((prev) => ({
         ...prev,
         isLoading: false,

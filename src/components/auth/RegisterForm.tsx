@@ -55,7 +55,7 @@ export function RegisterForm({ message, error: initialError }: RegisterFormProps
 
       // Success - show confirmation message
       setSuccess(true);
-    } catch (error) {
+    } catch {
       setError("Problem z połączeniem. Spróbuj ponownie");
     } finally {
       setLoading(false);

@@ -106,7 +106,7 @@ describe("PreferenceCard", () => {
     });
 
     it("should display 'Nie określono' for null budget type", () => {
-      const preference = createMockPreference({ budget_type: null as any });
+      const preference = createMockPreference({ budget_type: null as unknown as string });
 
       render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
@@ -171,7 +171,7 @@ describe("PreferenceCard", () => {
     });
 
     it("should apply muted color classes for null budget type", () => {
-      const preference = createMockPreference({ budget_type: null as any });
+      const preference = createMockPreference({ budget_type: null as unknown as string });
 
       const { container } = render(
         <PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />
@@ -249,7 +249,7 @@ describe("PreferenceCard", () => {
     });
 
     it("should display 'Nie określono' for null people count", () => {
-      const preference = createMockPreference({ people_count: null as any });
+      const preference = createMockPreference({ people_count: null as unknown as number });
 
       render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
@@ -257,7 +257,7 @@ describe("PreferenceCard", () => {
     });
 
     it("should display 'Nie określono' for undefined people count", () => {
-      const preference = createMockPreference({ people_count: undefined as any });
+      const preference = createMockPreference({ people_count: undefined as unknown as number });
 
       render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
@@ -432,8 +432,8 @@ describe("PreferenceCard", () => {
     it("should handle all null values", () => {
       const preference = createMockPreference({
         name: "Minimal Preference",
-        people_count: null as any,
-        budget_type: null as any,
+        people_count: null as unknown as number,
+        budget_type: null as unknown as string,
       });
 
       render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
@@ -452,7 +452,7 @@ describe("PreferenceCard", () => {
     });
 
     it("should handle preference with decimal people count", () => {
-      const preference = createMockPreference({ people_count: 2.5 as any });
+      const preference = createMockPreference({ people_count: 2.5 as unknown as number });
 
       render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
@@ -591,9 +591,7 @@ describe("PreferenceCard", () => {
     it("should render budget badge with proper styling", () => {
       const preference = createMockPreference({ budget_type: "medium" });
 
-      const { container } = render(
-        <PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />
-      );
+      render(<PreferenceCard preference={preference} onEdit={mockOnEdit} onDelete={mockOnDelete} />);
 
       const badge = screen.getByText("Średni");
       expect(badge).toHaveClass("inline-flex");

@@ -6,7 +6,7 @@ import type { CreatePreferenceCommand, UpdatePreferenceCommand, DeletePreference
 
 describe("UserPreferencesService", () => {
   let service: UserPreferencesService;
-  let mockSupabase: SupabaseClient;
+  let mockSupabase: any;
 
   beforeEach(() => {
     // Create mock Supabase client with chainable methods

@@ -14,6 +14,7 @@ import { EmptyState } from "./EmptyState";
 import { PreferenceCard } from "./PreferenceCard";
 import { PreferenceFormDialog } from "./PreferenceFormDialog";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import type { CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@/types";
 
 export function PreferencesView() {
   const {
@@ -31,11 +32,11 @@ export function PreferencesView() {
   } = usePreferences();
 
   // Handler dla submit formularza (create/edit)
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: CreateUserPreferenceDto | UpdateUserPreferenceDto) => {
     if (state.dialogMode === "create") {
-      await createPreference(data);
+      await createPreference(data as CreateUserPreferenceDto);
     } else if (state.dialogMode === "edit" && state.selectedPreference) {
-      await updatePreference(state.selectedPreference.id, data);
+      await updatePreference(state.selectedPreference.id, data as UpdateUserPreferenceDto);
     }
   };
 

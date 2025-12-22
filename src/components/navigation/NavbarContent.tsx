@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useFeatureFlag } from "@/features";
+import { logger } from "@/lib/utils/logger";
 
 interface NavbarContentProps {
   userEmail?: string;
@@ -22,7 +23,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
         window.location.href = "/login?message=logged-out";
       }
     } catch (error) {
-      console.error("Logout failed:", error);
+      logger.error("Logout failed:", error);
     }
   };
 
@@ -90,7 +91,12 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
             {isUserMenuOpen && (
               <>
                 {/* Backdrop */}
-                <div className="fixed inset-0 z-40" onClick={() => setIsUserMenuOpen(false)} />
+                <button
+                  type="button"
+                  className="fixed inset-0 z-40 cursor-default"
+                  onClick={() => setIsUserMenuOpen(false)}
+                  aria-label="Zamknij menu"
+                />
 
                 {/* Dropdown */}
                 <div className="absolute right-0 mt-2 w-56 z-50 rounded-md border bg-popover p-1 shadow-md">

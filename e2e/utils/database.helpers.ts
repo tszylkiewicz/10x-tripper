@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Database helpers for E2E test cleanup
  */

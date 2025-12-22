@@ -5,7 +5,7 @@ import type { EditableGeneratedPlan, PlanEditAction } from "../types";
 /**
  * Return type for the usePlanEditor hook
  */
-interface UsePlanEditorReturn {
+export interface UsePlanEditorReturn {
   editablePlan: EditableGeneratedPlan | null;
   updatePlan: (action: PlanEditAction) => void;
   isEdited: boolean;

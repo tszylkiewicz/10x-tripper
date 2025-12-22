@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { resetPasswordSchema } from "@/lib/validators/auth.validator";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
+import { logger } from "@/lib/utils/logger";
 
 export const prerender = false;
 
@@ -42,7 +43,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
 
     if (error) {
-      console.error("Update password error:", error);
+      logger.error("Update password error:", error);
 
       const errorResponse: ApiErrorResponse = {
         error: {
@@ -82,7 +83,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       });
     }
 
-    console.error("Update password error:", error);
+    logger.error("Update password error:", error);
 
     const errorResponse: ApiErrorResponse = {
       error: {

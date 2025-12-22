@@ -27,13 +27,9 @@ export interface FeatureFlagConfig {
 /**
  * Feature flag configuration per environment.
  */
-export type EnvironmentConfig = {
-  [K in FeatureFlagName]?: FeatureFlagConfig;
-};
+export type EnvironmentConfig = Partial<Record<FeatureFlagName, FeatureFlagConfig>>;
 
 /**
  * Complete feature flags configuration across all environments.
  */
-export type FeatureFlagsConfig = {
-  [E in EnvironmentName]: EnvironmentConfig;
-};
+export type FeatureFlagsConfig = Record<EnvironmentName, EnvironmentConfig>;

@@ -28,6 +28,7 @@ import {
 import { generateTripPlan, buildMessages, messagesToPrompt, MODEL } from "../../../lib/services/aiGeneration.service";
 import { logGenerationSuccess, logGenerationError } from "../../../lib/services/planGenerationLogger.service";
 import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
+import { logger } from "../../../lib/utils/logger";
 
 export const prerender = false;
 
@@ -57,7 +58,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let body: unknown;
     try {
       body = await request.json();
-    } catch (e) {
+    } catch {
       const errorResponse: ApiErrorResponse = {
         error: {
           code: "INVALID_JSON",
@@ -107,13 +108,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let generatedPlan: GeneratedTripPlanDto;
     try {
       generatedPlan = await generateTripPlan(command);
-    } catch (error: any) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
 
       // Handle timeout specifically
-      if (error.name === "AbortError") {
+      if (error instanceof Error && error.name === "AbortError") {
         // Log timeout error
-        if (error.prompt) {
+        if (typeof error === "object" && error !== null && "prompt" in error && typeof error.prompt === "string") {
           await logGenerationError(locals.supabase, {
             user_id: userId,
             model: MODEL,
@@ -137,19 +138,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
 
       // Log general AI generation error
-      console.error("AI generation failed:", {
+      logger.error("AI generation failed:", {
         error: error instanceof Error ? { message: error.message, name: error.name } : error,
         userId,
         timestamp: new Date().toISOString(),
       });
 
-      if (error.prompt) {
+      if (typeof error === "object" && error !== null && "prompt" in error && typeof error.prompt === "string") {
+        const errorDuration =
+          typeof error === "object" && error !== null && "duration_ms" in error && typeof error.duration_ms === "number"
+            ? error.duration_ms
+            : duration;
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
         await logGenerationError(locals.supabase, {
           user_id: userId,
           model: MODEL,
           prompt: error.prompt,
-          duration_ms: error.duration_ms || duration,
-          error_message: error.message || "Unknown error",
+          duration_ms: errorDuration,
+          error_message: errorMessage,
           error_code: "AI_GENERATION_FAILED",
         });
       }
@@ -179,9 +186,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
         prompt,
         duration_ms: duration,
       });
-      console.log("Generation logged successfully:", generationId);
+      logger.log("Generation logged successfully:", generationId);
     } catch (error) {
-      console.error("Failed to log generation success:", error);
+      logger.error("Failed to log generation success:", error);
       // Continue with the response even if logging fails
       // Use a fallback UUID so the user can still accept the plan
       generationId = crypto.randomUUID();
@@ -206,7 +213,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // 11. Handle unexpected errors
-    console.error("Unexpected error in POST /api/trip-plans/generate:", {
+    logger.error("Unexpected error in POST /api/trip-plans/generate:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });

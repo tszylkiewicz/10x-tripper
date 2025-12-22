@@ -5,7 +5,7 @@ import type { EditableGeneratedPlan } from "../types";
 /**
  * Return type for the useAcceptPlan hook
  */
-interface UseAcceptPlanReturn {
+export interface UseAcceptPlanReturn {
   acceptPlan: (plan: EditableGeneratedPlan) => Promise<TripPlanDto | null>;
   isAccepting: boolean;
   error: ApiErrorResponse | null;

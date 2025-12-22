@@ -11,4 +11,12 @@ alwaysApply: false
 - Use supabase from context.locals in Astro routes instead of importing supabaseClient directly
 - Use SupabaseClient type from `src/db/supabase.client.ts`, not from `@supabase/supabase-js`
 
+### Code Quality and ESLint
+
+- **Never disable ESLint rules** using `eslint-disable` comments - resolve errors using recommended approaches
+- Use proper TypeScript types instead of `any` - define interfaces, use generics, or use `unknown` with type guards
+- For catch blocks where error is unused, use empty catch syntax: `catch { }` (ES2019+)
+- For unused function parameters, use destructuring to omit them or prefix with `_` only if ESLint is configured to allow it
+- Use `logger` utility from `@/lib/utils/logger` instead of `console.*` statements
+
 

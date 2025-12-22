@@ -6,7 +6,7 @@ import type { AcceptPlanCommand, DeleteTripPlanCommand, UpdatePlanCommand, PlanD
 
 describe("TripPlanService", () => {
   let service: TripPlanService;
-  let mockSupabase: SupabaseClient;
+  let mockSupabase: any;
 
   const mockPlanDetails: PlanDetailsDto = {
     days: [
@@ -48,8 +48,8 @@ describe("TripPlanService", () => {
 
     service = new TripPlanService(mockSupabase);
 
-    // Clear console.error spy
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    // Clear logger.error spy
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
   describe("getTripPlans", () => {
@@ -694,7 +694,7 @@ describe("TripPlanService", () => {
           error: null,
         })
         .mockResolvedValueOnce({
-          data: { id: "plan-1", ...command, plan_details: mockPlanDetails },
+          data: { ...command, plan_details: mockPlanDetails },
           error: null,
         });
 
@@ -834,7 +834,7 @@ describe("TripPlanService", () => {
           error: null,
         })
         .mockResolvedValueOnce({
-          data: { id: "plan-1", ...command },
+          data: { ...command },
           error: null,
         });
 

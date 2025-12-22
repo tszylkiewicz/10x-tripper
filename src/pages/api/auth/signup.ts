@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { registerSchema } from "@/lib/validators/auth.validator";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
+import { logger } from "@/lib/utils/logger";
 
 export const prerender = false;
 
@@ -74,7 +75,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       });
     }
 
-    console.error("Signup error:", error);
+    logger.error("Signup error:", error);
 
     const errorResponse: ApiErrorResponse = {
       error: {

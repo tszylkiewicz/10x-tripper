@@ -15,6 +15,7 @@ import { createUserPreferenceSchema } from "../../../lib/validators/preferences.
 import { ValidationError } from "../../../errors/validation.error";
 import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
 import { guardFeature } from "../../../features";
+import { logger } from "../../../lib/utils/logger";
 import type { ApiSuccessResponse, ApiErrorResponse, UserPreferenceDto } from "../../../types";
 
 export const prerender = false;
@@ -51,7 +52,7 @@ export const GET: APIRoute = async ({ locals }) => {
     }
 
     // Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in GET /api/user/preferences:", {
+    logger.error("Unexpected error in GET /api/user/preferences:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
@@ -83,7 +84,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     try {
       body = await request.json();
-    } catch (e) {
+    } catch {
       const errorResponse: ApiErrorResponse = {
         error: {
           code: "VALIDATION_ERROR",
@@ -185,7 +186,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // 10. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in POST /api/user/preferences:", {
+    logger.error("Unexpected error in POST /api/user/preferences:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });

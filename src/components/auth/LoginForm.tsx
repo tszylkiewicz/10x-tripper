@@ -53,7 +53,7 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
 
       // Success - redirect (backend set cookies)
       window.location.href = "/";
-    } catch (error) {
+    } catch {
       setError("Problem z połączeniem. Spróbuj ponownie");
     } finally {
       setLoading(false);

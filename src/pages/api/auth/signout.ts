@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
+import { logger } from "@/lib/utils/logger";
 
 export const prerender = false;
 
@@ -27,7 +28,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      console.error("Signout error:", error);
+      logger.error("Signout error:", error);
       const errorResponse: ApiErrorResponse = {
         error: {
           code: "SIGNOUT_ERROR",
@@ -49,7 +50,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Signout error:", error);
+    logger.error("Signout error:", error);
     const errorResponse: ApiErrorResponse = {
       error: {
         code: "INTERNAL_SERVER_ERROR",

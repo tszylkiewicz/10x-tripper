@@ -56,7 +56,7 @@ export function ResetPasswordForm({ message, error: initialError }: ResetPasswor
       setTimeout(() => {
         window.location.href = "/login?message=password-reset-success";
       }, 2000);
-    } catch (error) {
+    } catch {
       setError("Problem z połączeniem. Spróbuj ponownie");
     } finally {
       setLoading(false);

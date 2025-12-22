@@ -23,6 +23,7 @@ import { acceptTripPlanSchema } from "../../../lib/validators/tripPlans.validato
 import { TripPlanService } from "../../../lib/services/tripPlan.service";
 import { ValidationError } from "../../../errors/validation.error";
 import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
+import { logger } from "../../../lib/utils/logger";
 import type {
   AcceptPlanCommand,
   AcceptTripPlanDto,
@@ -62,7 +63,7 @@ export const GET: APIRoute = async ({ locals }) => {
     }
 
     // 5. Handle unexpected errors
-    console.error("Unexpected error in GET /api/trip-plans:", {
+    logger.error("Unexpected error in GET /api/trip-plans:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
@@ -91,7 +92,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     let body: unknown;
     try {
       body = await request.json();
-    } catch (e) {
+    } catch {
       const errorResponse: ApiErrorResponse = {
         error: {
           code: "INVALID_JSON",
@@ -192,7 +193,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Log unexpected errors
-    console.error("Unexpected error in POST /api/trip-plans:", {
+    logger.error("Unexpected error in POST /api/trip-plans:", {
       error,
       message: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,

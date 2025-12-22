@@ -9,7 +9,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TripPlanDetailsView } from "./TripPlanDetailsView";
 import type { ViewError } from "./types";
-import type { TripPlanDto } from "@types";
+import type { TripPlanDto } from "@/types";
 
 // Mock child components
 vi.mock("./LoadingState", () => ({
@@ -48,7 +48,16 @@ vi.mock("./TripPlanHeader", () => ({
     onDelete,
     onSave,
     onCancel,
-  }: any) => (
+  }: {
+    destination: string;
+    isEditMode: boolean;
+    isSaving: boolean;
+    validationErrors?: Record<string, string>;
+    onEdit: () => void;
+    onDelete: () => void;
+    onSave: () => void;
+    onCancel: () => void;
+  }) => (
     <div data-testid="trip-plan-header">
       <h1 data-testid="destination">{destination}</h1>
       <p data-testid="edit-mode">{isEditMode ? "Edit Mode" : "View Mode"}</p>
@@ -79,7 +88,17 @@ vi.mock("./TripPlanHeader", () => ({
 }));
 
 vi.mock("../shared/DayCard", () => ({
-  DayCard: ({ day, dayIndex, isEditMode, onDeleteDay }: any) => (
+  DayCard: ({
+    day,
+    dayIndex,
+    isEditMode,
+    onDeleteDay,
+  }: {
+    day: { day: number; activities: unknown[] };
+    dayIndex: number;
+    isEditMode: boolean;
+    onDeleteDay: (index: number) => void;
+  }) => (
     <div data-testid={`plan-day-${dayIndex}`}>
       <p data-testid={`day-number-${dayIndex}`}>Day {day.day}</p>
       <p data-testid={`activities-count-${dayIndex}`}>{day.activities.length} activities</p>
@@ -94,7 +113,13 @@ vi.mock("../shared/DayCard", () => ({
 }));
 
 vi.mock("../shared/AccommodationCard", () => ({
-  AccommodationCard: ({ accommodation, isEditMode }: any) => (
+  AccommodationCard: ({
+    accommodation,
+    isEditMode,
+  }: {
+    accommodation?: { name: string } | null;
+    isEditMode: boolean;
+  }) => (
     <div data-testid="accommodation-section">
       {accommodation ? (
         <p data-testid="accommodation-name">{accommodation.name}</p>
@@ -107,7 +132,19 @@ vi.mock("../shared/AccommodationCard", () => ({
 }));
 
 vi.mock("./DeleteConfirmDialog", () => ({
-  DeleteConfirmDialog: ({ isOpen, planName, isDeleting, onConfirm, onCancel }: any) =>
+  DeleteConfirmDialog: ({
+    isOpen,
+    planName,
+    isDeleting,
+    onConfirm,
+    onCancel,
+  }: {
+    isOpen: boolean;
+    planName: string;
+    isDeleting: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+  }) =>
     isOpen ? (
       <div data-testid="delete-confirm-dialog">
         <p data-testid="dialog-plan-name">{planName}</p>
@@ -130,6 +167,7 @@ const mockUpdateActivity = vi.fn();
 const mockDeleteActivity = vi.fn();
 const mockAddActivity = vi.fn();
 const mockDeleteDay = vi.fn();
+const mockAddDay = vi.fn();
 const mockUpdateAccommodation = vi.fn();
 const mockRemoveAccommodation = vi.fn();
 const mockAddAccommodation = vi.fn();
@@ -158,6 +196,7 @@ vi.mock("./useTripPlanDetails", () => ({
     deleteActivity: mockDeleteActivity,
     addActivity: mockAddActivity,
     deleteDay: mockDeleteDay,
+    addDay: mockAddDay,
     updateAccommodation: mockUpdateAccommodation,
     removeAccommodation: mockRemoveAccommodation,
     addAccommodation: mockAddAccommodation,
@@ -175,7 +214,6 @@ const { useTripPlanDetails } = await import("./useTripPlanDetails");
 function createMockTripPlan(overrides?: Partial<TripPlanDto>): TripPlanDto {
   return {
     id: "plan-123",
-    user_id: "user-123",
     destination: "Paris",
     start_date: "2025-06-01",
     end_date: "2025-06-03",
@@ -218,9 +256,6 @@ function createMockTripPlan(overrides?: Partial<TripPlanDto>): TripPlanDto {
       total_estimated_cost: 500,
       notes: "Great trip!",
     },
-    source: "ai",
-    created_at: "2025-06-01T10:00:00Z",
-    updated_at: "2025-06-01T10:00:00Z",
     ...overrides,
   };
 }
@@ -253,6 +288,7 @@ describe("TripPlanDetailsView", () => {
       deleteActivity: mockDeleteActivity,
       addActivity: mockAddActivity,
       deleteDay: mockDeleteDay,
+      addDay: mockAddDay,
       updateAccommodation: mockUpdateAccommodation,
       removeAccommodation: mockRemoveAccommodation,
       addAccommodation: mockAddAccommodation,
@@ -288,6 +324,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -323,6 +360,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -361,6 +399,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -400,6 +439,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -441,6 +481,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -475,6 +516,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -514,6 +556,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -552,6 +595,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -591,6 +635,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -628,6 +673,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -682,6 +728,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -718,6 +765,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -758,6 +806,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -797,6 +846,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -836,6 +886,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -876,6 +927,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -918,6 +970,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -959,6 +1012,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -999,6 +1053,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1044,6 +1099,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1087,6 +1143,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1132,6 +1189,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1184,6 +1242,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1226,6 +1285,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1260,6 +1320,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1302,6 +1363,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1341,6 +1403,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1381,6 +1444,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1423,6 +1487,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1462,6 +1527,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1518,6 +1584,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1572,6 +1639,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,
@@ -1609,6 +1677,7 @@ describe("TripPlanDetailsView", () => {
         deleteActivity: mockDeleteActivity,
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
+        addDay: mockAddDay,
         updateAccommodation: mockUpdateAccommodation,
         removeAccommodation: mockRemoveAccommodation,
         addAccommodation: mockAddAccommodation,

@@ -16,14 +16,15 @@ import { UserPreferencesService } from "../../../../lib/services/userPreferences
 import { isValidUUID } from "../../../../lib/validators/uuid.validator";
 import { updateUserPreferenceSchema } from "../../../../lib/validators/preferences.validator";
 import { ValidationError } from "../../../../errors/validation.error";
-import { requireAuth, createUnauthorizedResponse } from "../../../../lib/auth.utils";
+import { createUnauthorizedResponse, requireAuth } from "../../../../lib/auth.utils";
 import { guardFeature } from "../../../../features";
+import { logger } from "../../../../lib/utils/logger";
 import type {
-  ApiSuccessResponse,
   ApiErrorResponse,
-  UserPreferenceDto,
+  ApiSuccessResponse,
   DeletePreferenceCommand,
   UpdatePreferenceCommand,
+  UserPreferenceDto,
 } from "../../../../types";
 
 export const prerender = false;
@@ -91,7 +92,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }
 
     // 7. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in GET /api/user/preferences/:id:", {
+    logger.error("Unexpected error in GET /api/user/preferences/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
@@ -250,7 +251,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     }
 
     // 12. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in PUT /api/user/preferences/:id:", {
+    logger.error("Unexpected error in PUT /api/user/preferences/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });
@@ -333,7 +334,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     }
 
     // 7. Log unexpected errors (without exposing sensitive data)
-    console.error("Unexpected error in DELETE /api/user/preferences/:id:", {
+    logger.error("Unexpected error in DELETE /api/user/preferences/:id:", {
       error: error instanceof Error ? { message: error.message, name: error.name } : error,
       timestamp: new Date().toISOString(),
     });

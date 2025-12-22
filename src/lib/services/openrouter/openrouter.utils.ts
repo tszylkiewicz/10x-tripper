@@ -48,15 +48,15 @@ export function cleanMarkdownCodeBlocks(content: string): string {
 /**
  * Checks if an error is retry-able based on status code or error type
  */
-export function isRetryableError(error: any): boolean {
+export function isRetryableError(error: unknown): boolean {
   // HTTP status codes that should be retried
-  if (error.status) {
+  if (typeof error === "object" && error !== null && "status" in error && typeof error.status === "number") {
     const retryableStatuses = [429, 500, 502, 503, 504];
     return retryableStatuses.includes(error.status);
   }
 
   // Network errors that should be retried
-  if (error.code) {
+  if (typeof error === "object" && error !== null && "code" in error && typeof error.code === "string") {
     const retryableCodes = ["ECONNRESET", "ETIMEDOUT", "ENOTFOUND"];
     return retryableCodes.includes(error.code);
   }
@@ -74,16 +74,16 @@ export function calculateRetryDelay(baseDelay: number, attemptNumber: number): n
 /**
  * Validates OpenRouter configuration
  */
-export function validateConfig(config: any): void {
-  if (config.timeout && (config.timeout < 1000 || config.timeout > 600000)) {
+export function validateConfig(config: Record<string, unknown>): void {
+  if (typeof config.timeout === "number" && (config.timeout < 1000 || config.timeout > 600000)) {
     throw new Error("Timeout must be between 1000ms and 600000ms");
   }
 
-  if (config.maxRetries && (config.maxRetries < 0 || config.maxRetries > 10)) {
+  if (typeof config.maxRetries === "number" && (config.maxRetries < 0 || config.maxRetries > 10)) {
     throw new Error("maxRetries must be between 0 and 10");
   }
 
-  if (config.temperature && (config.temperature < 0 || config.temperature > 2)) {
+  if (typeof config.temperature === "number" && (config.temperature < 0 || config.temperature > 2)) {
     throw new Error("temperature must be between 0 and 2");
   }
 }
@@ -92,7 +92,7 @@ export function validateConfig(config: any): void {
  * Converts Zod schema to JSON Schema (simplified version)
  * Note: For production, consider using @sodaru/zod-to-json-schema
  */
-export function zodToJsonSchema(zodSchema: any): JSONSchemaObject {
+export function zodToJsonSchema(_zodSchema: unknown): JSONSchemaObject {
   // This is a placeholder implementation
   // Use a proper library like @sodaru/zod-to-json-schema in production
   throw new Error("zodToJsonSchema not implemented. Use @sodaru/zod-to-json-schema library.");

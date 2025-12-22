@@ -22,7 +22,7 @@ export function usePreferences() {
     try {
       await dataState.createPreference(data);
       dialogsState.closeFormDialog();
-    } catch (error) {
+    } catch {
       // Błąd jest już obsłużony w usePreferencesData
       // Dialog pozostaje otwarty, żeby użytkownik mógł poprawić dane
     }
@@ -33,7 +33,7 @@ export function usePreferences() {
     try {
       await dataState.updatePreference(id, data);
       dialogsState.closeFormDialog();
-    } catch (error) {
+    } catch {
       // Błąd jest już obsłużony w usePreferencesData
       // Dialog pozostaje otwarty, żeby użytkownik mógł poprawić dane
     }
@@ -44,7 +44,7 @@ export function usePreferences() {
     try {
       await dataState.deletePreference(id);
       dialogsState.closeDeleteDialog();
-    } catch (error) {
+    } catch {
       // Błąd jest już obsłużony w usePreferencesData
       // Dialog się zamyka, ale błąd jest wyświetlany na poziomie strony
       dialogsState.closeDeleteDialog();

@@ -1,5 +1,5 @@
 ---
-description: 
+description:
 globs: *.tsx,*.astro
 alwaysApply: false
 ---
@@ -9,6 +9,14 @@ alwaysApply: false
 
 - Use Astro components (.astro) for static content and layout
 - Implement framework components in React only when interactivity is needed
+
+### Code Quality and ESLint
+
+- **Never disable ESLint rules** using `eslint-disable` comments - resolve errors using recommended approaches
+- Use proper TypeScript types instead of `any` - define interfaces, use generics, or use `unknown` with type guards
+- For event handlers, use proper React event types (e.g., `React.MouseEvent<HTMLButtonElement>`)
+- For catch blocks where error is unused, use empty catch syntax: `catch { }` (ES2019+)
+- Use `logger` utility from `@/lib/utils/logger` instead of `console.*` statements in components
 
 ### Guidelines for Styling
 

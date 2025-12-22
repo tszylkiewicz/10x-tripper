@@ -3,7 +3,7 @@ import { calculatePromptHash, logGenerationSuccess, logGenerationError } from ".
 import type { SupabaseClient } from "../../db/supabase.client";
 
 describe("PlanGenerationLogger Service", () => {
-  let mockSupabase: SupabaseClient;
+  let mockSupabase: any;
 
   beforeEach(() => {
     // Create mock Supabase client with chainable methods
@@ -14,8 +14,8 @@ describe("PlanGenerationLogger Service", () => {
       single: vi.fn(),
     } as unknown as SupabaseClient;
 
-    // Clear console.error spy
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    // Clear logger.error spy
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
   describe("calculatePromptHash", () => {

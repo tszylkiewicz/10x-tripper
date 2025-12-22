@@ -10,7 +10,7 @@ import type { TripPlanFormData } from "../types";
 /**
  * Return type for the useTripPlanGeneration hook
  */
-interface UseTripPlanGenerationReturn {
+export interface UseTripPlanGenerationReturn {
   generatePlan: (formData: TripPlanFormData) => Promise<void>;
   isGenerating: boolean;
   generatedPlan: GeneratedTripPlanDto | null;

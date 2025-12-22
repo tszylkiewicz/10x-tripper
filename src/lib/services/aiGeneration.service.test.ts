@@ -9,20 +9,17 @@ vi.mock("./openrouter", () => {
 
   return {
     OpenRouterService: class MockOpenRouterService {
-      constructor() {}
       completeStructured = mockCompleteStructured;
       getConfig = mockGetConfig;
     },
     // Export for test access
     getMockCompleteStructured: () => mockCompleteStructured,
-    getMockGetConfig: () => mockGetConfig,
   };
 });
 
 // Get access to mocks
-const { getMockCompleteStructured, getMockGetConfig } = await import("./openrouter");
+const { getMockCompleteStructured } = (await import("./openrouter")) as any;
 const mockCompleteStructured = getMockCompleteStructured();
-const mockGetConfig = getMockGetConfig();
 
 describe("AI Generation Service", () => {
   beforeEach(() => {
