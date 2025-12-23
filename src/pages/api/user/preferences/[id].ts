@@ -12,13 +12,13 @@
  */
 
 import type { APIRoute } from "astro";
-import { UserPreferencesService } from "../../../../lib/services/userPreferences.service";
-import { isValidUUID } from "../../../../lib/validators/uuid.validator";
-import { updateUserPreferenceSchema } from "../../../../lib/validators/preferences.validator";
-import { ValidationError } from "../../../../errors/validation.error";
-import { createUnauthorizedResponse, requireAuth } from "../../../../lib/auth.utils";
-import { guardFeature } from "../../../../features";
-import { logger } from "../../../../lib/utils/logger";
+import { UserPreferencesService } from "@/lib/services/userPreferences.service.ts";
+import { isValidUUID } from "@/lib/validators/uuid.validator.ts";
+import { updateUserPreferenceSchema } from "@/lib/validators/preferences.validator.ts";
+import { ValidationError } from "@/errors/validation.error.ts";
+import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
+import { guardFeature } from "@/features";
+import { logger } from "@/lib/utils/logger.ts";
 import type {
   ApiErrorResponse,
   ApiSuccessResponse,

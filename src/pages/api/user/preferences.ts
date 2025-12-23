@@ -10,13 +10,13 @@
 
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import { UserPreferencesService } from "../../../lib/services/userPreferences.service";
-import { createUserPreferenceSchema } from "../../../lib/validators/preferences.validator";
-import { ValidationError } from "../../../errors/validation.error";
-import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
-import { guardFeature } from "../../../features";
-import { logger } from "../../../lib/utils/logger";
-import type { ApiSuccessResponse, ApiErrorResponse, UserPreferenceDto } from "../../../types";
+import { UserPreferencesService } from "@/lib/services/userPreferences.service.ts";
+import { createUserPreferenceSchema } from "@/lib/validators/preferences.validator.ts";
+import { ValidationError } from "@/errors/validation.error.ts";
+import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
+import { guardFeature } from "@/features";
+import { logger } from "@/lib/utils/logger.ts";
+import type { ApiErrorResponse, ApiSuccessResponse, UserPreferenceDto } from "@/types.ts";
 
 export const prerender = false;
 
@@ -114,7 +114,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
                 acc[field] = err.message;
                 return acc;
               },
-              {} as Record<string, string>
+              {} as Record<string, string>,
             ),
           },
         };

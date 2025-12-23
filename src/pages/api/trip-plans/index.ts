@@ -19,17 +19,17 @@
 
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import { acceptTripPlanSchema } from "../../../lib/validators/tripPlans.validator";
-import { TripPlanService } from "../../../lib/services/tripPlan.service";
-import { ValidationError } from "../../../errors/validation.error";
-import { requireAuth, createUnauthorizedResponse } from "../../../lib/auth.utils";
-import { logger } from "../../../lib/utils/logger";
+import { acceptTripPlanSchema } from "@/lib/validators/tripPlans.validator.ts";
+import { TripPlanService } from "@/lib/services/tripPlan.service.ts";
+import { ValidationError } from "@/errors/validation.error.ts";
+import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
+import { logger } from "@/lib/utils/logger.ts";
 import type {
   AcceptPlanCommand,
   AcceptTripPlanDto,
-  TripPlanDto,
-  ApiSuccessResponse,
   ApiErrorResponse,
+  ApiSuccessResponse,
+  TripPlanDto,
 } from "../../../types";
 
 export const prerender = false;
