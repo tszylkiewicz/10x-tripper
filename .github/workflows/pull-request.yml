@@ -34,7 +34,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload unit test coverage
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: unit-coverage
           path: coverage/
@@ -65,7 +65,7 @@ jobs:
         run: npm run test:e2e:coverage
 
       - name: Upload E2E coverage
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: e2e-coverage
@@ -73,7 +73,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: playwright-report

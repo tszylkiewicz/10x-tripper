@@ -23,6 +23,7 @@
     "test:e2e:coverage": "nyc --reporter=json --reporter=html playwright test"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/node": "^9.5.1",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
