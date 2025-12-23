@@ -37,7 +37,7 @@ export const featureFlagsConfig: FeatureFlagsConfig = {
 };
 
 /**
- * Default environment when ENV_NAME is not set.
+ * Default environment when PUBLIC_ENV_NAME is not set.
  * Using 'local' as default for development safety.
  */
 export const DEFAULT_ENVIRONMENT: EnvironmentName = "local";

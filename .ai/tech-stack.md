@@ -20,5 +20,10 @@ AI - Komunikacja z modelami przez usługę Openrouter.ai:
 
 CI/CD i Hosting:
 
-- Github Actions do tworzenia pipeline’ów CI/CD
-- DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+- Github Actions do tworzenia pipeline'ów CI/CD
+- Cloudflare Pages jako platforma hostingowa:
+  - Nieograniczony bandwidth na darmowym planie
+  - Automatyczne preview deployments dla każdego PR
+  - Edge network zapewniający niskie latencje globalnie
+  - Oficjalny adapter Astro (`@astrojs/cloudflare`)
+  - Dozwolone użycie komercyjne na darmowym planie

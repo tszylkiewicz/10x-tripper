@@ -17,26 +17,16 @@ function isValidEnvironment(value: string): value is EnvironmentName {
 }
 
 /**
- * Gets the current environment from ENV_NAME variable.
- * Works in both server (process.env) and client (import.meta.env) contexts.
+ * Gets the current environment from PUBLIC_ENV_NAME variable.
+ * Works in both server and client contexts via import.meta.env.
  *
  * @returns The current environment name
  */
 export function getCurrentEnvironment(): EnvironmentName {
-  // Server-side (Node.js)
-  if (typeof process !== "undefined" && process.env?.ENV_NAME) {
-    const envName = process.env.ENV_NAME;
-    if (isValidEnvironment(envName)) {
-      return envName;
-    }
-  }
+  const envName = import.meta.env.PUBLIC_ENV_NAME;
 
-  // Client-side (Vite/Astro) - using PUBLIC_ prefix for client exposure
-  if (typeof import.meta !== "undefined" && import.meta.env?.PUBLIC_ENV_NAME) {
-    const envName = import.meta.env.PUBLIC_ENV_NAME;
-    if (isValidEnvironment(envName)) {
-      return envName;
-    }
+  if (envName && isValidEnvironment(envName)) {
+    return envName;
   }
 
   return DEFAULT_ENVIRONMENT;

@@ -12,7 +12,7 @@ export type FeatureFlagName = "preferences";
 
 /**
  * Environment names supported by the application.
- * Maps to ENV_NAME environment variable.
+ * Maps to PUBLIC_ENV_NAME environment variable.
  */
 export type EnvironmentName = "local" | "integration" | "prod";
 

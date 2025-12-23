@@ -89,6 +89,31 @@ The `.windsurfrules` file contains AI configuration for Windsurf.
 
 Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
 
+## Deployment
+
+This project is configured for deployment on **Cloudflare Pages**.
+
+### Why Cloudflare Pages?
+
+- Unlimited bandwidth on free tier
+- Automatic preview deployments for PRs
+- Global edge network with low latency
+- Official Astro adapter (`@astrojs/cloudflare`)
+- Commercial use allowed on free plan
+
+### Deploy to Cloudflare Pages
+
+1. Connect your repository to Cloudflare Pages
+2. Configure build settings:
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Node.js version:** `22` (set via environment variable `NODE_VERSION`)
+3. Add environment variables (Supabase URL, keys, etc.)
+
+### Preview Deployments
+
+Every pull request automatically gets a preview deployment URL, enabling easy review of changes before merging.
+
 ## License
 
 MIT
