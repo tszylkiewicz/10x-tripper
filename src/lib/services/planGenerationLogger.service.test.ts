@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { calculatePromptHash, logGenerationSuccess, logGenerationError } from "./planGenerationLogger.service";
-import type { SupabaseClient } from "../../db/supabase.client";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { calculatePromptHash, logGenerationError, logGenerationSuccess } from "./planGenerationLogger.service";
+import type { SupabaseClient } from "@/db/supabase.client.ts";
 
 describe("PlanGenerationLogger Service", () => {
-  let mockSupabase: any;
+  let mockSupabase: SupabaseClient;
 
   beforeEach(() => {
     // Create mock Supabase client with chainable methods
@@ -94,7 +95,7 @@ describe("PlanGenerationLogger Service", () => {
 
       const mockGenerationId = "gen-uuid-123";
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: mockGenerationId },
         error: null,
       });
@@ -123,7 +124,7 @@ describe("PlanGenerationLogger Service", () => {
 
       const expectedHash = "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f";
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "gen-uuid-456" },
         error: null,
       });
@@ -133,7 +134,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           source_text_hash: expectedHash,
-        })
+        }),
       );
     });
 
@@ -146,7 +147,7 @@ describe("PlanGenerationLogger Service", () => {
         duration_ms: 2500,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "gen-uuid-789" },
         error: null,
       });
@@ -156,7 +157,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           source_text_length: testPrompt.length,
-        })
+        }),
       );
     });
 
@@ -170,7 +171,7 @@ describe("PlanGenerationLogger Service", () => {
 
       const expectedHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "gen-empty" },
         error: null,
       });
@@ -196,7 +197,7 @@ describe("PlanGenerationLogger Service", () => {
         duration_ms: 10000,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "gen-long" },
         error: null,
       });
@@ -207,7 +208,7 @@ describe("PlanGenerationLogger Service", () => {
         expect.objectContaining({
           source_text_length: 5000,
           source_text_hash: expect.any(String),
-        })
+        }),
       );
       expect(result).toBe("gen-long");
     });
@@ -220,7 +221,7 @@ describe("PlanGenerationLogger Service", () => {
         duration_ms: 1000,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Database connection failed", code: "DB_ERROR" },
       });
@@ -238,7 +239,7 @@ describe("PlanGenerationLogger Service", () => {
       };
 
       const dbError = { message: "Database connection failed", code: "DB_ERROR" };
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: dbError,
       });
@@ -256,7 +257,7 @@ describe("PlanGenerationLogger Service", () => {
         duration_ms: 0,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "gen-instant" },
         error: null,
       });
@@ -266,7 +267,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           duration_ms: 0,
-        })
+        }),
       );
       expect(result).toBe("gen-instant");
     });
@@ -283,7 +284,7 @@ describe("PlanGenerationLogger Service", () => {
         error_code: "RATE_LIMIT",
       };
 
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: vi.fn().mockResolvedValue({
           error: null,
         }),
@@ -307,7 +308,7 @@ describe("PlanGenerationLogger Service", () => {
       const expectedHash = "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f";
 
       const insertMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -316,7 +317,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           source_text_hash: expectedHash,
-        })
+        }),
       );
     });
 
@@ -331,7 +332,7 @@ describe("PlanGenerationLogger Service", () => {
       };
 
       const insertMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -358,7 +359,7 @@ describe("PlanGenerationLogger Service", () => {
       };
 
       const insertMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -367,7 +368,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           error_code: null,
-        })
+        }),
       );
     });
 
@@ -384,7 +385,7 @@ describe("PlanGenerationLogger Service", () => {
       const insertMock = vi.fn().mockResolvedValue({
         error: { message: "Database connection failed", code: "DB_ERROR" },
       });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -406,7 +407,7 @@ describe("PlanGenerationLogger Service", () => {
       const insertMock = vi.fn().mockResolvedValue({
         error: dbError,
       });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -428,7 +429,7 @@ describe("PlanGenerationLogger Service", () => {
       const expectedHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
       const insertMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -438,7 +439,7 @@ describe("PlanGenerationLogger Service", () => {
         expect.objectContaining({
           source_text_hash: expectedHash,
           source_text_length: 0,
-        })
+        }),
       );
     });
 
@@ -454,7 +455,7 @@ describe("PlanGenerationLogger Service", () => {
       };
 
       const insertMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -463,7 +464,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           error_message: longErrorMessage,
-        })
+        }),
       );
     });
 
@@ -478,7 +479,7 @@ describe("PlanGenerationLogger Service", () => {
       };
 
       const insertMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertMock,
       });
 
@@ -487,7 +488,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           duration_ms: 0,
-        })
+        }),
       );
     });
   });
@@ -495,11 +496,9 @@ describe("PlanGenerationLogger Service", () => {
   describe("hash consistency between success and error logging", () => {
     it("should produce same hash for same prompt in both success and error logs", async () => {
       const prompt = "Consistent test prompt";
-      let successHash: string;
-      let errorHash: string;
 
       // Log success - capture the insert call
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "gen-123" },
         error: null,
       });
@@ -512,8 +511,8 @@ describe("PlanGenerationLogger Service", () => {
       });
 
       // Extract hash from the first insert call
-      const successInsertCall = (mockSupabase.insert as any).mock.calls[0][0];
-      successHash = successInsertCall.source_text_hash;
+      const successInsertCall = (mockSupabase.insert as Mock).mock.calls[0][0];
+      const successHash = successInsertCall.source_text_hash;
 
       // Reset mocks
       vi.clearAllMocks();
@@ -528,7 +527,7 @@ describe("PlanGenerationLogger Service", () => {
 
       // Log error
       const insertErrorMock = vi.fn().mockResolvedValue({ error: null });
-      (mockSupabase.from as any).mockReturnValue({
+      (mockSupabase.from as Mock).mockReturnValue({
         insert: insertErrorMock,
       });
 
@@ -540,7 +539,7 @@ describe("PlanGenerationLogger Service", () => {
         error_message: "Test error",
       });
 
-      errorHash = insertErrorMock.mock.calls[0][0].source_text_hash;
+      const errorHash = insertErrorMock.mock.calls[0][0].source_text_hash;
 
       expect(successHash).toBe(errorHash);
     });

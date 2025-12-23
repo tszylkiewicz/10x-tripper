@@ -1,12 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UserPreferencesService } from "./userPreferences.service";
-import { ValidationError } from "../../errors/validation.error";
-import type { SupabaseClient } from "../../db/supabase.client";
-import type { CreatePreferenceCommand, UpdatePreferenceCommand, DeletePreferenceCommand } from "../../types";
+import { ValidationError } from "@/errors/validation.error.ts";
+import type { SupabaseClient } from "@/db/supabase.client.ts";
+import type { CreatePreferenceCommand, DeletePreferenceCommand, UpdatePreferenceCommand } from "@/types.ts";
 
 describe("UserPreferencesService", () => {
   let service: UserPreferencesService;
-  let mockSupabase: any;
+  let mockSupabase: SupabaseClient;
 
   beforeEach(() => {
     // Create mock Supabase client with chainable methods
@@ -31,7 +32,7 @@ describe("UserPreferencesService", () => {
         { id: "2", name: "Business", people_count: 1, budget_type: "high" },
       ];
 
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: mockData,
         error: null,
       });
@@ -46,7 +47,7 @@ describe("UserPreferencesService", () => {
     });
 
     it("should return empty array when user has no preferences", async () => {
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -57,7 +58,7 @@ describe("UserPreferencesService", () => {
     });
 
     it("should throw error when database operation fails", async () => {
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Database connection failed", code: "DB_ERROR" },
       });
@@ -82,7 +83,7 @@ describe("UserPreferencesService", () => {
         budget_type: "high",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockCreated,
         error: null,
       });
@@ -112,7 +113,7 @@ describe("UserPreferencesService", () => {
         budget_type: null,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockCreated,
         error: null,
       });
@@ -172,7 +173,7 @@ describe("UserPreferencesService", () => {
           budget_type: null,
         };
 
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: mockCreated,
           error: null,
         });
@@ -235,7 +236,7 @@ describe("UserPreferencesService", () => {
           budget_type: null,
         };
 
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: mockCreated,
           error: null,
         });
@@ -259,7 +260,7 @@ describe("UserPreferencesService", () => {
           budget_type: null,
         };
 
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: mockCreated,
           error: null,
         });
@@ -276,7 +277,7 @@ describe("UserPreferencesService", () => {
         name: "Test",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Unique constraint violation", code: "23505" },
       });
@@ -294,7 +295,7 @@ describe("UserPreferencesService", () => {
         budget_type: "medium",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockPreference,
         error: null,
       });
@@ -309,7 +310,7 @@ describe("UserPreferencesService", () => {
     });
 
     it("should return null when preference not found (PGRST116)", async () => {
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "PGRST116", message: "No rows returned" },
       });
@@ -320,7 +321,7 @@ describe("UserPreferencesService", () => {
     });
 
     it("should return null when preference belongs to different user", async () => {
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "PGRST116", message: "No rows returned" },
       });
@@ -331,7 +332,7 @@ describe("UserPreferencesService", () => {
     });
 
     it("should throw error when database operation fails with non-PGRST116 error", async () => {
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "DB_ERROR", message: "Database connection failed" },
       });
@@ -357,7 +358,7 @@ describe("UserPreferencesService", () => {
         budget_type: "luxury",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockUpdated,
         error: null,
       });
@@ -389,7 +390,7 @@ describe("UserPreferencesService", () => {
         budget_type: "medium",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockUpdated,
         error: null,
       });
@@ -416,7 +417,7 @@ describe("UserPreferencesService", () => {
         budget_type: "medium",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockUpdated,
         error: null,
       });
@@ -443,7 +444,7 @@ describe("UserPreferencesService", () => {
         budget_type: "low",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockUpdated,
         error: null,
       });
@@ -470,7 +471,7 @@ describe("UserPreferencesService", () => {
         budget_type: "medium",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockUpdated,
         error: null,
       });
@@ -576,7 +577,7 @@ describe("UserPreferencesService", () => {
         name: "New Name",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "PGRST116", message: "No rows returned" },
       });
@@ -593,7 +594,7 @@ describe("UserPreferencesService", () => {
         name: "Updated",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "DB_ERROR", message: "Database connection failed" },
       });
@@ -609,7 +610,7 @@ describe("UserPreferencesService", () => {
         user_id: "user-123",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [{ id: "pref-1" }],
         error: null,
       });
@@ -629,7 +630,7 @@ describe("UserPreferencesService", () => {
         user_id: "user-123",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -645,7 +646,7 @@ describe("UserPreferencesService", () => {
         user_id: "wrong-user",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -661,7 +662,7 @@ describe("UserPreferencesService", () => {
         user_id: "user-123",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Database connection failed", code: "DB_ERROR" },
       });

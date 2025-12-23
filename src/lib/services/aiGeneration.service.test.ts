@@ -1,6 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { generateTripPlan, buildMessages, messagesToPrompt, MODEL } from "./aiGeneration.service";
-import type { GeneratePlanCommand, PlanDetailsDto } from "../../types";
+import type { Mock } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { ErrorWithMetadata } from "./aiGeneration.service";
+import { buildMessages, generateTripPlan, messagesToPrompt, MODEL } from "./aiGeneration.service";
+import type { GeneratePlanCommand, PlanDetailsDto } from "@/types.ts";
 
 // Mock OpenRouterService
 vi.mock("./openrouter", () => {
@@ -17,8 +19,13 @@ vi.mock("./openrouter", () => {
   };
 });
 
+// Type for mocked module
+interface MockedOpenRouterModule {
+  getMockCompleteStructured: () => Mock;
+}
+
 // Get access to mocks
-const { getMockCompleteStructured } = (await import("./openrouter")) as any;
+const { getMockCompleteStructured } = (await import("./openrouter")) as unknown as MockedOpenRouterModule;
 const mockCompleteStructured = getMockCompleteStructured();
 
 describe("AI Generation Service", () => {
@@ -257,12 +264,12 @@ describe("AI Generation Service", () => {
       const result = messagesToPrompt(messages);
 
       expect(result).toBe(
-        "[system]: You are a helpful assistant\n\n[user]: Generate a plan\n\n[assistant]: Here is your plan"
+        "[system]: You are a helpful assistant\n\n[user]: Generate a plan\n\n[assistant]: Here is your plan",
       );
     });
 
     it("should handle empty messages array", () => {
-      const messages: any[] = [];
+      const messages: never[] = [];
 
       const result = messagesToPrompt(messages);
 
@@ -459,9 +466,9 @@ describe("AI Generation Service", () => {
         const endTime = Date.now();
         expect(error).toBeInstanceOf(Error);
         expect((error as Error).message).toBe("API rate limit exceeded");
-        expect((error as any).duration_ms).toBeDefined();
-        expect((error as any).duration_ms).toBeGreaterThanOrEqual(0);
-        expect((error as any).duration_ms).toBeLessThanOrEqual(endTime - startTime + 10); // Allow 10ms margin
+        expect((error as ErrorWithMetadata).duration_ms).toBeDefined();
+        expect((error as ErrorWithMetadata).duration_ms).toBeGreaterThanOrEqual(0);
+        expect((error as ErrorWithMetadata).duration_ms).toBeLessThanOrEqual(endTime - startTime + 10); // Allow 10ms margin
       }
     });
 
@@ -506,7 +513,7 @@ describe("AI Generation Service", () => {
         expect(error).toBeInstanceOf(Error);
         expect((error as Error).message).toBe("Unknown error");
         expect((error as Error).name).toBe("Error");
-        expect((error as any).duration_ms).toBeDefined();
+        expect((error as ErrorWithMetadata).duration_ms).toBeDefined();
       }
     });
 

@@ -4,10 +4,15 @@
  * Service for generating trip plans using AI (OpenRouter API).
  */
 
-import type { GeneratePlanCommand, GeneratedTripPlanDto, PlanDetailsDto } from "../../types";
-import { OpenRouterService } from "./openrouter";
+import type { GeneratedTripPlanDto, GeneratePlanCommand, PlanDetailsDto } from "@/types.ts";
 import type { ChatMessage } from "./openrouter";
+import { OpenRouterService } from "./openrouter";
 import { z } from "zod";
+
+// Custom error type with metadata
+export interface ErrorWithMetadata extends Error {
+  duration_ms?: number;
+}
 
 // Initialize OpenRouter service
 const openRouterService = new OpenRouterService({
@@ -182,9 +187,9 @@ export async function generateTripPlan(command: GeneratePlanCommand): Promise<Ge
     const duration = Date.now() - startTime;
 
     // Re-throw with metadata for logging
-    const enhancedError = new Error(error instanceof Error ? error.message : "Unknown error");
+    const enhancedError = new Error(error instanceof Error ? error.message : "Unknown error") as ErrorWithMetadata;
     enhancedError.name = error instanceof Error ? error.name : "Error";
-    (enhancedError as any).duration_ms = duration;
+    enhancedError.duration_ms = duration;
 
     throw enhancedError;
   }

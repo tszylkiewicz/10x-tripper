@@ -5,7 +5,7 @@
  * Handles business logic, validation, and database interactions for trip plans.
  */
 
-import type { SupabaseClient } from "../../db/supabase.client";
+import type { SupabaseClient } from "@/db/supabase.client.ts";
 import type {
   AcceptPlanCommand,
   DeleteTripPlanCommand,
@@ -13,10 +13,11 @@ import type {
   TripPlanDto,
   TripPlanUpdate,
   UpdatePlanCommand,
-} from "../../types";
-import type { Json, Tables } from "../../db/database.types";
+} from "@/types.ts";
+import type { Json, Tables } from "@/db/database.types.ts";
 import { isValidUUID } from "../validators/uuid.validator";
-import { ValidationError } from "../../errors/validation.error";
+import { ValidationError } from "@/errors/validation.error.ts";
+import { logger } from "../utils/logger";
 
 export class TripPlanService {
   constructor(private supabase: SupabaseClient) {}
@@ -40,7 +41,7 @@ export class TripPlanService {
       .order("start_date", { ascending: true });
 
     if (error) {
-      console.error("Database error in getTripPlans:", error);
+      logger.error("Database error in getTripPlans:", error);
       throw new Error("Failed to fetch trip plans");
     }
 
@@ -51,11 +52,12 @@ export class TripPlanService {
    * Retrieves a single trip plan by ID
    *
    * @param id - The trip plan ID (UUID)
-   * @param userId - The ID of the user to verify ownership (used with RLS)
+   * @param _userId - The ID of the user to verify ownership (used with RLS, not directly in query)
    * @returns Trip plan as TripPlanDto or null if not found
    * @throws Error if ID format is invalid or database operation fails
    */
-  async getTripPlanById(id: string, userId: string): Promise<TripPlanDto | null> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async getTripPlanById(id: string, _userId: string): Promise<TripPlanDto | null> {
     // 1. Validate UUID format
     if (!isValidUUID(id)) {
       throw new Error("Invalid UUID format");
@@ -75,7 +77,7 @@ export class TripPlanService {
         return null;
       }
       // Any other error is unexpected and should be thrown
-      console.error("Database error in getTripPlanById:", error);
+      logger.error("Database error in getTripPlanById:", error);
       throw error;
     }
 
@@ -105,16 +107,12 @@ export class TripPlanService {
       .select("id");
 
     if (error) {
-      console.error("Database error in deleteTripPlan:", error);
+      logger.error("Database error in deleteTripPlan:", error);
       throw error;
     }
 
     // Check if any row was updated (soft deleted)
-    if (!data || data.length === 0) {
-      return false;
-    }
-
-    return true;
+    return !(!data || data.length === 0);
   }
 
   /**
@@ -298,7 +296,7 @@ export class TripPlanService {
       if (error.code === "PGRST116") {
         return null; // Not found (shouldn't happen after step 2, but safety)
       }
-      console.error("Database error in updateTripPlan:", error);
+      logger.error("Database error in updateTripPlan:", error);
       throw error;
     }
 
@@ -331,7 +329,7 @@ export class TripPlanService {
       if (error.code === "PGRST116") {
         return null; // Not found
       }
-      console.error("Database error in getTripPlanForUpdate:", error);
+      logger.error("Database error in getTripPlanForUpdate:", error);
       throw error;
     }
 

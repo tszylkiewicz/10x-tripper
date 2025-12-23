@@ -1,12 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Mock } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TripPlanService } from "./tripPlan.service";
-import { ValidationError } from "../../errors/validation.error";
-import type { SupabaseClient } from "../../db/supabase.client";
-import type { AcceptPlanCommand, DeleteTripPlanCommand, UpdatePlanCommand, PlanDetailsDto } from "../../types";
+import { ValidationError } from "@/errors/validation.error.ts";
+import type { SupabaseClient } from "@/db/supabase.client.ts";
+import type { AcceptPlanCommand, DeleteTripPlanCommand, PlanDetailsDto, UpdatePlanCommand } from "@/types.ts";
 
 describe("TripPlanService", () => {
   let service: TripPlanService;
-  let mockSupabase: any;
+  let mockSupabase: SupabaseClient;
 
   const mockPlanDetails: PlanDetailsDto = {
     days: [
@@ -75,7 +76,7 @@ describe("TripPlanService", () => {
         },
       ];
 
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: mockData,
         error: null,
       });
@@ -93,7 +94,7 @@ describe("TripPlanService", () => {
     });
 
     it("should return empty array when user has no trip plans", async () => {
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -104,7 +105,7 @@ describe("TripPlanService", () => {
     });
 
     it("should exclude soft-deleted plans", async () => {
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -115,7 +116,7 @@ describe("TripPlanService", () => {
     });
 
     it("should throw error when database operation fails", async () => {
-      (mockSupabase.order as any).mockResolvedValueOnce({
+      (mockSupabase.order as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Database connection failed", code: "DB_ERROR" },
       });
@@ -136,7 +137,7 @@ describe("TripPlanService", () => {
         plan_details: mockPlanDetails,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockPlan,
         error: null,
       });
@@ -157,7 +158,7 @@ describe("TripPlanService", () => {
     });
 
     it("should return null when trip plan not found (PGRST116)", async () => {
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "PGRST116", message: "No rows returned" },
       });
@@ -168,7 +169,7 @@ describe("TripPlanService", () => {
     });
 
     it("should return null when trip plan is soft-deleted", async () => {
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "PGRST116", message: "No rows returned" },
       });
@@ -179,7 +180,7 @@ describe("TripPlanService", () => {
     });
 
     it("should throw error when database operation fails with non-PGRST116 error", async () => {
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "DB_ERROR", message: "Database connection failed" },
       });
@@ -195,7 +196,7 @@ describe("TripPlanService", () => {
         user_id: "user-123",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [{ id: "plan-1" }],
         error: null,
       });
@@ -219,7 +220,7 @@ describe("TripPlanService", () => {
 
       const beforeTime = new Date().toISOString();
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [{ id: "plan-1" }],
         error: null,
       });
@@ -227,7 +228,7 @@ describe("TripPlanService", () => {
       await service.deleteTripPlan(command);
 
       const afterTime = new Date().toISOString();
-      const updateCall = (mockSupabase.update as any).mock.calls[0][0];
+      const updateCall = (mockSupabase.update as Mock).mock.calls[0][0];
       const deletedAt = updateCall.deleted_at;
 
       // Verify it's a valid ISO timestamp between before and after
@@ -242,7 +243,7 @@ describe("TripPlanService", () => {
         user_id: "user-123",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -258,7 +259,7 @@ describe("TripPlanService", () => {
         user_id: "wrong-user",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: [],
         error: null,
       });
@@ -274,7 +275,7 @@ describe("TripPlanService", () => {
         user_id: "user-123",
       };
 
-      (mockSupabase.select as any).mockResolvedValueOnce({
+      (mockSupabase.select as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Database connection failed", code: "DB_ERROR" },
       });
@@ -307,7 +308,7 @@ describe("TripPlanService", () => {
         plan_details: mockPlanDetails,
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: mockSaved,
         error: null,
       });
@@ -343,7 +344,7 @@ describe("TripPlanService", () => {
       };
 
       // Mock generation_id verification
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { id: "gen-uuid-123" },
           error: null,
@@ -372,7 +373,7 @@ describe("TripPlanService", () => {
         source: "ai-edited",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: { id: "plan-3", ...command },
         error: null,
       });
@@ -418,7 +419,7 @@ describe("TripPlanService", () => {
           source: "ai",
         };
 
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: { id: "plan-same-day", ...command },
           error: null,
         });
@@ -477,7 +478,7 @@ describe("TripPlanService", () => {
           source: "ai",
         };
 
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: { id: "plan-solo", ...command },
           error: null,
         });
@@ -552,7 +553,7 @@ describe("TripPlanService", () => {
           people_count: 2,
           budget_type: "medium",
           plan_details: mockPlanDetails,
-          source: "manual" as any,
+          source: "manual" as Mock,
         };
 
         await expect(service.acceptPlan(command)).rejects.toThrow(ValidationError);
@@ -575,7 +576,7 @@ describe("TripPlanService", () => {
         };
 
         // Mock the verification call to return not found
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: null,
           error: { code: "PGRST116", message: "No rows returned" },
         });
@@ -605,7 +606,7 @@ describe("TripPlanService", () => {
         };
 
         // Mock the verification call to return not found (RLS filters it out)
-        (mockSupabase.single as any).mockResolvedValueOnce({
+        (mockSupabase.single as Mock).mockResolvedValueOnce({
           data: null,
           error: { code: "PGRST116", message: "No rows returned" },
         });
@@ -634,7 +635,7 @@ describe("TripPlanService", () => {
           source: "ai",
         };
 
-        (mockSupabase.single as any)
+        (mockSupabase.single as Mock)
           .mockResolvedValueOnce({
             data: { id: "gen-verify" },
             error: null,
@@ -666,7 +667,7 @@ describe("TripPlanService", () => {
         source: "ai",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { message: "Database insert failed", code: "DB_ERROR" },
       });
@@ -688,7 +689,7 @@ describe("TripPlanService", () => {
       };
 
       // Mock getTripPlanForUpdate
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai", plan_details: mockPlanDetails },
           error: null,
@@ -718,7 +719,7 @@ describe("TripPlanService", () => {
         destination: "Updated Destination",
       };
 
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai", plan_details: mockPlanDetails },
           error: null,
@@ -760,7 +761,7 @@ describe("TripPlanService", () => {
         plan_details: newPlanDetails,
       };
 
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai", plan_details: mockPlanDetails },
           error: null,
@@ -804,7 +805,7 @@ describe("TripPlanService", () => {
         plan_details: newPlanDetails,
       };
 
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai-edited", plan_details: mockPlanDetails },
           error: null,
@@ -816,7 +817,7 @@ describe("TripPlanService", () => {
 
       await service.updateTripPlan(command);
 
-      const updateCall = (mockSupabase.update as any).mock.calls[0][0];
+      const updateCall = (mockSupabase.update as Mock).mock.calls[0][0];
       expect(updateCall.source).toBeUndefined();
     });
 
@@ -828,7 +829,7 @@ describe("TripPlanService", () => {
         people_count: 5,
       };
 
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai", plan_details: mockPlanDetails },
           error: null,
@@ -840,7 +841,7 @@ describe("TripPlanService", () => {
 
       await service.updateTripPlan(command);
 
-      const updateCall = (mockSupabase.update as any).mock.calls[0][0];
+      const updateCall = (mockSupabase.update as Mock).mock.calls[0][0];
       expect(updateCall.source).toBeUndefined();
     });
 
@@ -949,7 +950,7 @@ describe("TripPlanService", () => {
         destination: "New Destination",
       };
 
-      (mockSupabase.single as any).mockResolvedValueOnce({
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
         data: null,
         error: { code: "PGRST116", message: "No rows returned" },
       });
@@ -966,7 +967,7 @@ describe("TripPlanService", () => {
         destination: "Updated",
       };
 
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai", plan_details: mockPlanDetails },
           error: null,
@@ -988,7 +989,7 @@ describe("TripPlanService", () => {
         destination: "Updated",
       };
 
-      (mockSupabase.single as any)
+      (mockSupabase.single as Mock)
         .mockResolvedValueOnce({
           data: { source: "ai", plan_details: mockPlanDetails },
           error: null,

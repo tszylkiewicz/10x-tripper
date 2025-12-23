@@ -11,6 +11,7 @@ export const logger = {
    */
   log: (...args: unknown[]): void => {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.log(...args);
     }
   },
@@ -20,6 +21,7 @@ export const logger = {
    */
   warn: (...args: unknown[]): void => {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.warn(...args);
     }
   },
@@ -28,6 +30,7 @@ export const logger = {
    * Log errors (always logged, even in production)
    */
   error: (...args: unknown[]): void => {
+    // eslint-disable-next-line no-console
     console.error(...args);
   },
 
@@ -36,6 +39,7 @@ export const logger = {
    */
   debug: (...args: unknown[]): void => {
     if (isDev) {
+      // eslint-disable-next-line no-console
       console.debug(...args);
     }
   },

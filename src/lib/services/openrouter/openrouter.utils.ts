@@ -92,7 +92,8 @@ export function validateConfig(config: Record<string, unknown>): void {
  * Converts Zod schema to JSON Schema (simplified version)
  * Note: For production, consider using @sodaru/zod-to-json-schema
  */
-export function zodToJsonSchema(_zodSchema: unknown): JSONSchemaObject {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function zodToJsonSchema(_: unknown): JSONSchemaObject {
   // This is a placeholder implementation
   // Use a proper library like @sodaru/zod-to-json-schema in production
   throw new Error("zodToJsonSchema not implemented. Use @sodaru/zod-to-json-schema library.");

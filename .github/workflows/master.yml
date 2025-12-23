@@ -34,7 +34,7 @@ jobs:
   deploy:
     name: Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
-    needs: [ lint, unit-test ]
+    needs: [lint, unit-test]
     environment:
       name: production
       url: ${{ steps.deployment.outputs.url }}

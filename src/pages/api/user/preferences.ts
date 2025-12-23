@@ -114,7 +114,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
                 acc[field] = err.message;
                 return acc;
               },
-              {} as Record<string, string>,
+              {} as Record<string, string>
             ),
           },
         };

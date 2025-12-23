@@ -4,15 +4,13 @@
  * Tests the main orchestration flow: Form -> Generation -> Preview/Edit -> Accept
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CreateTripPlanContent } from "./CreateTripPlanContent";
-import type { TripPlanFormData, EditableGeneratedPlan } from "./types";
-import type { GeneratedTripPlanDto, TripPlanDto, ApiErrorResponse } from "../../../types";
+import type { EditableGeneratedPlan, TripPlanFormData } from "./types";
+import type { ApiErrorResponse, GeneratedTripPlanDto, TripPlanDto } from "@/types.ts";
 import type { UsePlanEditorReturn } from "./hooks/usePlanEditor";
-import type { UseTripPlanGenerationReturn } from "./hooks/useTripPlanGeneration";
-import type { UseAcceptPlanReturn } from "./hooks/useAcceptPlan";
 
 // Create a mock function to control TripPlanForm behavior
 const mockTripPlanFormSubmit = vi.fn();
@@ -20,9 +18,9 @@ const mockTripPlanFormSubmit = vi.fn();
 // Mock child components
 vi.mock("./TripPlanForm", () => ({
   TripPlanForm: ({
-    onSubmit,
-    isSubmitting,
-  }: {
+                   onSubmit,
+                   isSubmitting,
+                 }: {
     onSubmit: (data: TripPlanFormData) => void;
     isSubmitting?: boolean;
   }) => {
@@ -77,10 +75,10 @@ vi.mock("./LoadingOverlay", () => ({
 
 vi.mock("./ErrorDisplay", () => ({
   ErrorDisplay: ({
-    error,
-    onRetry,
-    onEditForm,
-  }: {
+                   error,
+                   onRetry,
+                   onEditForm,
+                 }: {
     error: ApiErrorResponse | null;
     onRetry: () => void;
     onEditForm?: () => void;
@@ -101,12 +99,12 @@ vi.mock("./ErrorDisplay", () => ({
 
 vi.mock("./GeneratedPlanSection", () => ({
   GeneratedPlanSection: ({
-    plan,
-    onRegeneratePlan,
-    onAcceptPlan,
-    onPlanChange,
-    isAccepting,
-  }: {
+                           plan,
+                           onRegeneratePlan,
+                           onAcceptPlan,
+                           onPlanChange,
+                           isAccepting,
+                         }: {
     plan: EditableGeneratedPlan;
     onRegeneratePlan: () => void;
     onAcceptPlan: (plan: EditableGeneratedPlan) => void;
@@ -245,7 +243,7 @@ describe("CreateTripPlanContent", () => {
       expect(screen.getByTestId("trip-plan-form")).toBeInTheDocument();
       expect(screen.getByText("Nowy plan wycieczki")).toBeInTheDocument();
       expect(
-        screen.getByText("Podaj szczegóły wycieczki, a AI wygeneruje dla Ciebie spersonalizowany plan")
+        screen.getByText("Podaj szczegóły wycieczki, a AI wygeneruje dla Ciebie spersonalizowany plan"),
       ).toBeInTheDocument();
     });
 
@@ -332,7 +330,7 @@ describe("CreateTripPlanContent", () => {
       expect(mockGeneratePlan).toHaveBeenCalledWith(
         expect.objectContaining({
           destination: "Paris",
-        })
+        }),
       );
     });
   });
@@ -432,7 +430,7 @@ describe("CreateTripPlanContent", () => {
         expect(mockSetEditablePlan).toHaveBeenCalledWith(
           expect.objectContaining({
             isEdited: true,
-          })
+          }),
         );
       });
     });
@@ -495,7 +493,7 @@ describe("CreateTripPlanContent", () => {
         expect(mockGeneratePlan).toHaveBeenCalledWith(
           expect.objectContaining({
             destination: "Paris",
-          })
+          }),
         );
       });
     });
@@ -857,7 +855,7 @@ describe("CreateTripPlanContent", () => {
               todo: "temples, ramen",
               avoid: "crowded areas",
             }),
-          })
+          }),
         );
       });
     });
