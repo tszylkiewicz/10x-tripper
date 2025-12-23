@@ -44,7 +44,7 @@ jobs:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       OPENROUTER_MODEL: ${{ secrets.OPENROUTER_MODEL }}
       PUBLIC_APP_URL: ${{ secrets.PUBLIC_APP_URL }}
-      PUBLIC_ENV_NAME: production
+      PUBLIC_ENV_NAME: prod
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
