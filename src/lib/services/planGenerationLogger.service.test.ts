@@ -134,7 +134,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           source_text_hash: expectedHash,
-        }),
+        })
       );
     });
 
@@ -157,7 +157,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           source_text_length: testPrompt.length,
-        }),
+        })
       );
     });
 
@@ -208,7 +208,7 @@ describe("PlanGenerationLogger Service", () => {
         expect.objectContaining({
           source_text_length: 5000,
           source_text_hash: expect.any(String),
-        }),
+        })
       );
       expect(result).toBe("gen-long");
     });
@@ -267,7 +267,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           duration_ms: 0,
-        }),
+        })
       );
       expect(result).toBe("gen-instant");
     });
@@ -317,7 +317,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           source_text_hash: expectedHash,
-        }),
+        })
       );
     });
 
@@ -368,7 +368,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           error_code: null,
-        }),
+        })
       );
     });
 
@@ -439,7 +439,7 @@ describe("PlanGenerationLogger Service", () => {
         expect.objectContaining({
           source_text_hash: expectedHash,
           source_text_length: 0,
-        }),
+        })
       );
     });
 
@@ -464,7 +464,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           error_message: longErrorMessage,
-        }),
+        })
       );
     });
 
@@ -488,7 +488,7 @@ describe("PlanGenerationLogger Service", () => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({
           duration_ms: 0,
-        }),
+        })
       );
     });
   });

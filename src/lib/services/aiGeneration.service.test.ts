@@ -264,7 +264,7 @@ describe("AI Generation Service", () => {
       const result = messagesToPrompt(messages);
 
       expect(result).toBe(
-        "[system]: You are a helpful assistant\n\n[user]: Generate a plan\n\n[assistant]: Here is your plan",
+        "[system]: You are a helpful assistant\n\n[user]: Generate a plan\n\n[assistant]: Here is your plan"
       );
     });
 
