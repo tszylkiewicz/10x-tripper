@@ -1,5 +1,4 @@
 import { defineMiddleware } from "astro:middleware";
-import { getSecret } from "astro:env/server";
 
 import { createSupabaseServerInstance } from "../db/supabase.client.ts";
 
@@ -19,37 +18,54 @@ const PUBLIC_PATHS = [
 ];
 
 export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
-  // Access environment variables via astro:env/server
-  // With Cloudflare adapter, these are automatically read from context.locals.runtime.env
-  // The env schema in astro.config.mjs validates these variables
-  const supabaseUrl = getSecret("SUPABASE_URL");
-  const supabaseKey = getSecret("SUPABASE_KEY");
-
-  // Validate that environment variables are available
-  if (!supabaseUrl || !supabaseKey) {
+  // Validate runtime environment is available (provided by @astrojs/cloudflare adapter)
+  if (!locals.runtime?.env) {
     // eslint-disable-next-line no-console
-    console.error("[Middleware] Missing required environment variables", {
-      hasSupabaseUrl: !!supabaseUrl,
-      hasSupabaseKey: !!supabaseKey,
+    console.error("[Middleware] CRITICAL: locals.runtime.env is not available", {
+      hasRuntime: !!locals.runtime,
       url: url.pathname,
     });
+    throw new Error("Runtime environment not available. Ensure @astrojs/cloudflare adapter is properly configured.");
+  }
+
+  const { env } = locals.runtime;
+
+  // Validate required environment variables
+  const requiredVars = ["SUPABASE_URL", "SUPABASE_KEY"] as const;
+  const missingVars = requiredVars.filter((varName) => !env[varName]);
+
+  if (missingVars.length > 0) {
+    // eslint-disable-next-line no-console
+    console.error("[Middleware] Missing required environment variables:", {
+      missing: missingVars,
+      availableKeys: Object.keys(env),
+      url: url.pathname,
+    });
+
     throw new Error(
-      "Missing required environment variables. Set SUPABASE_URL and SUPABASE_KEY in Cloudflare Pages dashboard."
+      `Missing required environment variables: ${missingVars.join(", ")}. ` +
+        `Set these in Cloudflare Pages: Settings → Environment variables (both Production and Preview)`
     );
   }
 
-  // Create Supabase server instance with cookie support for all requests
-  const supabase = createSupabaseServerInstance({
-    cookies,
-    headers: request.headers,
-    env: {
-      SUPABASE_URL: supabaseUrl,
-      SUPABASE_KEY: supabaseKey,
-    },
-  });
+  try {
+    // Create Supabase server instance with cookie support for all requests
+    const supabase = createSupabaseServerInstance({
+      cookies,
+      headers: request.headers,
+      env: {
+        SUPABASE_URL: env.SUPABASE_URL,
+        SUPABASE_KEY: env.SUPABASE_KEY,
+      },
+    });
 
-  // Set Supabase client in locals for use in pages and API routes
-  locals.supabase = supabase;
+    // Set Supabase client in locals for use in pages and API routes
+    locals.supabase = supabase;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("[Middleware] Failed to create Supabase client:", error);
+    throw error;
+  }
 
   // Skip auth verification for public paths
   if (PUBLIC_PATHS.includes(url.pathname)) {

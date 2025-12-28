@@ -1,6 +1,6 @@
 // @ts-check
 /* eslint-env node */
-import { defineConfig, envField } from "astro/config";
+import { defineConfig } from "astro/config";
 
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
@@ -14,47 +14,19 @@ export default defineConfig({
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    define: {
+      /* eslint-disable no-undef */
+      "import.meta.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
+      "import.meta.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
+      "import.meta.env.OPENROUTER_API_KEY": JSON.stringify(process.env.OPENROUTER_API_KEY),
+      "import.meta.env.OPENROUTER_MODEL": JSON.stringify(process.env.OPENROUTER_MODEL),
+      "import.meta.env.PUBLIC_APP_URL": JSON.stringify(process.env.PUBLIC_APP_URL),
+      /* eslint-enable no-undef */
+    },
   },
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
     },
   }),
-  env: {
-    schema: {
-      // Server-side secrets (never exposed to client)
-      // Accessed via astro:env/server
-      SUPABASE_URL: envField.string({
-        context: "server",
-        access: "secret",
-      }),
-      SUPABASE_KEY: envField.string({
-        context: "server",
-        access: "secret",
-      }),
-      OPENROUTER_API_KEY: envField.string({
-        context: "server",
-        access: "secret",
-      }),
-      OPENROUTER_MODEL: envField.string({
-        context: "server",
-        access: "secret",
-      }),
-
-      // Public variables (available on both client and server)
-      // Accessed via astro:env/client on client, astro:env/server on server
-      PUBLIC_APP_URL: envField.string({
-        context: "client",
-        access: "public",
-        optional: true,
-      }),
-      PUBLIC_ENV_NAME: envField.enum({
-        context: "client",
-        access: "public",
-        values: ["local", "integration", "prod"],
-        optional: true,
-        default: "local",
-      }),
-    },
-  },
 });
