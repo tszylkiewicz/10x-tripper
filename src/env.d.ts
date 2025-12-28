@@ -4,6 +4,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./db/database.types.ts";
 
+// Cloudflare environment variables
+interface CloudflareEnv {
+  SUPABASE_URL: string;
+  SUPABASE_KEY: string;
+  OPENROUTER_API_KEY: string;
+  OPENROUTER_MODEL?: string;
+  PUBLIC_APP_URL?: string;
+}
+
 declare global {
   namespace App {
     interface Locals {
@@ -12,14 +21,8 @@ declare global {
         email: string;
         id: string;
       };
-      runtime?: {
-        env?: {
-          SUPABASE_URL?: string;
-          SUPABASE_KEY?: string;
-          OPENROUTER_API_KEY?: string;
-          OPENROUTER_MODEL?: string;
-          PUBLIC_APP_URL?: string;
-        };
+      runtime: {
+        env: CloudflareEnv;
       };
     }
   }
