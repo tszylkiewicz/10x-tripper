@@ -4,30 +4,29 @@ import type { AstroCookies } from "astro";
 
 import type { Database } from "../db/database.types.ts";
 
-// Helper to get env vars with fallback to build-time values
-const getEnvVar = (runtimeValue: string | undefined, buildTimeValue: string, varName: string): string => {
-  const value = runtimeValue || buildTimeValue;
-  if (!value) {
+/**
+ * Type for Supabase client with database types
+ * Used throughout the application for type safety
+ */
+export type SupabaseClient = ReturnType<typeof createClient<Database>>;
+
+/**
+ * Creates a client-side Supabase client for browser usage
+ * Note: In Cloudflare Pages SSR, PUBLIC_ prefixed env vars are available on client
+ * For server-side requests, use createSupabaseServerInstance instead
+ */
+export function createSupabaseClient(): SupabaseClient {
+  const url = import.meta.env.PUBLIC_SUPABASE_URL;
+  const key = import.meta.env.PUBLIC_SUPABASE_KEY;
+
+  if (!url || !key) {
     throw new Error(
-      `${varName} is not set. Please ensure it's configured in Cloudflare Pages environment variables or build-time environment.`
+      "Missing PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_KEY. These must be set as PUBLIC_ prefixed environment variables for client-side usage."
     );
   }
-  return value;
-};
 
-// Default Supabase client for client-side usage (uses build-time env vars)
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
-
-// Validate build-time env vars
-if (!supabaseUrl || !supabaseAnonKey) {
-  // eslint-disable-next-line no-console
-  console.error("Missing Supabase environment variables at build time");
+  return createClient<Database>(url, key);
 }
-
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
-
-export type SupabaseClient = typeof supabaseClient;
 
 // Cookie options for Supabase SSR
 export const cookieOptions: CookieOptionsWithName = {
@@ -49,22 +48,37 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
  * Creates a Supabase server instance with SSR support for authentication
  * Uses @supabase/ssr for proper cookie management in Astro
  *
- * @param context - Object containing headers, cookies, and optional runtime env vars from Astro request
+ * IMPORTANT: In Cloudflare Pages, environment variables must be:
+ * 1. Set in Cloudflare Pages dashboard (Settings → Environment variables)
+ * 2. Passed from context.locals.runtime.env (available in middleware and API routes)
+ *
+ * @param context - Object containing headers, cookies, and runtime env vars from Astro request
  * @returns Supabase server client with auth session support
+ * @throws Error if SUPABASE_URL or SUPABASE_KEY are not provided in env
  */
 export const createSupabaseServerInstance = (context: {
   headers: Headers;
   cookies: AstroCookies;
-  env?: {
-    SUPABASE_URL?: string;
-    SUPABASE_KEY?: string;
+  env: {
+    SUPABASE_URL: string;
+    SUPABASE_KEY: string;
   };
-}) => {
-  // Use runtime env vars if available, fallback to build-time env vars
-  const url = getEnvVar(context.env?.SUPABASE_URL, supabaseUrl, "SUPABASE_URL");
-  const key = getEnvVar(context.env?.SUPABASE_KEY, supabaseAnonKey, "SUPABASE_KEY");
+}): SupabaseClient => {
+  const { SUPABASE_URL, SUPABASE_KEY } = context.env;
 
-  const supabase = createServerClient<Database>(url, key, {
+  // Validate required environment variables
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    const missing = [];
+    if (!SUPABASE_URL) missing.push("SUPABASE_URL");
+    if (!SUPABASE_KEY) missing.push("SUPABASE_KEY");
+
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}. ` +
+        `These must be set in Cloudflare Pages dashboard and passed via context.locals.runtime.env`
+    );
+  }
+
+  const supabase = createServerClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     cookieOptions,
     cookies: {
       getAll() {

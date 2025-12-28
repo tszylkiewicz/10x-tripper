@@ -1,0 +1,19 @@
+name = "10x-tripper"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+# Enable Node.js compatibility for npm packages
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables
+# IMPORTANT: Set actual values in Cloudflare Pages dashboard
+# Settings → Environment variables → Add variable
+# Configure for BOTH Production and Preview environments
+#
+# Required variables:
+# - SUPABASE_URL
+# - SUPABASE_KEY
+# - OPENROUTER_API_KEY
+# - OPENROUTER_MODEL
+# - PUBLIC_APP_URL (your deployed URL, e.g., https://10x-tripper.pages.dev)
+# - PUBLIC_ENV_NAME (e.g., "production" or "preview")
