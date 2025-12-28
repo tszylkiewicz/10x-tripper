@@ -1,7 +1,7 @@
 import type { Mock } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ErrorWithMetadata } from "./aiGeneration.service";
-import { buildMessages, generateTripPlan, messagesToPrompt, MODEL } from "./aiGeneration.service";
+import { buildMessages, generateTripPlan, messagesToPrompt, getModelName } from "./aiGeneration.service";
 import type { GeneratePlanCommand, PlanDetailsDto } from "@/types.ts";
 
 // Mock OpenRouterService
@@ -573,11 +573,23 @@ describe("AI Generation Service", () => {
     });
   });
 
-  describe("MODEL export", () => {
-    it("should export MODEL constant from OpenRouter config", () => {
-      expect(MODEL).toBeDefined();
-      expect(typeof MODEL).toBe("string");
-      expect(MODEL).toBe("openai/o3-mini");
+  describe("getModelName function", () => {
+    it("should return model from runtime env when provided", () => {
+      const runtimeEnv = { OPENROUTER_MODEL: "custom/model" };
+      expect(getModelName(runtimeEnv)).toBe("custom/model");
+    });
+
+    it("should fallback to default when runtime env not provided", () => {
+      const modelName = getModelName();
+      expect(typeof modelName).toBe("string");
+      expect(modelName).toBeTruthy();
+    });
+
+    it("should return default model when runtime env is empty", () => {
+      const runtimeEnv = {};
+      const modelName = getModelName(runtimeEnv);
+      expect(typeof modelName).toBe("string");
+      expect(modelName).toBeTruthy();
     });
   });
 });
