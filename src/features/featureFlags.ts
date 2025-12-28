@@ -23,7 +23,7 @@ function isValidEnvironment(value: string): value is EnvironmentName {
  * @returns The current environment name
  */
 export function getCurrentEnvironment(): EnvironmentName {
-  const envName = import.meta.env.PUBLIC_ENV_NAME;
+  const envName = import.meta.env.PUBLIC_ENV_NAME ?? process.env.PUBLIC_ENV_NAME;
 
   if (envName && isValidEnvironment(envName)) {
     return envName;
