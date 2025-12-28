@@ -14,10 +14,23 @@ export interface ErrorWithMetadata extends Error {
   duration_ms?: number;
 }
 
-// Initialize OpenRouter service
-const openRouterService = new OpenRouterService({
-  // Configuration will be loaded from environment variables
-});
+// Runtime environment variables interface
+export interface RuntimeEnv {
+  OPENROUTER_API_KEY?: string;
+  OPENROUTER_MODEL?: string;
+  PUBLIC_APP_URL?: string;
+}
+
+/**
+ * Creates an OpenRouter service instance with runtime environment variables
+ */
+function createOpenRouterService(runtimeEnv?: RuntimeEnv): OpenRouterService {
+  return new OpenRouterService({
+    apiKey: runtimeEnv?.OPENROUTER_API_KEY,
+    model: runtimeEnv?.OPENROUTER_MODEL,
+    httpReferer: runtimeEnv?.PUBLIC_APP_URL,
+  });
+}
 
 /**
  * Zod schema for trip plan validation
@@ -159,11 +172,17 @@ function getJsonSchema() {
 /**
  * Main function to generate a trip plan using OpenRouter
  */
-export async function generateTripPlan(command: GeneratePlanCommand): Promise<GeneratedTripPlanDto> {
+export async function generateTripPlan(
+  command: GeneratePlanCommand,
+  runtimeEnv?: RuntimeEnv
+): Promise<GeneratedTripPlanDto> {
   const startTime = Date.now();
 
   try {
     const messages = buildMessages(command);
+
+    // Create OpenRouter service with runtime env vars
+    const openRouterService = createOpenRouterService(runtimeEnv);
 
     // Use OpenRouterService with structured output
     const planDetails = await openRouterService.completeStructured<PlanDetailsDto>({
@@ -208,6 +227,8 @@ export function messagesToPrompt(messages: ChatMessage[]): string {
 export { buildMessages };
 
 /**
- * Export model name for logging
+ * Gets the model name from runtime env or falls back to default
  */
-export const MODEL = openRouterService.getConfig().model;
+export function getModelName(runtimeEnv?: RuntimeEnv): string {
+  return runtimeEnv?.OPENROUTER_MODEL || import.meta.env.OPENROUTER_MODEL || "openai/o3-mini";
+}

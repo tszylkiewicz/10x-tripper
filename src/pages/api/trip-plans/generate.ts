@@ -22,7 +22,13 @@ import type {
   GenerateTripPlanRequestDto,
 } from "@/types.ts";
 import { createGeneratePlanCommand, validateGenerateTripPlanRequest } from "@/lib/validators/tripPlans.validator.ts";
-import { buildMessages, generateTripPlan, messagesToPrompt, MODEL } from "@/lib/services/aiGeneration.service.ts";
+import {
+  buildMessages,
+  generateTripPlan,
+  messagesToPrompt,
+  getModelName,
+  type RuntimeEnv,
+} from "@/lib/services/aiGeneration.service.ts";
 import { logGenerationError, logGenerationSuccess } from "@/lib/services/planGenerationLogger.service.ts";
 import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
 import { logger } from "@/lib/utils/logger.ts";
@@ -101,10 +107,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 5. Create command object
     const command = createGeneratePlanCommand(validatedData, userId);
 
+    // 5.5. Get runtime environment variables
+    const runtimeEnv: RuntimeEnv = {
+      OPENROUTER_API_KEY: locals.runtime?.env?.OPENROUTER_API_KEY,
+      OPENROUTER_MODEL: locals.runtime?.env?.OPENROUTER_MODEL,
+      PUBLIC_APP_URL: locals.runtime?.env?.PUBLIC_APP_URL,
+    };
+
     // 6. Generate trip plan using AI
     let generatedPlan: GeneratedTripPlanDto;
     try {
-      generatedPlan = await generateTripPlan(command);
+      generatedPlan = await generateTripPlan(command, runtimeEnv);
     } catch (error: unknown) {
       const duration = Date.now() - startTime;
 
@@ -114,7 +127,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         if (typeof error === "object" && error !== null && "prompt" in error && typeof error.prompt === "string") {
           await logGenerationError(locals.supabase, {
             user_id: userId,
-            model: MODEL,
+            model: getModelName(runtimeEnv),
             prompt: error.prompt,
             duration_ms: duration,
             error_message: "Generation timeout after 180 seconds",
@@ -150,7 +163,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
         await logGenerationError(locals.supabase, {
           user_id: userId,
-          model: MODEL,
+          model: getModelName(runtimeEnv),
           prompt: error.prompt,
           duration_ms: errorDuration,
           error_message: errorMessage,
@@ -179,7 +192,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       generationId = await logGenerationSuccess(locals.supabase, {
         user_id: userId,
-        model: MODEL,
+        model: getModelName(runtimeEnv),
         prompt,
         duration_ms: duration,
       });

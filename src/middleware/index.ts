@@ -19,9 +19,14 @@ const PUBLIC_PATHS = [
 
 export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
   // Create Supabase server instance with cookie support for all requests
+  // Pass runtime env vars from Cloudflare Workers context if available
   const supabase = createSupabaseServerInstance({
     cookies,
     headers: request.headers,
+    env: {
+      SUPABASE_URL: locals.runtime?.env?.SUPABASE_URL,
+      SUPABASE_KEY: locals.runtime?.env?.SUPABASE_KEY,
+    },
   });
 
   // Set Supabase client in locals for use in pages and API routes

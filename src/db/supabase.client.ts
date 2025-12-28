@@ -4,6 +4,12 @@ import type { AstroCookies } from "astro";
 
 import type { Database } from "../db/database.types.ts";
 
+// Helper to get env vars with fallback to build-time values
+const getEnvVar = (runtimeValue: string | undefined, buildTimeValue: string): string => {
+  return runtimeValue || buildTimeValue;
+};
+
+// Default Supabase client for client-side usage (uses build-time env vars)
 const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
 
@@ -31,11 +37,22 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
  * Creates a Supabase server instance with SSR support for authentication
  * Uses @supabase/ssr for proper cookie management in Astro
  *
- * @param context - Object containing headers and cookies from Astro request
+ * @param context - Object containing headers, cookies, and optional runtime env vars from Astro request
  * @returns Supabase server client with auth session support
  */
-export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
-  const supabase = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+export const createSupabaseServerInstance = (context: {
+  headers: Headers;
+  cookies: AstroCookies;
+  env?: {
+    SUPABASE_URL?: string;
+    SUPABASE_KEY?: string;
+  };
+}) => {
+  // Use runtime env vars if available, fallback to build-time env vars
+  const url = getEnvVar(context.env?.SUPABASE_URL, supabaseUrl);
+  const key = getEnvVar(context.env?.SUPABASE_KEY, supabaseAnonKey);
+
+  const supabase = createServerClient<Database>(url, key, {
     cookieOptions,
     cookies: {
       getAll() {

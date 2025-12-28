@@ -16,12 +16,16 @@ export const prerender = false;
  * Error responses:
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     // Create Supabase client
     const supabase = createSupabaseServerInstance({
       cookies,
       headers: request.headers,
+      env: {
+        SUPABASE_URL: locals.runtime?.env?.SUPABASE_URL,
+        SUPABASE_KEY: locals.runtime?.env?.SUPABASE_KEY,
+      },
     });
 
     // Call Supabase signOut (automatically removes cookies)

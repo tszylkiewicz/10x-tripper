@@ -25,7 +25,7 @@ export const prerender = false;
  * - 401: Invalid credentials or email not confirmed
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     // 1. Parse request body
     const body = await request.json();
@@ -33,10 +33,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     // 2. Validate with Zod
     const validatedData = loginSchema.parse(body);
 
-    // 3. Create Supabase client with cookie support
+    // 3. Create Supabase client with cookie support and runtime env vars
     const supabase = createSupabaseServerInstance({
       cookies,
       headers: request.headers,
+      env: {
+        SUPABASE_URL: locals.runtime?.env?.SUPABASE_URL,
+        SUPABASE_KEY: locals.runtime?.env?.SUPABASE_KEY,
+      },
     });
 
     // 4. Call Supabase Auth

@@ -7,7 +7,7 @@ import { logger } from "@/lib/utils/logger";
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     const body = await request.json();
     const validatedData = forgotPasswordSchema.parse(body);
@@ -15,6 +15,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const supabase = createSupabaseServerInstance({
       cookies,
       headers: request.headers,
+      env: {
+        SUPABASE_URL: locals.runtime?.env?.SUPABASE_URL,
+        SUPABASE_KEY: locals.runtime?.env?.SUPABASE_KEY,
+      },
     });
 
     // Send password reset email
