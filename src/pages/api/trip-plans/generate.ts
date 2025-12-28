@@ -14,6 +14,7 @@
  */
 
 import type { APIRoute } from "astro";
+import { getSecret } from "astro:env/server";
 import { ZodError } from "zod";
 import type {
   ApiErrorResponse,
@@ -107,11 +108,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 5. Create command object
     const command = createGeneratePlanCommand(validatedData, userId);
 
-    // 5.5. Get runtime environment variables
+    // 5.5. Get runtime environment variables using astro:env/server
     const runtimeEnv: RuntimeEnv = {
-      OPENROUTER_API_KEY: locals.runtime?.env?.OPENROUTER_API_KEY,
-      OPENROUTER_MODEL: locals.runtime?.env?.OPENROUTER_MODEL,
-      PUBLIC_APP_URL: locals.runtime?.env?.PUBLIC_APP_URL,
+      OPENROUTER_API_KEY: getSecret("OPENROUTER_API_KEY"),
+      OPENROUTER_MODEL: getSecret("OPENROUTER_MODEL"),
+      PUBLIC_APP_URL: getSecret("PUBLIC_APP_URL"),
     };
 
     // 6. Generate trip plan using AI

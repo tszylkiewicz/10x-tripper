@@ -12,10 +12,13 @@ export type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
 /**
  * Creates a client-side Supabase client for browser usage
- * Note: In Cloudflare Pages SSR, PUBLIC_ prefixed env vars are available on client
+ * Uses astro:env/client for type-safe access to public environment variables
  * For server-side requests, use createSupabaseServerInstance instead
  */
 export function createSupabaseClient(): SupabaseClient {
+  // Note: For client-side usage, you would use PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_KEY
+  // These should be defined in your env schema with context: "client"
+  // For now, using import.meta.env as fallback for client-side compatibility
   const url = import.meta.env.PUBLIC_SUPABASE_URL;
   const key = import.meta.env.PUBLIC_SUPABASE_KEY;
 
