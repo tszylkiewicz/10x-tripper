@@ -18,18 +18,14 @@ const PUBLIC_PATHS = [
 ];
 
 export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
-  // Get runtime environment variables from Cloudflare context
-  // In Cloudflare Pages, these are available on locals.runtime.env
-  const runtimeEnv = locals.runtime?.env;
-
   // Create Supabase server instance with cookie support for all requests
   // Pass runtime env vars from Cloudflare Workers context if available
   const supabase = createSupabaseServerInstance({
     cookies,
     headers: request.headers,
     env: {
-      SUPABASE_URL: runtimeEnv?.SUPABASE_URL,
-      SUPABASE_KEY: runtimeEnv?.SUPABASE_KEY,
+      SUPABASE_URL: locals.runtime?.env?.SUPABASE_URL,
+      SUPABASE_KEY: locals.runtime?.env?.SUPABASE_KEY,
     },
   });
 

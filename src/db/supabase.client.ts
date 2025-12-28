@@ -5,25 +5,13 @@ import type { AstroCookies } from "astro";
 import type { Database } from "../db/database.types.ts";
 
 // Helper to get env vars with fallback to build-time values
-const getEnvVar = (runtimeValue: string | undefined, buildTimeValue: string, varName: string): string => {
-  const value = runtimeValue || buildTimeValue;
-  if (!value) {
-    throw new Error(
-      `${varName} is not set. Please ensure it's configured in Cloudflare Pages environment variables or build-time environment.`
-    );
-  }
-  return value;
+const getEnvVar = (runtimeValue: string | undefined, buildTimeValue: string): string => {
+  return runtimeValue || buildTimeValue;
 };
 
 // Default Supabase client for client-side usage (uses build-time env vars)
 const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
-
-// Validate build-time env vars
-if (!supabaseUrl || !supabaseAnonKey) {
-  // eslint-disable-next-line no-console
-  console.error("Missing Supabase environment variables at build time");
-}
 
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
@@ -61,8 +49,8 @@ export const createSupabaseServerInstance = (context: {
   };
 }) => {
   // Use runtime env vars if available, fallback to build-time env vars
-  const url = getEnvVar(context.env?.SUPABASE_URL, supabaseUrl, "SUPABASE_URL");
-  const key = getEnvVar(context.env?.SUPABASE_KEY, supabaseAnonKey, "SUPABASE_KEY");
+  const url = getEnvVar(context.env?.SUPABASE_URL, supabaseUrl);
+  const key = getEnvVar(context.env?.SUPABASE_KEY, supabaseAnonKey);
 
   const supabase = createServerClient<Database>(url, key, {
     cookieOptions,
