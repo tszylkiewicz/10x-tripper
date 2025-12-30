@@ -13,13 +13,13 @@ const supabaseAnonKey = import.meta.env.SUPABASE_KEY ?? process.env.SUPABASE_KEY
 
 try {
   createClient<Database>(supabaseUrl, supabaseAnonKey);
-} catch (e) {
+} catch {
   const test = {
     a,
     b,
     c,
   };
-  throw Error(JSON.stringify(test));
+  throw new Error(JSON.stringify(test));
 }
 
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
