@@ -4,6 +4,10 @@ import type { AstroCookies } from "astro";
 
 import type { Database } from "../db/database.types.ts";
 
+console.log(import.meta.env.SUPABASE_URL ?? process.env.SUPABASE_URL);
+console.log(import.meta.env.OPENROUTER_MODEL ?? process.env.OPENROUTER_MODEL);
+console.log(import.meta.env.PUBLIC_ENV_NAME ?? process.env.PUBLIC_ENV_NAME);
+
 const supabaseUrl = import.meta.env.SUPABASE_URL ?? process.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.SUPABASE_KEY ?? process.env.SUPABASE_KEY;
 
