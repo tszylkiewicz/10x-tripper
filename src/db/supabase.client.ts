@@ -1,19 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
 import { type CookieOptionsWithName, createServerClient } from "@supabase/ssr";
 import type { AstroCookies } from "astro";
 
 import type { Database } from "../db/database.types.ts";
-
-/**
- * Fallback Supabase client for client-side usage only.
- * For server-side/SSR, use createSupabaseServerInstance() with runtime env vars.
- */
-export const supabaseClient = createClient<Database>(
-  import.meta.env.SUPABASE_URL || "",
-  import.meta.env.SUPABASE_KEY || ""
-);
-
-export type SupabaseClient = typeof supabaseClient;
 
 // Cookie options for Supabase SSR
 export const cookieOptions: CookieOptionsWithName = {

@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { loginSchema } from "@/lib/validators/auth.validator";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
 import { logger } from "@/lib/utils/logger";
@@ -25,7 +24,7 @@ export const prerender = false;
  * - 401: Invalid credentials or email not confirmed
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // 1. Parse request body
     const body = await request.json();
@@ -33,11 +32,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     // 2. Validate with Zod
     const validatedData = loginSchema.parse(body);
 
-    // 3. Create Supabase client with cookie support
-    const supabase = createSupabaseServerInstance({
-      cookies,
-      headers: request.headers,
-    });
+    // 3. Use Supabase client from middleware
+    const supabase = locals.supabase;
 
     // 4. Call Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({

@@ -2,12 +2,12 @@ import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UserPreferencesService } from "./userPreferences.service";
 import { ValidationError } from "@/errors/validation.error.ts";
-import type { SupabaseClient } from "@/db/supabase.client.ts";
 import type { CreatePreferenceCommand, DeletePreferenceCommand, UpdatePreferenceCommand } from "@/types.ts";
 
 describe("UserPreferencesService", () => {
   let service: UserPreferencesService;
-  let mockSupabase: SupabaseClient;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockSupabase: any;
 
   beforeEach(() => {
     // Create mock Supabase client with chainable methods
@@ -20,7 +20,7 @@ describe("UserPreferencesService", () => {
       eq: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       single: vi.fn(),
-    } as unknown as SupabaseClient;
+    };
 
     service = new UserPreferencesService(mockSupabase);
   });

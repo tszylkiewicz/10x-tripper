@@ -1,21 +1,17 @@
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import { createSupabaseServerInstance } from "@/db/supabase.client";
 import { resetPasswordSchema } from "@/lib/validators/auth.validator";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
 import { logger } from "@/lib/utils/logger";
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await request.json();
     const validatedData = resetPasswordSchema.parse(body);
 
-    const supabase = createSupabaseServerInstance({
-      cookies,
-      headers: request.headers,
-    });
+    const supabase = locals.supabase;
 
     // Verify user has valid session from reset token
     const {

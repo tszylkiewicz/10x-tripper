@@ -1,10 +1,10 @@
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { calculatePromptHash, logGenerationError, logGenerationSuccess } from "./planGenerationLogger.service";
-import type { SupabaseClient } from "@/db/supabase.client.ts";
 
 describe("PlanGenerationLogger Service", () => {
-  let mockSupabase: SupabaseClient;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockSupabase: any;
 
   beforeEach(() => {
     // Create mock Supabase client with chainable methods
@@ -13,7 +13,7 @@ describe("PlanGenerationLogger Service", () => {
       insert: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       single: vi.fn(),
-    } as unknown as SupabaseClient;
+    };
 
     // Clear logger.error spy
     vi.spyOn(console, "error").mockImplementation(() => undefined);

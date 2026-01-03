@@ -5,7 +5,8 @@
  * Handles business logic, validation, and database interactions for trip plans.
  */
 
-import type { SupabaseClient } from "@/db/supabase.client.ts";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database, Json, Tables } from "@/db/database.types.ts";
 import type {
   AcceptPlanCommand,
   DeleteTripPlanCommand,
@@ -14,13 +15,12 @@ import type {
   TripPlanUpdate,
   UpdatePlanCommand,
 } from "@/types.ts";
-import type { Json, Tables } from "@/db/database.types.ts";
 import { isValidUUID } from "../validators/uuid.validator";
 import { ValidationError } from "@/errors/validation.error.ts";
 import { logger } from "../utils/logger";
 
 export class TripPlanService {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(private supabase: SupabaseClient<Database>) {}
 
   /**
    * Retrieves all active trip plans for a specific user

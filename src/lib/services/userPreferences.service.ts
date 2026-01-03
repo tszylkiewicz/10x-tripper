@@ -5,18 +5,20 @@
  * Handles business logic, validation, and database interactions.
  */
 
-import type { SupabaseClient } from "../../db/supabase.client";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/db/database.types.ts";
 import type {
   CreatePreferenceCommand,
   DeletePreferenceCommand,
   UpdatePreferenceCommand,
   UserPreferenceDto,
-} from "../../types";
-import { ValidationError } from "../../errors/validation.error";
+} from "@/types.ts";
+import { ValidationError } from "@/errors/validation.error.ts";
 import { logger } from "../utils/logger";
 
 export class UserPreferencesService {
-  constructor(private supabase: SupabaseClient) {}
+  constructor(private supabase: SupabaseClient<Database>) {
+  }
 
   /**
    * Retrieves all user preference templates for a specific user

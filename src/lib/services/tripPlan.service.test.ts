@@ -2,12 +2,12 @@ import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TripPlanService } from "./tripPlan.service";
 import { ValidationError } from "@/errors/validation.error.ts";
-import type { SupabaseClient } from "@/db/supabase.client.ts";
 import type { AcceptPlanCommand, DeleteTripPlanCommand, PlanDetailsDto, UpdatePlanCommand } from "@/types.ts";
 
 describe("TripPlanService", () => {
   let service: TripPlanService;
-  let mockSupabase: SupabaseClient;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockSupabase: any;
 
   const mockPlanDetails: PlanDetailsDto = {
     days: [
@@ -553,7 +553,8 @@ describe("TripPlanService", () => {
           people_count: 2,
           budget_type: "medium",
           plan_details: mockPlanDetails,
-          source: "manual" as Mock,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          source: "manual" as any,
         };
 
         await expect(service.acceptPlan(command)).rejects.toThrow(ValidationError);

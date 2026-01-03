@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro";
-import { createSupabaseServerInstance } from "@/db/supabase.client";
 import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
 import { logger } from "@/lib/utils/logger";
 
@@ -16,13 +15,10 @@ export const prerender = false;
  * Error responses:
  * - 500: Internal server error
  */
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ locals }) => {
   try {
-    // Create Supabase client
-    const supabase = createSupabaseServerInstance({
-      cookies,
-      headers: request.headers,
-    });
+    // Use Supabase client from middleware
+    const supabase = locals.supabase;
 
     // Call Supabase signOut (automatically removes cookies)
     const { error } = await supabase.auth.signOut();

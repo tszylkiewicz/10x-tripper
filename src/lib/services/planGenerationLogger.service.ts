@@ -5,7 +5,8 @@
  * Used for analytics, debugging, and tracking AI usage.
  */
 
-import type { SupabaseClient } from "../../db/supabase.client";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
 import type { PlanGenerationInsert, PlanGenerationErrorLogInsert } from "../../types";
 import { logger } from "../utils/logger";
 
@@ -33,7 +34,7 @@ export async function calculatePromptHash(prompt: string): Promise<string> {
  * @throws Error if database insert fails
  */
 export async function logGenerationSuccess(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   params: {
     user_id: string;
     model: string;
@@ -71,7 +72,7 @@ export async function logGenerationSuccess(
  * @throws Does not throw - errors are logged to console only to avoid cascading failures
  */
 export async function logGenerationError(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   params: {
     user_id: string;
     model: string;
