@@ -17,8 +17,7 @@ import { ValidationError } from "@/errors/validation.error.ts";
 import { logger } from "../utils/logger";
 
 export class UserPreferencesService {
-  constructor(private supabase: SupabaseClient<Database>) {
-  }
+  constructor(private supabase: SupabaseClient<Database>) {}
 
   /**
    * Retrieves all user preference templates for a specific user
