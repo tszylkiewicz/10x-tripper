@@ -14,7 +14,7 @@ const supabaseAnonKey = import.meta.env.SUPABASE_KEY ?? process.env.SUPABASE_KEY
 try {
   createClient<Database>(supabaseUrl, supabaseAnonKey);
 } catch {
-  throw new Error(`SUPABASE_URL ${supabaseUrl}, OPENROUTER_MODEL ${b}, PUBLIC_ENV_NAME ${c}`);
+  throw new Error(`SUPABASE_URL ${a}, OPENROUTER_MODEL ${b}, PUBLIC_ENV_NAME ${c}`);
 }
 
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
