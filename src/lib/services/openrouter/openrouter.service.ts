@@ -6,24 +6,24 @@
  */
 
 import type {
-  OpenRouterConfig,
-  RequiredOpenRouterConfig,
   CompletionOptions,
   CompletionResponse,
-  StructuredCompletionOptions,
+  OpenRouterConfig,
   OpenRouterRequestBody,
   OpenRouterResponse,
+  RequiredOpenRouterConfig,
+  StructuredCompletionOptions,
 } from "./openrouter.types";
 
 import {
   OpenRouterAPIError,
-  OpenRouterTimeoutError,
-  OpenRouterParseError,
-  OpenRouterValidationError,
   OpenRouterConfigError,
+  OpenRouterParseError,
+  OpenRouterTimeoutError,
+  OpenRouterValidationError,
 } from "./openrouter.errors";
 
-import { cleanMarkdownCodeBlocks, isRetryableError, calculateRetryDelay, validateConfig } from "./openrouter.utils";
+import { calculateRetryDelay, cleanMarkdownCodeBlocks, isRetryableError, validateConfig } from "./openrouter.utils";
 
 /**
  * Default configuration values
@@ -56,31 +56,24 @@ export class OpenRouterService {
   }
 
   /**
-   * Resolves final configuration from provided config, env vars, and defaults
+   * Resolves final configuration from provided config and defaults.
+   * Environment variables should be passed explicitly via config parameter.
    */
   private resolveConfig(config: OpenRouterConfig): RequiredOpenRouterConfig {
-    const apiKey = config.apiKey || import.meta.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY;
+    const apiKey = config.apiKey;
 
     if (!apiKey) {
-      throw new OpenRouterConfigError(
-        "API key is required. Provide via config.apiKey or OPENROUTER_API_KEY environment variable."
-      );
+      throw new OpenRouterConfigError("API key is required. Provide via config.apiKey parameter.");
     }
 
     return {
       apiKey,
-      model:
-        config.model ||
-        import.meta.env.OPENROUTER_MODEL ||
-        process.env.OPENROUTER_MODEL ||
-        DEFAULT_CONFIG.model ||
-        "anthropic/claude-3-sonnet-20240229",
+      model: config.model || DEFAULT_CONFIG.model || "anthropic/claude-3-sonnet-20240229",
       baseUrl: config.baseUrl || DEFAULT_CONFIG.baseUrl || "https://openrouter.ai/api/v1",
       timeout: config.timeout ?? DEFAULT_CONFIG.timeout ?? 180000,
       maxRetries: config.maxRetries ?? DEFAULT_CONFIG.maxRetries ?? 3,
       retryDelay: config.retryDelay ?? DEFAULT_CONFIG.retryDelay ?? 1000,
-      httpReferer:
-        config.httpReferer || import.meta.env.PUBLIC_APP_URL || process.env.PUBLIC_APP_URL || "http://localhost:4321",
+      httpReferer: config.httpReferer || "http://localhost:4321",
       appTitle: config.appTitle || DEFAULT_CONFIG.appTitle || "Tripper App",
     };
   }

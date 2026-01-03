@@ -14,10 +14,12 @@ export interface ErrorWithMetadata extends Error {
   duration_ms?: number;
 }
 
-// Initialize OpenRouter service
-const openRouterService = new OpenRouterService({
-  // Configuration will be loaded from environment variables
-});
+// Environment variables required for OpenRouter service
+export interface OpenRouterEnv {
+  OPENROUTER_API_KEY: string;
+  OPENROUTER_MODEL?: string;
+  PUBLIC_APP_URL?: string;
+}
 
 /**
  * Zod schema for trip plan validation
@@ -158,11 +160,23 @@ function getJsonSchema() {
 
 /**
  * Main function to generate a trip plan using OpenRouter
+ * @param command - Trip generation parameters
+ * @param env - Environment variables (from runtime.env or import.meta.env)
  */
-export async function generateTripPlan(command: GeneratePlanCommand): Promise<GeneratedTripPlanDto> {
+export async function generateTripPlan(
+  command: GeneratePlanCommand,
+  env: OpenRouterEnv
+): Promise<GeneratedTripPlanDto> {
   const startTime = Date.now();
 
   try {
+    // Create OpenRouter service with runtime env vars
+    const openRouterService = new OpenRouterService({
+      apiKey: env.OPENROUTER_API_KEY,
+      model: env.OPENROUTER_MODEL,
+      httpReferer: env.PUBLIC_APP_URL,
+    });
+
     const messages = buildMessages(command);
 
     // Use OpenRouterService with structured output
@@ -206,8 +220,3 @@ export function messagesToPrompt(messages: ChatMessage[]): string {
  * Export buildMessages for external use (e.g., logging)
  */
 export { buildMessages };
-
-/**
- * Export model name for logging
- */
-export const MODEL = openRouterService.getConfig().model;

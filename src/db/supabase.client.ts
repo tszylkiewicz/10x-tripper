@@ -4,20 +4,14 @@ import type { AstroCookies } from "astro";
 
 import type { Database } from "../db/database.types.ts";
 
-const a = import.meta.env.SUPABASE_URL ?? process.env.SUPABASE_URL;
-const b = import.meta.env.OPENROUTER_MODEL ?? process.env.OPENROUTER_MODEL;
-const c = import.meta.env.PUBLIC_ENV_NAME ?? process.env.PUBLIC_ENV_NAME;
-
-const supabaseUrl = import.meta.env.SUPABASE_URL ?? process.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY ?? process.env.SUPABASE_KEY;
-
-try {
-  createClient<Database>(supabaseUrl, supabaseAnonKey);
-} catch {
-  throw new Error(`SUPABASE_URL ${a}, OPENROUTER_MODEL ${b}, PUBLIC_ENV_NAME ${c}`);
-}
-
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+/**
+ * Fallback Supabase client for client-side usage only.
+ * For server-side/SSR, use createSupabaseServerInstance() with runtime env vars.
+ */
+export const supabaseClient = createClient<Database>(
+  import.meta.env.SUPABASE_URL || "",
+  import.meta.env.SUPABASE_KEY || ""
+);
 
 export type SupabaseClient = typeof supabaseClient;
 
@@ -42,10 +36,14 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
  * Uses @supabase/ssr for proper cookie management in Astro
  *
  * @param context - Object containing headers and cookies from Astro request
+ * @param env - Environment variables (from Astro.locals.runtime?.env or import.meta.env)
  * @returns Supabase server client with auth session support
  */
-export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
-  const supabase = createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+export const createSupabaseServerInstance = (
+  context: { headers: Headers; cookies: AstroCookies },
+  env: { SUPABASE_URL: string; SUPABASE_KEY: string }
+) => {
+  return createServerClient<Database>(env.SUPABASE_URL, env.SUPABASE_KEY, {
     cookieOptions,
     cookies: {
       getAll() {
@@ -56,6 +54,4 @@ export const createSupabaseServerInstance = (context: { headers: Headers; cookie
       },
     },
   });
-
-  return supabase;
 };

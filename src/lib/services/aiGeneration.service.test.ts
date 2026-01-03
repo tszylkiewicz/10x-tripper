@@ -1,8 +1,15 @@
 import type { Mock } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { ErrorWithMetadata } from "./aiGeneration.service";
-import { buildMessages, generateTripPlan, messagesToPrompt, MODEL } from "./aiGeneration.service";
+import type { ErrorWithMetadata, OpenRouterEnv } from "./aiGeneration.service";
+import { buildMessages, generateTripPlan, messagesToPrompt } from "./aiGeneration.service";
 import type { GeneratePlanCommand, PlanDetailsDto } from "@/types.ts";
+
+// Mock environment variables for tests
+const mockEnv: OpenRouterEnv = {
+  OPENROUTER_API_KEY: "test-api-key",
+  OPENROUTER_MODEL: "openai/o3-mini",
+  PUBLIC_APP_URL: "http://localhost:3000",
+};
 
 // Mock OpenRouterService
 vi.mock("./openrouter", () => {
@@ -338,7 +345,7 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(mockPlanDetails);
 
-      const result = await generateTripPlan(command);
+      const result = await generateTripPlan(command, mockEnv);
 
       expect(result.destination).toBe("Paris");
       expect(result.start_date).toBe("2025-06-01");
@@ -364,7 +371,7 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(mockPlanDetails);
 
-      await generateTripPlan(command);
+      await generateTripPlan(command, mockEnv);
 
       expect(mockCompleteStructured).toHaveBeenCalledTimes(1);
       const callArgs = mockCompleteStructured.mock.calls[0][0];
@@ -388,7 +395,7 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(mockPlanDetails);
 
-      await generateTripPlan(command);
+      await generateTripPlan(command, mockEnv);
 
       const callArgs = mockCompleteStructured.mock.calls[0][0];
 
@@ -412,7 +419,7 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(mockPlanDetails);
 
-      await generateTripPlan(command);
+      await generateTripPlan(command, mockEnv);
 
       const callArgs = mockCompleteStructured.mock.calls[0][0];
 
@@ -433,7 +440,7 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(mockPlanDetails);
 
-      await generateTripPlan(command);
+      await generateTripPlan(command, mockEnv);
 
       const callArgs = mockCompleteStructured.mock.calls[0][0];
       const validator = callArgs.validator;
@@ -460,7 +467,7 @@ describe("AI Generation Service", () => {
 
       const startTime = Date.now();
       try {
-        await generateTripPlan(command);
+        await generateTripPlan(command, mockEnv);
         expect.fail("Should have thrown error");
       } catch (error) {
         const endTime = Date.now();
@@ -487,7 +494,7 @@ describe("AI Generation Service", () => {
       mockCompleteStructured.mockRejectedValueOnce(originalError);
 
       try {
-        await generateTripPlan(command);
+        await generateTripPlan(command, mockEnv);
         expect.fail("Should have thrown error");
       } catch (error) {
         expect((error as Error).name).toBe("TimeoutError");
@@ -507,7 +514,7 @@ describe("AI Generation Service", () => {
       mockCompleteStructured.mockRejectedValueOnce("String error");
 
       try {
-        await generateTripPlan(command);
+        await generateTripPlan(command, mockEnv);
         expect.fail("Should have thrown error");
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
@@ -529,7 +536,7 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(mockPlanDetails);
 
-      const result = await generateTripPlan(command);
+      const result = await generateTripPlan(command, mockEnv);
 
       // generation_id is set by the API route after logging
       expect(result.generation_id).toBe("");
@@ -564,20 +571,12 @@ describe("AI Generation Service", () => {
 
       mockCompleteStructured.mockResolvedValueOnce(minimalPlanDetails);
 
-      const result = await generateTripPlan(command);
+      const result = await generateTripPlan(command, mockEnv);
 
       expect(result.plan_details).toEqual(minimalPlanDetails);
       expect(result.plan_details.accommodation).toBeUndefined();
       expect(result.plan_details.total_estimated_cost).toBeUndefined();
       expect(result.plan_details.notes).toBeUndefined();
-    });
-  });
-
-  describe("MODEL export", () => {
-    it("should export MODEL constant from OpenRouter config", () => {
-      expect(MODEL).toBeDefined();
-      expect(typeof MODEL).toBe("string");
-      expect(MODEL).toBe("openai/o3-mini");
     });
   });
 });

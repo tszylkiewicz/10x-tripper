@@ -11,6 +11,10 @@ declare global {
         email: string;
         id: string;
       };
+      // Cloudflare runtime context
+      runtime?: {
+        env: ImportMetaEnv & Record<string, string | undefined>;
+      };
     }
   }
 }

@@ -12,17 +12,19 @@ import { isFeatureEnabled } from "../featureFlags";
  * Use with Astro.redirect() for disabled features.
  *
  * @param flagName - The feature flag to check
+ * @param env - Optional environment object (from Astro.locals.runtime?.env)
  * @returns true if enabled, false if should redirect
  *
  * @example
  * ---
  * import { shouldRenderPage } from '@/features';
  *
- * if (!shouldRenderPage('preferences')) {
+ * const env = Astro.locals.runtime?.env || import.meta.env;
+ * if (!shouldRenderPage('preferences', env)) {
  *   return Astro.redirect('/404');
  * }
  * ---
  */
-export function shouldRenderPage(flagName: FeatureFlagName): boolean {
-  return isFeatureEnabled(flagName);
+export function shouldRenderPage(flagName: FeatureFlagName, env?: { PUBLIC_ENV_NAME?: string }): boolean {
+  return isFeatureEnabled(flagName, env);
 }

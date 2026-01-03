@@ -22,7 +22,7 @@ import type {
   GenerateTripPlanRequestDto,
 } from "@/types.ts";
 import { createGeneratePlanCommand, validateGenerateTripPlanRequest } from "@/lib/validators/tripPlans.validator.ts";
-import { buildMessages, generateTripPlan, messagesToPrompt, MODEL } from "@/lib/services/aiGeneration.service.ts";
+import { buildMessages, generateTripPlan, messagesToPrompt } from "@/lib/services/aiGeneration.service.ts";
 import { logGenerationError, logGenerationSuccess } from "@/lib/services/planGenerationLogger.service.ts";
 import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
 import { logger } from "@/lib/utils/logger.ts";
@@ -98,13 +98,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 4. Get user_id from authenticated session
     const userId = await requireAuth(locals.supabase);
 
-    // 5. Create command object
+    // 5. Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
+    const env = locals.runtime?.env || import.meta.env;
+
+    // 6. Create command object
     const command = createGeneratePlanCommand(validatedData, userId);
 
-    // 6. Generate trip plan using AI
+    // 7. Generate trip plan using AI
     let generatedPlan: GeneratedTripPlanDto;
     try {
-      generatedPlan = await generateTripPlan(command);
+      generatedPlan = await generateTripPlan(command, {
+        OPENROUTER_API_KEY: env.OPENROUTER_API_KEY,
+        OPENROUTER_MODEL: env.OPENROUTER_MODEL,
+        PUBLIC_APP_URL: env.PUBLIC_APP_URL,
+      });
     } catch (error: unknown) {
       const duration = Date.now() - startTime;
 
@@ -114,7 +121,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         if (typeof error === "object" && error !== null && "prompt" in error && typeof error.prompt === "string") {
           await logGenerationError(locals.supabase, {
             user_id: userId,
-            model: MODEL,
+            model: env.OPENROUTER_MODEL || "openai/o3-mini",
             prompt: error.prompt,
             duration_ms: duration,
             error_message: "Generation timeout after 180 seconds",
@@ -150,7 +157,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
         await logGenerationError(locals.supabase, {
           user_id: userId,
-          model: MODEL,
+          model: env.OPENROUTER_MODEL || "openai/o3-mini",
           prompt: error.prompt,
           duration_ms: errorDuration,
           error_message: errorMessage,
@@ -170,7 +177,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    // 7. Log success to plan_generations table and get database ID
+    // 8. Log success to plan_generations table and get database ID
     const duration = Date.now() - startTime;
     const messages = buildMessages(command);
     const prompt = messagesToPrompt(messages);
@@ -179,7 +186,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     try {
       generationId = await logGenerationSuccess(locals.supabase, {
         user_id: userId,
-        model: MODEL,
+        model: env.OPENROUTER_MODEL || "openai/o3-mini",
         prompt,
         duration_ms: duration,
       });
