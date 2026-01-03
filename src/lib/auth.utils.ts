@@ -10,24 +10,28 @@ import type { ApiErrorResponse } from "@/types";
 import { AuthenticationError } from "@/errors/auth.error";
 
 /**
- * Verifies that a valid session exists and returns the user ID
- * Throws AuthenticationError if session is missing or invalid
+ * Verifies that a valid user exists and returns the user ID
+ * Throws AuthenticationError if user is missing or invalid
+ *
+ * Uses getUser() instead of getSession() for security.
+ * getUser() authenticates the data by contacting the Supabase Auth server,
+ * while getSession() only reads from cookies which could be tampered with.
  *
  * @param supabase - Supabase client instance
- * @returns User ID from the authenticated session
- * @throws AuthenticationError if no valid session exists
+ * @returns User ID from the authenticated user
+ * @throws AuthenticationError if no valid user exists
  */
 export async function requireAuth(supabase: SupabaseClient<Database>): Promise<string> {
   const {
-    data: { session },
+    data: { user },
     error,
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
 
-  if (error || !session) {
+  if (error || !user) {
     throw new AuthenticationError();
   }
 
-  return session.user.id;
+  return user.id;
 }
 
 /**

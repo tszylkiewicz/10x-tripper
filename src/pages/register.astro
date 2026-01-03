@@ -3,11 +3,12 @@ import Layout from "@/layouts/Layout.astro";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 // Server-side logic: Check if user is already logged in
+// Use getUser() instead of getSession() for security
 const {
-  data: { session },
-} = await Astro.locals.supabase.auth.getSession();
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
 
-if (session) {
+if (user) {
   return Astro.redirect("/");
 }
 
