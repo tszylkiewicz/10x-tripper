@@ -141,6 +141,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       name: validatedData.name,
       people_count: validatedData.people_count ?? null,
       budget_type: validatedData.budget_type ?? null,
+      transport: validatedData.transport ?? null,
+      activities_todo: validatedData.activities_todo ?? null,
+      activities_avoid: validatedData.activities_avoid ?? null,
     };
 
     // 5. Call service to create preference
