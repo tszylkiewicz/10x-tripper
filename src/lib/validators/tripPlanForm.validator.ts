@@ -21,9 +21,9 @@ const isNotPastDate = (dateString: string): boolean => {
  * Schema for user preferences (optional fields)
  */
 const preferencesSchema = z.object({
-  transport: z.string().optional(),
-  todo: z.string().optional(),
-  avoid: z.string().optional(),
+  transport: z.array(z.string()).optional(),
+  todo: z.array(z.string()).optional(),
+  avoid: z.array(z.string()).optional(),
 });
 
 /**
@@ -99,9 +99,9 @@ export const defaultTripPlanFormValues: Partial<TripPlanFormSchema> = {
   people_count: 1,
   budget_type: undefined,
   preferences: {
-    transport: "",
-    todo: "",
-    avoid: "",
+    transport: [],
+    todo: [],
+    avoid: [],
   },
 };
 

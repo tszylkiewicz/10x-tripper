@@ -5,6 +5,18 @@
  */
 
 import { z } from "zod";
+import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS, isCustomOption } from "../constants/preferences.constants";
+
+const transportIds = TRANSPORT_OPTIONS.map((o) => o.id);
+const activityIds = ACTIVITY_OPTIONS.map((o) => o.id);
+
+/**
+ * Validator that accepts predefined IDs or custom: prefixed values
+ */
+const optionValueSchema = (predefinedIds: string[]) =>
+  z.string().refine((val) => predefinedIds.includes(val) || isCustomOption(val), {
+    message: "Nieprawidłowa wartość opcji",
+  });
 
 /**
  * Schema for creating a user preference
@@ -35,6 +47,10 @@ export const createUserPreferenceSchema = z.object({
     })
     .optional()
     .nullable(),
+
+  transport: z.array(optionValueSchema(transportIds)).nullable().optional(),
+  activities_todo: z.array(optionValueSchema(activityIds)).nullable().optional(),
+  activities_avoid: z.array(optionValueSchema(activityIds)).nullable().optional(),
 });
 
 export type CreateUserPreferenceInput = z.infer<typeof createUserPreferenceSchema>;
@@ -71,6 +87,10 @@ export const updateUserPreferenceSchema = z
       })
       .optional()
       .nullable(),
+
+    transport: z.array(optionValueSchema(transportIds)).nullable().optional(),
+    activities_todo: z.array(optionValueSchema(activityIds)).nullable().optional(),
+    activities_avoid: z.array(optionValueSchema(activityIds)).nullable().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",

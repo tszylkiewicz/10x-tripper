@@ -57,7 +57,6 @@ export function usePlanEditor(initialPlan: GeneratedTripPlanDto | null): UsePlan
 
       const { plan_details } = prev;
       let updatedDays = [...plan_details.days];
-      let updatedAccommodation = plan_details.accommodation;
 
       switch (action.type) {
         case "UPDATE_DAY": {
@@ -109,16 +108,6 @@ export function usePlanEditor(initialPlan: GeneratedTripPlanDto | null): UsePlan
           break;
         }
 
-        case "UPDATE_ACCOMMODATION": {
-          updatedAccommodation = action.accommodation;
-          break;
-        }
-
-        case "REMOVE_ACCOMMODATION": {
-          updatedAccommodation = undefined;
-          break;
-        }
-
         default:
           return prev;
       }
@@ -128,7 +117,6 @@ export function usePlanEditor(initialPlan: GeneratedTripPlanDto | null): UsePlan
         plan_details: {
           ...plan_details,
           days: updatedDays,
-          accommodation: updatedAccommodation,
         },
         isEdited: true,
       };

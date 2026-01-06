@@ -22,6 +22,9 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
     name: initialData?.name || "",
     people_count: initialData?.people_count?.toString() || "",
     budget_type: initialData?.budget_type || "",
+    transport: initialData?.transport || [],
+    activities_todo: initialData?.activities_todo || [],
+    activities_avoid: initialData?.activities_avoid || [],
   });
 
   const [errors, setErrors] = useState<PreferenceFormErrors>({});
@@ -29,6 +32,9 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
     name: false,
     people_count: false,
     budget_type: false,
+    transport: false,
+    activities_todo: false,
+    activities_avoid: false,
   });
 
   // Resetuj formularz gdy zmieni się initialData (np. przy przełączaniu między create/edit)
@@ -37,12 +43,18 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
       name: initialData?.name || "",
       people_count: initialData?.people_count?.toString() || "",
       budget_type: initialData?.budget_type || "",
+      transport: initialData?.transport || [],
+      activities_todo: initialData?.activities_todo || [],
+      activities_avoid: initialData?.activities_avoid || [],
     });
     setErrors({});
     setTouched({
       name: false,
       people_count: false,
       budget_type: false,
+      transport: false,
+      activities_todo: false,
+      activities_avoid: false,
     });
   }, [initialData, mode]);
 
@@ -82,6 +94,12 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
         // Pole select z predefiniowanymi opcjami, brak walidacji
         return undefined;
 
+      case "transport":
+      case "activities_todo":
+      case "activities_avoid":
+        // Array fields - no validation needed (optional multi-select)
+        return undefined;
+
       default:
         return undefined;
     }
@@ -96,6 +114,9 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
       name: validateField("name", formData.name),
       people_count: validateField("people_count", formData.people_count),
       budget_type: validateField("budget_type", formData.budget_type),
+      transport: validateField("transport", ""),
+      activities_todo: validateField("activities_todo", ""),
+      activities_avoid: validateField("activities_avoid", ""),
     };
 
     setErrors(newErrors);
@@ -107,11 +128,11 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
   /**
    * Obsługa zmiany wartości pola
    */
-  const handleChange = (name: keyof PreferenceFormViewModel, value: string) => {
+  const handleChange = (name: keyof PreferenceFormViewModel, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Walidacja on-the-fly dla pola które zostało już touched
-    if (touched[name]) {
+    // Walidacja on-the-fly dla pola które zostało już touched (tylko dla string fields)
+    if (touched[name] && typeof value === "string") {
       const error = validateField(name, value);
       setErrors((prev) => ({ ...prev, [name]: error }));
     }
@@ -135,12 +156,18 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
       name: initialData?.name || "",
       people_count: initialData?.people_count?.toString() || "",
       budget_type: initialData?.budget_type || "",
+      transport: initialData?.transport || [],
+      activities_todo: initialData?.activities_todo || [],
+      activities_avoid: initialData?.activities_avoid || [],
     });
     setErrors({});
     setTouched({
       name: false,
       people_count: false,
       budget_type: false,
+      transport: false,
+      activities_todo: false,
+      activities_avoid: false,
     });
   };
 
@@ -166,6 +193,15 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
     } else {
       dto.budget_type = null;
     }
+
+    // transport - użyj tablicy lub null jeśli pusta
+    dto.transport = formData.transport.length > 0 ? formData.transport : null;
+
+    // activities_todo - użyj tablicy lub null jeśli pusta
+    dto.activities_todo = formData.activities_todo.length > 0 ? formData.activities_todo : null;
+
+    // activities_avoid - użyj tablicy lub null jeśli pusta
+    dto.activities_avoid = formData.activities_avoid.length > 0 ? formData.activities_avoid : null;
 
     return dto;
   };

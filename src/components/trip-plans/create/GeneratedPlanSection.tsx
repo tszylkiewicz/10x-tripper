@@ -19,8 +19,7 @@ import {
 import { PlanHeader } from "./PlanHeader";
 import { PlanActions } from "./PlanActions";
 import { DayCard } from "../shared/DayCard";
-import { AccommodationCard } from "../shared/AccommodationCard";
-import type { DayDto, AccommodationDto } from "../../../types";
+import type { DayDto } from "../../../types";
 import type { GeneratedPlanSectionProps, EditableGeneratedPlan } from "./types";
 
 /**
@@ -77,22 +76,6 @@ export function GeneratedPlanSection({
     [plan, onPlanChange]
   );
 
-  // Handler for accommodation update
-  const handleAccommodationUpdate = useCallback(
-    (updatedAccommodation: AccommodationDto) => {
-      const updatedPlan: EditableGeneratedPlan = {
-        ...plan,
-        plan_details: {
-          ...plan.plan_details,
-          accommodation: updatedAccommodation,
-        },
-        isEdited: true,
-      };
-      onPlanChange(updatedPlan);
-    },
-    [plan, onPlanChange]
-  );
-
   // Handler for regenerate click
   const handleRegenerateClick = useCallback(() => {
     if (plan.isEdited) {
@@ -123,11 +106,6 @@ export function GeneratedPlanSection({
         peopleCount={plan.people_count}
         budgetType={plan.budget_type}
       />
-
-      {/* Accommodation card (if exists) */}
-      {plan.plan_details.accommodation && (
-        <AccommodationCard accommodation={plan.plan_details.accommodation} onUpdate={handleAccommodationUpdate} />
-      )}
 
       {/* Days list */}
       <div className="space-y-4">

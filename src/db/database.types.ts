@@ -62,7 +62,6 @@ export interface Database {
           duration_ms: number;
           id: string;
           model: string;
-          plan_id: string | null;
           source_text_hash: string;
           source_text_length: number;
           user_id: string;
@@ -72,7 +71,6 @@ export interface Database {
           duration_ms: number;
           id?: string;
           model: string;
-          plan_id?: string | null;
           source_text_hash: string;
           source_text_length: number;
           user_id: string;
@@ -82,20 +80,11 @@ export interface Database {
           duration_ms?: number;
           id?: string;
           model?: string;
-          plan_id?: string | null;
           source_text_hash?: string;
           source_text_length?: number;
           user_id?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "plan_generations_plan_id_fkey";
-            columns: ["plan_id"];
-            isOneToOne: false;
-            referencedRelation: "trip_plans";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
       };
       trip_plans: {
         Row: {
@@ -105,6 +94,7 @@ export interface Database {
           deleted_by: string | null;
           destination: string;
           end_date: string;
+          generation_id: string | null;
           id: string;
           people_count: number;
           plan_details: Json;
@@ -120,6 +110,7 @@ export interface Database {
           deleted_by?: string | null;
           destination: string;
           end_date: string;
+          generation_id?: string | null;
           id?: string;
           people_count: number;
           plan_details: Json;
@@ -135,6 +126,7 @@ export interface Database {
           deleted_by?: string | null;
           destination?: string;
           end_date?: string;
+          generation_id?: string | null;
           id?: string;
           people_count?: number;
           plan_details?: Json;
@@ -143,33 +135,50 @@ export interface Database {
           updated_at?: string;
           user_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "trip_plans_generation_id_fkey";
+            columns: ["generation_id"];
+            isOneToOne: false;
+            referencedRelation: "plan_generations";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       user_preferences: {
         Row: {
+          activities_avoid: string[] | null;
+          activities_todo: string[] | null;
           budget_type: string | null;
           created_at: string;
           id: string;
           name: string;
           people_count: number | null;
+          transport: string[] | null;
           updated_at: string;
           user_id: string;
         };
         Insert: {
+          activities_avoid?: string[] | null;
+          activities_todo?: string[] | null;
           budget_type?: string | null;
           created_at?: string;
           id?: string;
           name: string;
           people_count?: number | null;
+          transport?: string[] | null;
           updated_at?: string;
           user_id: string;
         };
         Update: {
+          activities_avoid?: string[] | null;
+          activities_todo?: string[] | null;
           budget_type?: string | null;
           created_at?: string;
           id?: string;
           name?: string;
           people_count?: number | null;
+          transport?: string[] | null;
           updated_at?: string;
           user_id?: string;
         };

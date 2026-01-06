@@ -18,8 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
 import { usePreferenceForm } from "../hooks/usePreferenceForm";
 import { BUDGET_TYPE_OPTIONS } from "../types";
+import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS } from "@/lib/constants/preferences.constants";
 import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "../../types";
 
 interface PreferenceFormDialogProps {
@@ -150,6 +152,45 @@ export function PreferenceFormDialog({
                   ))}
                 </SelectContent>
               </Select>
+              <p className="text-sm text-muted-foreground">Opcjonalne</p>
+            </div>
+
+            {/* Pole: Transport */}
+            <div className="space-y-2">
+              <MultiSelectWithCustom
+                label="Transport"
+                options={TRANSPORT_OPTIONS}
+                selectedValues={formData.transport}
+                onSelectionChange={(values) => handleChange("transport", values)}
+                customInputPlaceholder="Dodaj własny środek transportu..."
+                disabled={isSubmitting}
+              />
+              <p className="text-sm text-muted-foreground">Opcjonalne</p>
+            </div>
+
+            {/* Pole: Co robić */}
+            <div className="space-y-2">
+              <MultiSelectWithCustom
+                label="Co robić"
+                options={ACTIVITY_OPTIONS}
+                selectedValues={formData.activities_todo}
+                onSelectionChange={(values) => handleChange("activities_todo", values)}
+                customInputPlaceholder="Dodaj własną aktywność..."
+                disabled={isSubmitting}
+              />
+              <p className="text-sm text-muted-foreground">Opcjonalne</p>
+            </div>
+
+            {/* Pole: Czego unikać */}
+            <div className="space-y-2">
+              <MultiSelectWithCustom
+                label="Czego unikać"
+                options={ACTIVITY_OPTIONS}
+                selectedValues={formData.activities_avoid}
+                onSelectionChange={(values) => handleChange("activities_avoid", values)}
+                customInputPlaceholder="Dodaj aktywność do unikania..."
+                disabled={isSubmitting}
+              />
               <p className="text-sm text-muted-foreground">Opcjonalne</p>
             </div>
           </div>

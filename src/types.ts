@@ -53,7 +53,6 @@ export interface AccommodationDto {
  */
 export interface PlanDetailsDto {
   days: DayDto[];
-  accommodation?: AccommodationDto;
   notes?: string;
   total_estimated_cost?: number;
   accepted_at?: string;
@@ -71,7 +70,10 @@ export interface PlanDetailsDto {
  * Explicitly picks only the fields that should be exposed via API.
  * This ensures new database fields won't automatically leak into the API response.
  */
-export type UserPreferenceDto = Pick<Tables<"user_preferences">, "id" | "name" | "people_count" | "budget_type">;
+export type UserPreferenceDto = Pick<
+  Tables<"user_preferences">,
+  "id" | "name" | "people_count" | "budget_type" | "transport" | "activities_todo" | "activities_avoid"
+>;
 
 /**
  * Create User Preference request Dto
@@ -82,6 +84,9 @@ export interface CreateUserPreferenceDto {
   name: string;
   people_count?: number | null;
   budget_type?: string | null;
+  transport?: string[] | null;
+  activities_todo?: string[] | null;
+  activities_avoid?: string[] | null;
 }
 
 /**
@@ -93,6 +98,9 @@ export interface UpdateUserPreferenceDto {
   name?: string;
   people_count?: number | null;
   budget_type?: string | null;
+  transport?: string[] | null;
+  activities_todo?: string[] | null;
+  activities_avoid?: string[] | null;
 }
 
 // =============================================================================
@@ -120,10 +128,9 @@ export type TripPlanDto = Pick<
  * Used in: POST /api/trip-plans/generate request body
  */
 export interface TripPlanNotesDto {
-  transport?: string;
-  todo?: string;
-  avoid?: string;
-  [key: string]: string | undefined;
+  transport?: string[] | null;
+  todo?: string[] | null;
+  avoid?: string[] | null;
 }
 
 /**
@@ -274,6 +281,9 @@ export interface CreatePreferenceCommand {
   name: string;
   people_count?: number | null;
   budget_type?: string | null;
+  transport?: string[] | null;
+  activities_todo?: string[] | null;
+  activities_avoid?: string[] | null;
   user_id: string;
 }
 
@@ -290,6 +300,9 @@ export interface UpdatePreferenceCommand {
   name?: string;
   people_count?: number | null;
   budget_type?: string | null;
+  transport?: string[] | null;
+  activities_todo?: string[] | null;
+  activities_avoid?: string[] | null;
   user_id: string;
 }
 

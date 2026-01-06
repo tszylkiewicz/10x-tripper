@@ -8,6 +8,7 @@ import type { GeneratedTripPlanDto, GeneratePlanCommand, PlanDetailsDto } from "
 import type { ChatMessage } from "./openrouter";
 import { OpenRouterService } from "./openrouter";
 import { z } from "zod";
+import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS, optionsToPromptText } from "../constants/preferences.constants";
 
 // Custom error type with metadata
 export interface ErrorWithMetadata extends Error {
@@ -40,18 +41,8 @@ const DaySchema = z.object({
   activities: z.array(ActivitySchema),
 });
 
-const AccommodationSchema = z.object({
-  name: z.string(),
-  address: z.string(),
-  check_in: z.string(),
-  check_out: z.string(),
-  estimated_cost: z.number().optional(),
-  booking_url: z.string().optional(),
-});
-
 const PlanDetailsSchema = z.object({
   days: z.array(DaySchema),
-  accommodation: AccommodationSchema.optional(),
   total_estimated_cost: z.number().optional(),
   notes: z.string().optional(),
 });
@@ -77,16 +68,15 @@ Budget Type: ${budget_type}
 
   if (notes) {
     userPrompt += `\nUser Preferences:`;
-    if (notes.transport) userPrompt += `\n- Transport: ${notes.transport}`;
-    if (notes.todo) userPrompt += `\n- Things to do: ${notes.todo}`;
-    if (notes.avoid) userPrompt += `\n- Things to avoid: ${notes.avoid}`;
-
-    // Other dynamic preferences
-    Object.entries(notes).forEach(([key, value]) => {
-      if (key !== "transport" && key !== "todo" && key !== "avoid" && value) {
-        userPrompt += `\n- ${key}: ${value}`;
-      }
-    });
+    if (notes.transport && notes.transport.length > 0) {
+      userPrompt += `\n- Transport: ${optionsToPromptText(notes.transport, TRANSPORT_OPTIONS)}`;
+    }
+    if (notes.todo && notes.todo.length > 0) {
+      userPrompt += `\n- Things to do: ${optionsToPromptText(notes.todo, ACTIVITY_OPTIONS)}`;
+    }
+    if (notes.avoid && notes.avoid.length > 0) {
+      userPrompt += `\n- Things to avoid: ${optionsToPromptText(notes.avoid, ACTIVITY_OPTIONS)}`;
+    }
   }
 
   return [
@@ -138,21 +128,10 @@ function getJsonSchema() {
             additionalProperties: false,
           },
         },
-        accommodation: {
-          type: "object" as const,
-          properties: {
-            name: { type: "string" as const },
-            address: { type: "string" as const },
-            check_in: { type: "string" as const },
-            check_out: { type: "string" as const },
-          },
-          required: ["name", "address", "check_in", "check_out"],
-          additionalProperties: false,
-        },
         total_estimated_cost: { type: "number" as const },
         notes: { type: "string" as const },
       },
-      required: ["days", "accommodation", "total_estimated_cost", "notes"],
+      required: ["days", "total_estimated_cost", "notes"],
       additionalProperties: false,
     },
   };

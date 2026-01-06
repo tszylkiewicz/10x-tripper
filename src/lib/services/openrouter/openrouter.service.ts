@@ -103,7 +103,7 @@ export class OpenRouterService {
     return {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.config.apiKey}`,
-      // "HTTP-Referer": this.config.httpReferer,
+      "HTTP-Referer": this.config.httpReferer,
       "X-Title": this.config.appTitle,
     };
   }

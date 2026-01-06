@@ -2,7 +2,7 @@
 
 ## 1. Przegląd produktu
 
-Tripper to webowa aplikacja wspierająca planowanie wycieczek. Dzięki generatywnej sztucznej inteligencji konwertuje uproszczone notatki użytkownika w szczegółowe, wielodniowe plany podróży wraz z rekomendacjami noclegów. MVP koncentruje się na:
+Tripper to webowa aplikacja wspierająca planowanie wycieczek. Dzięki generatywnej sztucznej inteligencji konwertuje uproszczone notatki użytkownika w szczegółowe, wielodniowe plany podróży. MVP koncentruje się na:
 
 - prostym zarządzaniu kontem i preferencjami użytkownika,
 - tworzeniu i przechowywaniu planów przyszłych wyjazdów,
@@ -24,11 +24,26 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
    - Logowanie (e-mail + hasło)
    - Resetowanie zapomnianego hasła
    - Sesje i zabezpieczenie endpointów API
-2. Profil użytkownika
-   - Dodawanie, edycja, usuwanie szablonów preferencji (ogólne dane — brak informacji wrażliwych)
-   - Możliwość zapisania preferencji podczas tworzenia pierwszego planu (wymaga potwierdzenia)
+2. Profil użytkownika (szablony preferencji)
+   - Dodawanie, edycja, usuwanie szablonów preferencji
+   - Każdy szablon zawiera:
+     - Nazwę szablonu (wymagana, unikalna per użytkownik)
+     - Liczbę osób (opcjonalna)
+     - Typ budżetu (opcjonalny): niski, średni, wysoki
+     - Środki transportu (opcjonalne): wielokrotny wybór z predefiniowanej listy + własny tekst
+     - Preferowane aktywności "Co robić" (opcjonalne): wielokrotny wybór z predefiniowanej listy + własny tekst
+     - Aktywności do unikania "Czego unikać" (opcjonalne): wielokrotny wybór z predefiniowanej listy + własny tekst
+   - Możliwość zapisania danych z formularza generowania jako nowy szablon preferencji
 3. Generowanie planu przy użyciu AI
-   - Formularz z polami: cel podróży, daty, liczba osób, transport, budżet, „Co robić", „Czego unikać"
+   - Formularz z polami:
+     - Cel podróży (wymagany)
+     - Daty rozpoczęcia i zakończenia (wymagane)
+     - Liczba osób (wymagana)
+     - Typ budżetu (wymagany): niski, średni, wysoki
+     - Transport (opcjonalny): wielokrotny wybór z predefiniowanej listy + możliwość dodania własnego tekstu
+     - "Co robić" (opcjonalne): wielokrotny wybór z predefiniowanej listy + możliwość dodania własnego tekstu
+     - "Czego unikać" (opcjonalne): wielokrotny wybór z predefiniowanej listy + możliwość dodania własnego tekstu
+   - Możliwość załadowania zapisanego szablonu preferencji do formularza
    - Jedno kliknięcie „Generuj plan"
    - Czas odpowiedzi ≤ 180 s; w razie niepowodzenia wyświetlany jest komunikat błędu
    - Nieograniczona liczba ponownych prób (manualnie inicjowanych)
@@ -65,8 +80,43 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Brak współdzielenia planów między użytkownikami
 - Brak zaawansowanej analizy multimediów oraz map
 - Brak systemu ocen planu na etapie MVP
+- Brak rekomendacji zakwaterowania w MVP (funkcja planowana na przyszłe wersje)
 
-## 5. Historyjki użytkowników
+## 5. Predefiniowane opcje
+
+### 5.1 Środki transportu
+
+Lista predefiniowanych opcji transportu (multi-select):
+
+- Samolot
+- Pociąg
+- Autobus dalekobieżny
+- Wypożyczony samochód
+- Własny samochód
+- Transport publiczny (metro, tramwaj, autobus miejski)
+- Piesze spacery
+- Rower / hulajnoga
+- Taksówki / Uber
+
+### 5.2 Aktywności (dla "Co robić" i "Czego unikać")
+
+Lista predefiniowanych kategorii aktywności (multi-select):
+
+- Zwiedzanie muzeów
+- Zabytki i architektura
+- Lokalna kuchnia / restauracje
+- Zakupy
+- Piesze wycieczki / trekking
+- Sporty wodne
+- Plaża / wypoczynek
+- Życie nocne / kluby
+- Parki i natura
+- Atrakcje dla dzieci
+- Punkty widokowe (must-see)
+- Festiwale i wydarzenia lokalne
+- Spa i wellness
+
+## 6. Historyjki użytkowników
 
 ### US-001
 
@@ -95,11 +145,16 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 ### US-003
 
 - ID: US-003
-- Tytuł: Edycja profilu
-- Opis: Jako zalogowany użytkownik chcę zarządzać szablonami preferencji, aby szybciej tworzyć podobne plany.
+- Tytuł: Zarządzanie szablonami preferencji
+- Opis: Jako zalogowany użytkownik chcę zarządzać szablonami preferencji zawierającymi moje typowe ustawienia podróży, aby szybciej wypełniać formularz generowania planu.
 - Kryteria akceptacji:
-  1. Użytkownik może dodawać, edytować, usuwać szablony preferencji.
-  2. Zmiany zapisują się w profilu.
+  1. Użytkownik może dodawać nowe szablony preferencji z pełnym zestawem pól (nazwa, liczba osób, budżet, transport, co robić, czego unikać).
+  2. Pola transport, "co robić" i "czego unikać" umożliwiają wielokrotny wybór z predefiniowanej listy opcji.
+  3. Użytkownik może dodać własny tekst do każdego z pól preferencji oprócz wyboru z listy.
+  4. Użytkownik może edytować istniejące szablony.
+  5. Użytkownik może usuwać szablony.
+  6. Nazwa szablonu musi być unikalna dla danego użytkownika.
+  7. Zmiany zapisują się w profilu natychmiast po potwierdzeniu.
 
 ### US-004
 
@@ -108,10 +163,11 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Opis: Jako zalogowany użytkownik chcę wygenerować plan wycieczki na podstawie moich preferencji przy użyciu AI.
 - Kryteria akceptacji:
   1. Formularz wymusza wypełnienie pól obowiązkowych (cel, daty, liczba osób, budżet).
-  2. Kliknięcie „Generuj plan" rozpoczyna proces generowania.
-  3. Wyświetla się wskaźnik postępu podczas generowania.
-  4. Plan pojawia się w ≤ 180 s lub komunikat błędu.
-  5. Wygenerowany plan jest wyświetlany w interfejsie, ale NIE jest jeszcze zapisany w bazie.
+  2. Pola transport, "co robić" i "czego unikać" umożliwiają wielokrotny wybór z predefiniowanej listy opcji oraz dodanie własnego tekstu.
+  3. Kliknięcie „Generuj plan" rozpoczyna proces generowania.
+  4. Wyświetla się wskaźnik postępu podczas generowania.
+  5. Plan pojawia się w ≤ 180 s lub komunikat błędu.
+  6. Wygenerowany plan jest wyświetlany w interfejsie, ale NIE jest jeszcze zapisany w bazie.
 
 ### US-005
 
@@ -192,7 +248,45 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
   7. Po sukcesie użytkownik jest przekierowywany na stronę logowania z komunikatem o zmianie hasła.
   8. Link resetujący wygasa po 24 godzinach.
 
-## 6. Metryki sukcesu
+### US-012
+
+- ID: US-012
+- Tytuł: Ładowanie szablonu preferencji do formularza generowania
+- Opis: Jako użytkownik chcę załadować zapisany szablon preferencji do formularza generowania planu, aby nie wprowadzać tych samych danych wielokrotnie.
+- Kryteria akceptacji:
+  1. W formularzu generowania planu dostępna jest opcja "Załaduj z preferencji".
+  2. Użytkownik może wybrać szablon z listy swoich zapisanych preferencji.
+  3. Po wybraniu szablonu, odpowiednie pola formularza wypełniają się automatycznie (liczba osób, budżet, transport, co robić, czego unikać).
+  4. Użytkownik może modyfikować załadowane wartości przed generowaniem.
+  5. Pola obowiązkowe (cel, daty) pozostają do ręcznego wypełnienia.
+
+### US-013
+
+- ID: US-013
+- Tytuł: Zapisywanie preferencji z formularza generowania
+- Opis: Jako użytkownik chcę zapisać dane wprowadzone w formularzu generowania jako nowy szablon preferencji, aby móc je wykorzystać w przyszłości.
+- Kryteria akceptacji:
+  1. Po wypełnieniu formularza generowania (przed lub po wygenerowaniu planu) użytkownik może kliknąć "Zapisz jako preferencję".
+  2. System wyświetla dialog z prośbą o podanie nazwy dla nowego szablonu.
+  3. Zapisywane są: liczba osób, budżet, transport, co robić, czego unikać.
+  4. Nie są zapisywane: cel podróży, daty (te są specyficzne dla konkretnej podróży).
+  5. Po zapisaniu użytkownik otrzymuje potwierdzenie.
+  6. Nowy szablon pojawia się na liście preferencji użytkownika.
+
+### US-014
+
+- ID: US-014
+- Tytuł: Wybór predefiniowanych opcji w formularzu
+- Opis: Jako użytkownik chcę szybko wybrać opcje transportu i aktywności z gotowej listy zamiast wpisywać je ręcznie.
+- Kryteria akceptacji:
+  1. Pola "Transport", "Co robić" i "Czego unikać" wyświetlają listę predefiniowanych opcji jako checkboxy/multi-select.
+  2. Użytkownik może zaznaczyć dowolną liczbę opcji z listy.
+  3. Oprócz predefiniowanych opcji dostępne jest pole tekstowe na dodatkowe własne preferencje.
+  4. Wybrane opcje są wyraźnie oznaczone wizualnie.
+  5. Użytkownik może odznaczyć wcześniej wybrane opcje.
+  6. Listy opcji są takie same dla "Co robić" i "Czego unikać" (te same kategorie aktywności).
+
+## 7. Metryki sukcesu
 
 1. Odsetek zaakceptowanych planów w pełni wygenerowanych przez AI ≥ 60 % w ciągu 3 miesięcy od startu.
 2. 75 % aktywnych użytkowników generuje ≥ 3 plany rocznie.

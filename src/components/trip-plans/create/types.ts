@@ -22,9 +22,9 @@ export interface TripPlanFormData {
   people_count: number;
   budget_type: string;
   preferences?: {
-    transport?: string;
-    todo?: string;
-    avoid?: string;
+    transport?: string[] | null;
+    todo?: string[] | null;
+    avoid?: string[] | null;
   };
 }
 
@@ -43,6 +43,17 @@ export interface TripPlanFormErrors {
     todo?: string;
     avoid?: string;
   };
+}
+
+/**
+ * Props for SavePreferenceDialog component
+ */
+export interface SavePreferenceDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onSave: (name: string) => Promise<void>;
+  isSaving: boolean;
+  currentFormData: TripPlanFormData;
 }
 
 // =============================================================================
@@ -112,9 +123,7 @@ export type PlanEditAction =
   | { type: "UPDATE_ACTIVITY"; dayIndex: number; activityIndex: number; activity: ActivityDto }
   | { type: "REMOVE_ACTIVITY"; dayIndex: number; activityIndex: number }
   | { type: "ADD_ACTIVITY"; dayIndex: number; activity: ActivityDto }
-  | { type: "REORDER_ACTIVITIES"; dayIndex: number; fromIndex: number; toIndex: number }
-  | { type: "UPDATE_ACCOMMODATION"; accommodation: AccommodationDto }
-  | { type: "REMOVE_ACCOMMODATION" };
+  | { type: "REORDER_ACTIVITIES"; dayIndex: number; fromIndex: number; toIndex: number };
 
 // =============================================================================
 // BUDGET TYPE CONFIGURATION
@@ -207,6 +216,7 @@ export interface PlanHeaderProps {
 
 /**
  * Props for AccommodationCard component
+ * @deprecated Accommodation feature removed from MVP - kept for backward compatibility
  */
 export interface AccommodationCardProps {
   accommodation: AccommodationDto;

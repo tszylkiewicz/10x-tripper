@@ -29,7 +29,7 @@ export class UserPreferencesService {
   async getPreferences(userId: string): Promise<UserPreferenceDto[]> {
     const { data, error } = await this.supabase
       .from("user_preferences")
-      .select("id, name, people_count, budget_type")
+      .select("id, name, people_count, budget_type, transport, activities_todo, activities_avoid")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
@@ -61,8 +61,11 @@ export class UserPreferencesService {
         name: command.name,
         people_count: command.people_count,
         budget_type: command.budget_type,
+        transport: command.transport,
+        activities_todo: command.activities_todo,
+        activities_avoid: command.activities_avoid,
       })
-      .select("id, name, people_count, budget_type")
+      .select("id, name, people_count, budget_type, transport, activities_todo, activities_avoid")
       .single();
 
     if (error) {
@@ -83,7 +86,7 @@ export class UserPreferencesService {
   async getPreferenceById(id: string, userId: string): Promise<UserPreferenceDto | null> {
     const { data, error } = await this.supabase
       .from("user_preferences")
-      .select("id, name, people_count, budget_type")
+      .select("id, name, people_count, budget_type, transport, activities_todo, activities_avoid")
       .eq("id", id)
       .eq("user_id", userId)
       .single();
@@ -124,6 +127,15 @@ export class UserPreferencesService {
     if (command.budget_type !== undefined) {
       updateData.budget_type = command.budget_type;
     }
+    if (command.transport !== undefined) {
+      updateData.transport = command.transport;
+    }
+    if (command.activities_todo !== undefined) {
+      updateData.activities_todo = command.activities_todo;
+    }
+    if (command.activities_avoid !== undefined) {
+      updateData.activities_avoid = command.activities_avoid;
+    }
 
     // Update in database
     const { data, error } = await this.supabase
@@ -131,7 +143,7 @@ export class UserPreferencesService {
       .update(updateData)
       .eq("id", command.id)
       .eq("user_id", command.user_id)
-      .select("id, name, people_count, budget_type")
+      .select("id, name, people_count, budget_type, transport, activities_todo, activities_avoid")
       .single();
 
     // Handle "not found" case
@@ -212,8 +224,11 @@ export class UserPreferencesService {
     const hasName = command.name !== undefined;
     const hasPeopleCount = command.people_count !== undefined;
     const hasBudgetType = command.budget_type !== undefined;
+    const hasTransport = command.transport !== undefined;
+    const hasActivitiesTodo = command.activities_todo !== undefined;
+    const hasActivitiesAvoid = command.activities_avoid !== undefined;
 
-    if (!hasName && !hasPeopleCount && !hasBudgetType) {
+    if (!hasName && !hasPeopleCount && !hasBudgetType && !hasTransport && !hasActivitiesTodo && !hasActivitiesAvoid) {
       throw new ValidationError("At least one field must be provided for update", "general");
     }
 
