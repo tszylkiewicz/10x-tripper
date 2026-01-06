@@ -104,7 +104,7 @@ export function MultiSelectWithCustom({
           <Label className="text-sm text-muted-foreground">Własne opcje:</Label>
           <div className="flex flex-wrap gap-2">
             {customValues.map((customValue) => (
-              <Badge key={customValue} variant="secondary" className="gap-1 pr-1">
+              <Badge key={customValue} variant="secondary" className="gap-1 pr-1" data-testid={`badge-${customValue}`}>
                 <span>{getCustomText(customValue)}</span>
                 <button
                   type="button"

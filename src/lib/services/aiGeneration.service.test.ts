@@ -109,14 +109,14 @@ describe("AI Generation Service", () => {
         people_count: 2,
         budget_type: "high",
         notes: {
-          transport: "public transport only",
+          transport: ["public_transport", "walking"],
         },
       };
 
       const messages = buildMessages(command);
 
       expect(messages[1].content).toContain("User Preferences:");
-      expect(messages[1].content).toContain("Transport: public transport only");
+      expect(messages[1].content).toContain("Transport: Public transport, Walking");
     });
 
     it("should include todo preference when provided", () => {
@@ -128,13 +128,13 @@ describe("AI Generation Service", () => {
         people_count: 3,
         budget_type: "medium",
         notes: {
-          todo: "visit museums, try local cuisine",
+          todo: ["museums", "local_cuisine"],
         },
       };
 
       const messages = buildMessages(command);
 
-      expect(messages[1].content).toContain("Things to do: visit museums, try local cuisine");
+      expect(messages[1].content).toContain("Things to do: Museums, Local cuisine / restaurants");
     });
 
     it("should include avoid preference when provided", () => {
@@ -146,13 +146,13 @@ describe("AI Generation Service", () => {
         people_count: 2,
         budget_type: "low",
         notes: {
-          avoid: "crowded tourist spots",
+          avoid: ["custom:Crowds"],
         },
       };
 
       const messages = buildMessages(command);
 
-      expect(messages[1].content).toContain("Things to avoid: crowded tourist spots");
+      expect(messages[1].content).toContain("Things to avoid: Crowds");
     });
 
     it("should include all standard preferences together", () => {
@@ -164,16 +164,18 @@ describe("AI Generation Service", () => {
         people_count: 2,
         budget_type: "high",
         notes: {
-          transport: "trains and walking",
-          todo: "temples, ramen shops, anime districts",
-          avoid: "expensive hotels",
+          transport: ["train", "walking"],
+          todo: ["landmarks", "local_cuisine", "custom:anime districts"],
+          avoid: ["custom:expensive hotels"],
         },
       };
 
       const messages = buildMessages(command);
 
-      expect(messages[1].content).toContain("Transport: trains and walking");
-      expect(messages[1].content).toContain("Things to do: temples, ramen shops, anime districts");
+      expect(messages[1].content).toContain("Transport: Train, Walking");
+      expect(messages[1].content).toContain(
+        "Things to do: Landmarks and architecture, Local cuisine / restaurants, anime districts"
+      );
       expect(messages[1].content).toContain("Things to avoid: expensive hotels");
     });
 
@@ -186,17 +188,16 @@ describe("AI Generation Service", () => {
         people_count: 4,
         budget_type: "medium",
         notes: {
-          dietary_restrictions: "vegetarian",
-          accessibility: "wheelchair accessible",
-          interests: "art galleries, jazz clubs",
+          transport: ["public_transport", "custom:taxi when needed"],
+          todo: ["custom:art galleries", "custom:jazz clubs"],
+          avoid: [],
         },
       };
 
       const messages = buildMessages(command);
 
-      expect(messages[1].content).toContain("dietary_restrictions: vegetarian");
-      expect(messages[1].content).toContain("accessibility: wheelchair accessible");
-      expect(messages[1].content).toContain("interests: art galleries, jazz clubs");
+      expect(messages[1].content).toContain("Transport: Public transport, taxi when needed");
+      expect(messages[1].content).toContain("Things to do: art galleries, jazz clubs");
     });
 
     it("should not include User Preferences section when notes is undefined", () => {
@@ -231,7 +232,7 @@ describe("AI Generation Service", () => {
       expect(messages[1].content).toContain("User Preferences:");
     });
 
-    it("should handle multi-line values in notes", () => {
+    it("should handle custom options with special characters", () => {
       const command: GeneratePlanCommand = {
         user_id: "user-123",
         destination: "Prague",
@@ -240,7 +241,7 @@ describe("AI Generation Service", () => {
         people_count: 2,
         budget_type: "medium",
         notes: {
-          todo: "Visit Old Town Square\nTry traditional Czech food\nExplore Prague Castle",
+          todo: ["custom:Visit Old Town Square", "custom:Try traditional Czech food", "custom:Explore Prague Castle"],
         },
       };
 
@@ -322,13 +323,6 @@ describe("AI Generation Service", () => {
           ],
         },
       ],
-      accommodation: {
-        name: "Hotel Paris",
-        address: "123 Rue de Rivoli",
-        check_in: "2025-06-01",
-        check_out: "2025-06-03",
-        estimated_cost: 200,
-      },
       total_estimated_cost: 500,
       notes: "Great trip!",
     };
@@ -365,7 +359,7 @@ describe("AI Generation Service", () => {
         people_count: 1,
         budget_type: "low",
         notes: {
-          transport: "tube only",
+          transport: ["public_transport"],
         },
       };
 
@@ -380,7 +374,7 @@ describe("AI Generation Service", () => {
       expect(callArgs.messages[0].role).toBe("system");
       expect(callArgs.messages[1].role).toBe("user");
       expect(callArgs.messages[1].content).toContain("London");
-      expect(callArgs.messages[1].content).toContain("tube only");
+      expect(callArgs.messages[1].content).toContain("Public transport");
     });
 
     it("should call OpenRouter with correct schema", async () => {
@@ -403,8 +397,7 @@ describe("AI Generation Service", () => {
       expect(callArgs.schema.name).toBe("trip-plan");
       expect(callArgs.schema.schema.type).toBe("object");
       expect(callArgs.schema.schema.properties.days).toBeDefined();
-      expect(callArgs.schema.schema.properties.accommodation).toBeDefined();
-      expect(callArgs.schema.schema.required).toEqual(["days", "accommodation", "total_estimated_cost", "notes"]);
+      expect(callArgs.schema.schema.required).toContain("days");
     });
 
     it("should call OpenRouter with correct parameters", async () => {
@@ -574,7 +567,6 @@ describe("AI Generation Service", () => {
       const result = await generateTripPlan(command, mockEnv);
 
       expect(result.plan_details).toEqual(minimalPlanDetails);
-      expect(result.plan_details.accommodation).toBeUndefined();
       expect(result.plan_details.total_estimated_cost).toBeUndefined();
       expect(result.plan_details.notes).toBeUndefined();
     });

@@ -40,7 +40,9 @@ describe("UserPreferencesService", () => {
       const result = await service.getPreferences("user-123");
 
       expect(mockSupabase.from).toHaveBeenCalledWith("user_preferences");
-      expect(mockSupabase.select).toHaveBeenCalledWith("id, name, people_count, budget_type");
+      expect(mockSupabase.select).toHaveBeenCalledWith(
+        "id, name, people_count, budget_type, transport, activities_todo, activities_avoid"
+      );
       expect(mockSupabase.eq).toHaveBeenCalledWith("user_id", "user-123");
       expect(mockSupabase.order).toHaveBeenCalledWith("created_at", { ascending: false });
       expect(result).toEqual(mockData);
@@ -68,12 +70,15 @@ describe("UserPreferencesService", () => {
   });
 
   describe("createPreference", () => {
-    it("should create a new preference with all fields", async () => {
+    it("should create a new preference with all fields including arrays", async () => {
       const command: CreatePreferenceCommand = {
         user_id: "user-123",
         name: "Summer Vacation",
         people_count: 4,
         budget_type: "high",
+        transport: ["car", "train"],
+        activities_todo: ["museum", "beach"],
+        activities_avoid: ["crowds"],
       };
 
       const mockCreated = {
@@ -81,6 +86,9 @@ describe("UserPreferencesService", () => {
         name: "Summer Vacation",
         people_count: 4,
         budget_type: "high",
+        transport: ["car", "train"],
+        activities_todo: ["museum", "beach"],
+        activities_avoid: ["crowds"],
       };
 
       (mockSupabase.single as Mock).mockResolvedValueOnce({
@@ -96,6 +104,9 @@ describe("UserPreferencesService", () => {
         name: "Summer Vacation",
         people_count: 4,
         budget_type: "high",
+        transport: ["car", "train"],
+        activities_todo: ["museum", "beach"],
+        activities_avoid: ["crowds"],
       });
       expect(result).toEqual(mockCreated);
     });
@@ -111,6 +122,9 @@ describe("UserPreferencesService", () => {
         name: "Minimal Preference",
         people_count: null,
         budget_type: null,
+        transport: null,
+        activities_todo: null,
+        activities_avoid: null,
       };
 
       (mockSupabase.single as Mock).mockResolvedValueOnce({
@@ -125,6 +139,47 @@ describe("UserPreferencesService", () => {
         name: "Minimal Preference",
         people_count: undefined,
         budget_type: undefined,
+        transport: undefined,
+        activities_todo: undefined,
+        activities_avoid: undefined,
+      });
+      expect(result).toEqual(mockCreated);
+    });
+
+    it("should create preference with empty arrays for optional fields", async () => {
+      const command: CreatePreferenceCommand = {
+        user_id: "user-123",
+        name: "Empty Arrays",
+        transport: [],
+        activities_todo: [],
+        activities_avoid: [],
+      };
+
+      const mockCreated = {
+        id: "pref-3",
+        name: "Empty Arrays",
+        people_count: null,
+        budget_type: null,
+        transport: [],
+        activities_todo: [],
+        activities_avoid: [],
+      };
+
+      (mockSupabase.single as Mock).mockResolvedValueOnce({
+        data: mockCreated,
+        error: null,
+      });
+
+      const result = await service.createPreference(command);
+
+      expect(mockSupabase.insert).toHaveBeenCalledWith({
+        user_id: "user-123",
+        name: "Empty Arrays",
+        people_count: undefined,
+        budget_type: undefined,
+        transport: [],
+        activities_todo: [],
+        activities_avoid: [],
       });
       expect(result).toEqual(mockCreated);
     });
@@ -303,7 +358,9 @@ describe("UserPreferencesService", () => {
       const result = await service.getPreferenceById("pref-1", "user-123");
 
       expect(mockSupabase.from).toHaveBeenCalledWith("user_preferences");
-      expect(mockSupabase.select).toHaveBeenCalledWith("id, name, people_count, budget_type");
+      expect(mockSupabase.select).toHaveBeenCalledWith(
+        "id, name, people_count, budget_type, transport, activities_todo, activities_avoid"
+      );
       expect(mockSupabase.eq).toHaveBeenCalledWith("id", "pref-1");
       expect(mockSupabase.eq).toHaveBeenCalledWith("user_id", "user-123");
       expect(result).toEqual(mockPreference);
@@ -342,13 +399,16 @@ describe("UserPreferencesService", () => {
   });
 
   describe("updatePreference", () => {
-    it("should update all fields", async () => {
+    it("should update all fields including arrays", async () => {
       const command: UpdatePreferenceCommand = {
         id: "pref-1",
         user_id: "user-123",
         name: "Updated Name",
         people_count: 5,
         budget_type: "luxury",
+        transport: ["plane", "bus"],
+        activities_todo: ["hiking", "shopping"],
+        activities_avoid: ["nightlife"],
       };
 
       const mockUpdated = {
@@ -356,6 +416,9 @@ describe("UserPreferencesService", () => {
         name: "Updated Name",
         people_count: 5,
         budget_type: "luxury",
+        transport: ["plane", "bus"],
+        activities_todo: ["hiking", "shopping"],
+        activities_avoid: ["nightlife"],
       };
 
       (mockSupabase.single as Mock).mockResolvedValueOnce({
@@ -370,6 +433,9 @@ describe("UserPreferencesService", () => {
         name: "Updated Name",
         people_count: 5,
         budget_type: "luxury",
+        transport: ["plane", "bus"],
+        activities_todo: ["hiking", "shopping"],
+        activities_avoid: ["nightlife"],
       });
       expect(mockSupabase.eq).toHaveBeenCalledWith("id", "pref-1");
       expect(mockSupabase.eq).toHaveBeenCalledWith("user_id", "user-123");
