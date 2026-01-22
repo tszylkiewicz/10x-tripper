@@ -65,14 +65,14 @@ export function PreferenceFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-      <DialogContent className="sm:max-w-[500px]" data-testid="preference-form-dialog">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col" data-testid="preference-form-dialog">
         <DialogHeader>
           <DialogTitle data-testid="preference-form-title">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} data-testid="preference-form">
-          <div className="space-y-4 py-4">
+        <form onSubmit={handleSubmit} data-testid="preference-form" className="flex flex-col flex-1 min-h-0">
+          <div className="space-y-4 py-4 overflow-y-auto px-1">
             {/* Pole: Nazwa */}
             <div className="space-y-2">
               <Label htmlFor="name">
@@ -195,7 +195,7 @@ export function PreferenceFormDialog({
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="pt-4 border-t">
             <Button
               type="button"
               variant="outline"
