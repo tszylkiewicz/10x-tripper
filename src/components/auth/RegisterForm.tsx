@@ -117,7 +117,7 @@ export function RegisterForm({ message, error: initialError }: RegisterFormProps
           {/* Error message */}
           {error && (
             <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -165,8 +165,8 @@ export function RegisterForm({ message, error: initialError }: RegisterFormProps
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full gap-2" disabled={loading}>
+              {loading && <Loader2 className="size-4 animate-spin" />}
               {loading ? "Rejestracja..." : "Zarejestruj się"}
             </Button>
           </form>

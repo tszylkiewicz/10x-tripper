@@ -65,7 +65,7 @@ export function PreferencesView() {
           </p>
         </div>
         <Button onClick={openCreateDialog} className="gap-2" data-testid="create-preference-button">
-          <Plus className="h-4 w-4" />
+          <Plus className="size-4" />
           Nowa preferencja
         </Button>
       </div>

@@ -78,7 +78,7 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
           {/* Error message */}
           {error && (
             <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -112,8 +112,8 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading} data-testid="login-submit-button">
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full gap-2" disabled={loading} data-testid="login-submit-button">
+              {loading && <Loader2 className="size-4 animate-spin" />}
               {loading ? "Logowanie..." : "Zaloguj się"}
             </Button>
           </form>

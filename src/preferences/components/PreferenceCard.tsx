@@ -65,7 +65,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
       <CardContent className="space-y-3">
         {/* Liczba osób */}
         <div className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 text-muted-foreground" />
+          <Users className="size-4 text-muted-foreground" />
           <span className="text-muted-foreground">Liczba osób:</span>
           <span className="font-medium" data-testid="preference-card-people-count">
             {preference.people_count ?? "Nie określono"}
@@ -94,7 +94,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
           className="gap-2"
           data-testid="preference-card-edit-button"
         >
-          <Pencil className="h-4 w-4" />
+          <Pencil className="size-4" />
           Edytuj
         </Button>
         <Button
@@ -104,7 +104,7 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
           className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
           data-testid="preference-card-delete-button"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="size-4" />
           Usuń
         </Button>
       </CardFooter>

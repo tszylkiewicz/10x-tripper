@@ -17,7 +17,7 @@ interface ErrorAlertProps {
 export function ErrorAlert({ message, onDismiss, onRetry }: ErrorAlertProps) {
   return (
     <Alert variant="destructive" className="relative" data-testid="error-alert">
-      <AlertCircle className="h-4 w-4" />
+      <AlertCircle className="size-4" />
       <AlertTitle>Wystąpił błąd</AlertTitle>
       <AlertDescription className="pr-8" data-testid="error-alert-message">
         {message}
@@ -30,7 +30,7 @@ export function ErrorAlert({ message, onDismiss, onRetry }: ErrorAlertProps) {
         aria-label="Zamknij"
         data-testid="error-alert-dismiss-button"
       >
-        <X className="h-4 w-4" />
+        <X className="size-4" />
       </button>
 
       {/* Opcjonalny przycisk "Spróbuj ponownie" */}

@@ -110,7 +110,7 @@ export function ForgotPasswordForm({ message, error: initialError }: ForgotPassw
           {/* Error message */}
           {error && (
             <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -130,8 +130,8 @@ export function ForgotPasswordForm({ message, error: initialError }: ForgotPassw
               <p className="text-xs text-muted-foreground">Podaj adres email powiązany z Twoim kontem</p>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full gap-2" disabled={loading}>
+              {loading && <Loader2 className="size-4 animate-spin" />}
               {loading ? "Wysyłanie..." : "Wyślij link resetujący"}
             </Button>
           </form>

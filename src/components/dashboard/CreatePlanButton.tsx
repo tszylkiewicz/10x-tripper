@@ -14,10 +14,10 @@ export function CreatePlanButton({ onClick }: CreatePlanButtonProps) {
     <Button
       onClick={onClick}
       size="lg"
-      className="fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg md:static md:size-auto md:rounded-md"
+      className="fixed bottom-6 right-6 z-50 size-14 rounded-full shadow-lg md:static md:w-auto md:h-10 md:rounded-md gap-2"
       aria-label="Utwórz nowy plan"
     >
-      <Plus className="size-6 md:mr-2 md:size-5" />
+      <Plus className="size-4" />
       <span className="hidden md:inline">Utwórz plan</span>
     </Button>
   );

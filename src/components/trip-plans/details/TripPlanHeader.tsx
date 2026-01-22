@@ -90,12 +90,12 @@ function TripPlanHeaderComponent({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={onEdit}>
-              <Pencil className="mr-1.5 size-4" />
+            <Button variant="outline" size="sm" onClick={onEdit} className="gap-2">
+              <Pencil className="size-4" />
               Edytuj
             </Button>
-            <Button variant="outline" size="sm" onClick={onDelete} className="text-destructive hover:text-destructive">
-              <Trash2 className="mr-1.5 size-4" />
+            <Button variant="outline" size="sm" onClick={onDelete} className="gap-2 text-destructive hover:text-destructive">
+              <Trash2 className="size-4" />
               Usuń
             </Button>
           </div>
@@ -205,12 +205,12 @@ function TripPlanHeaderComponent({
 
       {/* Action buttons */}
       <div className="mt-6 flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={onCancel} disabled={isSaving}>
-          <X className="mr-1.5 size-4" />
+        <Button variant="outline" size="sm" onClick={onCancel} disabled={isSaving} className="gap-2">
+          <X className="size-4" />
           Anuluj
         </Button>
-        <Button size="sm" onClick={onSave} disabled={isSaving}>
-          <Save className="mr-1.5 size-4" />
+        <Button size="sm" onClick={onSave} disabled={isSaving} className="gap-2">
+          <Save className="size-4" />
           {isSaving ? "Zapisywanie..." : "Zapisz"}
         </Button>
       </div>

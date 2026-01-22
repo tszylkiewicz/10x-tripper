@@ -205,10 +205,10 @@ export function PreferenceFormDialog({
             >
               Anuluj
             </Button>
-            <Button type="submit" disabled={isSubmitting || hasErrors()} data-testid="preference-form-submit-button">
+            <Button type="submit" disabled={isSubmitting || hasErrors()} data-testid="preference-form-submit-button" className="gap-2">
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                   Zapisywanie...
                 </>
               ) : (

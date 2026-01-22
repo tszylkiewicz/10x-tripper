@@ -99,10 +99,10 @@ export function SavePreferenceDialog({ open, onClose, onSave, isSaving }: SavePr
             <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
               Anuluj
             </Button>
-            <Button type="submit" disabled={isSaving || !name.trim()}>
+            <Button type="submit" disabled={isSaving || !name.trim()} className="gap-2">
               {isSaving ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="size-4 animate-spin" />
                   Zapisywanie...
                 </>
               ) : (

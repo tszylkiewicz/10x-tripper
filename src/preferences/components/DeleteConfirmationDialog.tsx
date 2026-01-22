@@ -57,12 +57,12 @@ export function DeleteConfirmationDialog({
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="gap-2 bg-destructive text-destructive-foreground hover:bg-destructive/90"
             data-testid="delete-dialog-confirm-button"
           >
             {isDeleting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
                 Usuwanie...
               </>
             ) : (

@@ -71,7 +71,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
         {/* Right side actions */}
         <div className="flex items-center gap-2">
           {/* Desktop Create Plan Button */}
-          <Button asChild className="hidden sm:flex gap-2">
+          <Button asChild size="default" className="hidden sm:flex gap-2">
             <a href="/trip-plans/new">
               <Plus className="size-4" />
               <span>Utwórz plan</span>
@@ -131,8 +131,8 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                 {/* Create Plan Button - Prominent */}
                 <Button asChild className="w-full justify-start gap-2" size="lg">
                   <a href="/trip-plans/new" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Plus className="size-5" />
-                    <span className="text-base font-semibold">Utwórz plan</span>
+                    <Plus className="size-4" />
+                    <span>Utwórz plan</span>
                   </a>
                 </Button>
 
