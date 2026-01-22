@@ -31,9 +31,9 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
     <header className="sticky top-0 z-40 border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 font-semibold">
+        <a href="/" className="flex items-center gap-2">
           <MapPin className="size-6 text-primary" />
-          <span className="text-xl">Tripper</span>
+          <span className="text-xl font-bold text-primary">Tripper</span>
         </a>
 
         {/* Desktop Navigation - hidden on mobile */}
@@ -41,9 +41,11 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
           <a
             href="/"
             className={cn(
-              "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+              "px-4 py-2 rounded-md text-sm transition-colors",
               "hover:bg-accent hover:text-accent-foreground",
-              currentPath === "/" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              currentPath === "/"
+                ? "bg-accent text-accent-foreground font-medium"
+                : "text-muted-foreground font-normal"
             )}
             aria-current={currentPath === "/" ? "page" : undefined}
           >
@@ -53,9 +55,11 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
             <a
               href="/preferences"
               className={cn(
-                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "px-4 py-2 rounded-md text-sm transition-colors",
                 "hover:bg-accent hover:text-accent-foreground",
-                currentPath === "/preferences" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+                currentPath === "/preferences"
+                  ? "bg-accent text-accent-foreground font-medium"
+                  : "text-muted-foreground font-normal"
               )}
               aria-current={currentPath === "/preferences" ? "page" : undefined}
             >
@@ -140,7 +144,9 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                     className={cn(
                       "flex items-center gap-3 px-4 py-3 rounded-md text-base transition-colors",
                       "hover:bg-accent hover:text-accent-foreground",
-                      currentPath === "/" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground"
+                      currentPath === "/"
+                        ? "bg-accent text-accent-foreground font-medium"
+                        : "text-muted-foreground font-normal"
                     )}
                     aria-current={currentPath === "/" ? "page" : undefined}
                   >
@@ -156,7 +162,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                         "hover:bg-accent hover:text-accent-foreground",
                         currentPath === "/preferences"
                           ? "bg-accent text-accent-foreground font-medium"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground font-normal"
                       )}
                       aria-current={currentPath === "/preferences" ? "page" : undefined}
                     >

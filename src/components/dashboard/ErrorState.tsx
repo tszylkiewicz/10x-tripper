@@ -13,11 +13,11 @@ interface ErrorStateProps {
 export function ErrorState({ error, onRetry }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="rounded-full bg-destructive/10 p-4">
-        <AlertCircle className="size-8 text-destructive" />
+      <div className="rounded-full bg-destructive-light p-4">
+        <AlertCircle className="size-12 text-destructive" />
       </div>
-      <h2 className="mt-4 text-lg font-semibold">Nie udało się pobrać planów</h2>
-      <p className="mt-2 max-w-sm text-sm text-muted-foreground">{error}</p>
+      <h2 className="mt-4 text-lg font-semibold text-foreground">Nie udało się pobrać planów</h2>
+      <p className="mt-2 max-w-sm text-sm text-foreground">{error}</p>
       <Button onClick={onRetry} variant="outline" className="mt-6">
         Spróbuj ponownie
       </Button>
