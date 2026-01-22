@@ -5,7 +5,7 @@
  * Fetches all user preferences and provides a function to load a specific one.
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { UserPreferenceDto } from "@/types";
 
 interface UseLoadPreferenceReturn {
@@ -30,14 +30,14 @@ export function useLoadPreference(): UseLoadPreferenceReturn {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch("/api/preferences");
+        const response = await fetch("/api/user/preferences");
 
         if (!response.ok) {
           throw new Error("Nie udało się pobrać preferencji");
         }
 
         const data = await response.json();
-        setPreferences(data.preferences || []);
+        setPreferences(data.data || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Wystąpił błąd");
       } finally {

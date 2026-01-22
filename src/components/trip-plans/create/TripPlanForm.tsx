@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, ChevronUp, Sparkles, Save } from "lucide-react";
+import { ChevronDown, ChevronUp, Save, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
 import { tripPlanFormSchema, type TripPlanFormSchema } from "@/lib/validators/tripPlanForm.validator";
-import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS } from "@/lib/constants/preferences.constants";
-import { BUDGET_TYPE_OPTIONS, type TripPlanFormProps, type TripPlanFormData } from "./types";
+import { ACTIVITY_OPTIONS, TRANSPORT_OPTIONS } from "@/lib/constants/preferences.constants";
+import { BUDGET_TYPE_OPTIONS, type TripPlanFormData, type TripPlanFormProps } from "./types";
 import { useLoadPreference } from "./hooks/useLoadPreference";
 import { SavePreferenceDialog } from "./SavePreferenceDialog";
 import type { CreateUserPreferenceDto } from "@/types";
@@ -128,7 +128,7 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
         formData.preferences?.avoid && formData.preferences.avoid.length > 0 ? formData.preferences.avoid : null,
     };
 
-    const response = await fetch("/api/preferences", {
+    const response = await fetch("/api/user/preferences", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

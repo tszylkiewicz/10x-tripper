@@ -5,7 +5,7 @@
  */
 
 import { z } from "zod";
-import type { GenerateTripPlanRequestDto, GeneratePlanCommand } from "../../types";
+import type { GeneratePlanCommand, GenerateTripPlanRequestDto } from "../../types";
 
 // UUID v4 regex for optional generation_id
 const UUID_V4_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -121,7 +121,7 @@ export const acceptTripPlanSchema = z
     {
       message: "End date must be on or after start date",
       path: ["end_date"],
-    }
+    },
   );
 
 export type AcceptTripPlanInput = z.infer<typeof acceptTripPlanSchema>;
@@ -188,7 +188,7 @@ export const updateTripPlanSchema = z
     {
       message: "End date must be on or after start date",
       path: ["end_date"],
-    }
+    },
   );
 
 export type UpdateTripPlanInput = z.infer<typeof updateTripPlanSchema>;
@@ -198,9 +198,9 @@ export type UpdateTripPlanInput = z.infer<typeof updateTripPlanSchema>;
  */
 const tripPlanNotesSchema = z
   .object({
-    transport: z.string().optional(),
-    todo: z.string().max(1000, "Todo description is too long").optional(),
-    avoid: z.string().max(1000, "Avoid description is too long").optional(),
+    transport: z.array(z.string()).optional(),
+    todo: z.array(z.string().max(1000, "Todo description is too long")).optional(),
+    avoid: z.array(z.string().max(1000, "Avoid description is too long")).optional(),
   })
   .catchall(z.string());
 
@@ -266,7 +266,7 @@ export const generateTripPlanSchema = z
     {
       message: "End date must be on or after start date",
       path: ["end_date"],
-    }
+    },
   );
 
 export type GenerateTripPlanInput = z.infer<typeof generateTripPlanSchema>;
