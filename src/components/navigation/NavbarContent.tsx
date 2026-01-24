@@ -43,9 +43,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
             className={cn(
               "px-4 py-2 rounded-md text-sm transition-colors",
               "hover:bg-accent hover:text-accent-foreground",
-              currentPath === "/"
-                ? "bg-accent text-accent-foreground font-medium"
-                : "text-muted-foreground font-normal",
+              currentPath === "/" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground font-normal"
             )}
             aria-current={currentPath === "/" ? "page" : undefined}
           >
@@ -59,7 +57,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                 "hover:bg-accent hover:text-accent-foreground",
                 currentPath === "/preferences"
                   ? "bg-accent text-accent-foreground font-medium"
-                  : "text-muted-foreground font-normal",
+                  : "text-muted-foreground font-normal"
               )}
               aria-current={currentPath === "/preferences" ? "page" : undefined}
             >
@@ -146,7 +144,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                       "hover:bg-accent hover:text-accent-foreground",
                       currentPath === "/"
                         ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground font-normal",
+                        : "text-muted-foreground font-normal"
                     )}
                     aria-current={currentPath === "/" ? "page" : undefined}
                   >
@@ -162,7 +160,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                         "hover:bg-accent hover:text-accent-foreground",
                         currentPath === "/preferences"
                           ? "bg-accent text-accent-foreground font-medium"
-                          : "text-muted-foreground font-normal",
+                          : "text-muted-foreground font-normal"
                       )}
                       aria-current={currentPath === "/preferences" ? "page" : undefined}
                     >

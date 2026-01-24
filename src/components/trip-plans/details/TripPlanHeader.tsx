@@ -94,7 +94,12 @@ function TripPlanHeaderComponent({
               <Pencil className="size-4" />
               Edytuj
             </Button>
-            <Button variant="outline" size="sm" onClick={onDelete} className="gap-2 text-destructive hover:text-destructive">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDelete}
+              className="gap-2 text-destructive hover:text-destructive"
+            >
               <Trash2 className="size-4" />
               Usuń
             </Button>

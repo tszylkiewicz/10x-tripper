@@ -205,7 +205,12 @@ export function PreferenceFormDialog({
             >
               Anuluj
             </Button>
-            <Button type="submit" disabled={isSubmitting || hasErrors()} data-testid="preference-form-submit-button" className="gap-2">
+            <Button
+              type="submit"
+              disabled={isSubmitting || hasErrors()}
+              data-testid="preference-form-submit-button"
+              className="gap-2"
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />

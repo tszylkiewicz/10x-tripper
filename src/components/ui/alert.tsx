@@ -15,8 +15,7 @@ const alertVariants = cva(
           "bg-success-light text-success border-success [&>svg]:text-success *:data-[slot=alert-description]:text-success/90",
         warning:
           "bg-warning-light text-warning-foreground border-warning [&>svg]:text-warning *:data-[slot=alert-description]:text-warning-foreground/90",
-        info:
-          "bg-info-light text-info border-info [&>svg]:text-info *:data-[slot=alert-description]:text-info/90",
+        info: "bg-info-light text-info border-info [&>svg]:text-info *:data-[slot=alert-description]:text-info/90",
       },
     },
     defaultVariants: {

@@ -121,7 +121,7 @@ export const acceptTripPlanSchema = z
     {
       message: "End date must be on or after start date",
       path: ["end_date"],
-    },
+    }
   );
 
 export type AcceptTripPlanInput = z.infer<typeof acceptTripPlanSchema>;
@@ -188,7 +188,7 @@ export const updateTripPlanSchema = z
     {
       message: "End date must be on or after start date",
       path: ["end_date"],
-    },
+    }
   );
 
 export type UpdateTripPlanInput = z.infer<typeof updateTripPlanSchema>;
@@ -266,7 +266,7 @@ export const generateTripPlanSchema = z
     {
       message: "End date must be on or after start date",
       path: ["end_date"],
-    },
+    }
   );
 
 export type GenerateTripPlanInput = z.infer<typeof generateTripPlanSchema>;
