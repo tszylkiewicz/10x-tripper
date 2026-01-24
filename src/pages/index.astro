@@ -1,8 +1,30 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { DashboardContent } from "../components/dashboard/DashboardContent";
+import LandingPage from "../components/landing/LandingPage.astro";
+
+const {
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
+const isAuthenticated = !!user;
+
+if (user) {
+  Astro.locals.user = { email: user.email ?? "", id: user.id };
+}
 ---
 
-<Layout>
-  <DashboardContent client:load />
-</Layout>
+{
+  isAuthenticated ? (
+    <Layout title="Tripper - Twoje plany">
+      <DashboardContent client:load />
+    </Layout>
+  ) : (
+    <Layout
+      title="Tripper - Zamień pomysły na gotowe plany wycieczek z AI"
+      description="Tripper zamienia notatki podróżne w szczegółowe plany wycieczek. Opisz cel, daty i preferencje - AI stworzy plan dopasowany do Ciebie."
+      showNavigation={false}
+    >
+      <LandingPage />
+    </Layout>
+  )
+}

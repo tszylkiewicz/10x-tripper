@@ -1,13 +1,16 @@
 ---
 import "../styles/global.css";
 import AppNavigation from "../components/navigation/AppNavigation.astro";
+import AuthNavbar from "../components/navigation/AuthNavbar.astro";
 
 interface Props {
   title?: string;
+  description?: string;
   showNavigation?: boolean;
+  showAuthNavbar?: boolean;
 }
 
-const { title = "Tripper", showNavigation = true } = Astro.props;
+const { title = "Tripper", description, showNavigation = true, showAuthNavbar = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,10 +29,12 @@ const { title = "Tripper", showNavigation = true } = Astro.props;
       rel="stylesheet"
     />
 
+    {description && <meta name="description" content={description} />}
     <title>{title}</title>
   </head>
   <body>
     {showNavigation && <AppNavigation currentPath={Astro.url.pathname} />}
+    {showAuthNavbar && <AuthNavbar />}
     <slot />
   </body>
 </html>

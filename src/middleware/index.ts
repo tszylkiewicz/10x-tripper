@@ -4,6 +4,8 @@ import { createSupabaseServerInstance } from "../db/supabase.client.ts";
 
 // Public paths - Auth pages and API endpoints that don't require authentication
 const PUBLIC_PATHS = [
+  // Landing page
+  "/",
   // Auth pages
   "/login",
   "/register",

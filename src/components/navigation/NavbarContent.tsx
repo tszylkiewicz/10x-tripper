@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Menu, Plus, User, LogOut, List, Settings } from "lucide-react";
+import { List, LogOut, Menu, Plus, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2">
-          <MapPin className="size-6 text-primary" />
+          <img src="/logo-icon.png" alt="Tripper logo" width="48" />
           <span className="text-xl font-bold text-primary">Tripper</span>
         </a>
 
@@ -45,7 +45,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
               "hover:bg-accent hover:text-accent-foreground",
               currentPath === "/"
                 ? "bg-accent text-accent-foreground font-medium"
-                : "text-muted-foreground font-normal"
+                : "text-muted-foreground font-normal",
             )}
             aria-current={currentPath === "/" ? "page" : undefined}
           >
@@ -59,7 +59,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                 "hover:bg-accent hover:text-accent-foreground",
                 currentPath === "/preferences"
                   ? "bg-accent text-accent-foreground font-medium"
-                  : "text-muted-foreground font-normal"
+                  : "text-muted-foreground font-normal",
               )}
               aria-current={currentPath === "/preferences" ? "page" : undefined}
             >
@@ -146,7 +146,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                       "hover:bg-accent hover:text-accent-foreground",
                       currentPath === "/"
                         ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground font-normal"
+                        : "text-muted-foreground font-normal",
                     )}
                     aria-current={currentPath === "/" ? "page" : undefined}
                   >
@@ -162,7 +162,7 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
                         "hover:bg-accent hover:text-accent-foreground",
                         currentPath === "/preferences"
                           ? "bg-accent text-accent-foreground font-medium"
-                          : "text-muted-foreground font-normal"
+                          : "text-muted-foreground font-normal",
                       )}
                       aria-current={currentPath === "/preferences" ? "page" : undefined}
                     >

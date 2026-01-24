@@ -1,0 +1,21 @@
+---
+import LandingNavbar from "./LandingNavbar.astro";
+import HeroSection from "./HeroSection.astro";
+import PainPointsSection from "./PainPointsSection.astro";
+import HowItWorksSection from "./HowItWorksSection.astro";
+import BenefitsSection from "./BenefitsSection.astro";
+import CtaSection from "./CtaSection.astro";
+import LandingFooter from "./LandingFooter.astro";
+---
+
+<div class="min-h-screen flex flex-col">
+  <LandingNavbar />
+  <main class="flex-1">
+    <HeroSection />
+    <PainPointsSection />
+    <HowItWorksSection />
+    <BenefitsSection />
+    <CtaSection />
+  </main>
+  <LandingFooter />
+</div>
