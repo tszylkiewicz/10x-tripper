@@ -30,34 +30,107 @@ npm run test:e2e     # Run E2E tests with Playwright
 2. **Middleware-based Auth**: Authentication is handled in `src/middleware/index.ts`, which injects Supabase client into `context.locals.supabase`.
 3. **Service Layer Pattern**: Business logic lives in `src/lib/services/`, API routes are thin wrappers that validate input and call services.
 4. **Command/DTO Pattern**: API requests use Command objects (include `user_id`), services return DTOs. All types in `src/types.ts` are derived from database schema.
-5. **Feature-based Organization**: Features like `preferences/` contain their own components and hooks. Shared components live in `components/ui/`.
+5. **Hybrid Feature-based Organization**: Domain features (preferences, trip-plans, auth, dashboard, landing) live in `src/features/` with co-located components, hooks, and types. Shared UI primitives live in `src/components/ui/`. Feature flags system is in `src/feature-flags/`.
 
 ### Directory Structure
 
-- `src/pages/` - Astro pages and API routes
-  - `src/pages/api/` - REST API endpoints (use uppercase `GET`, `POST`, etc.)
-  - All API routes must use `export const prerender = false`
-- `src/lib/services/` - Business logic services (e.g., `tripPlan.service.ts`, `userPreferences.service.ts`, `aiGeneration.service.ts`)
-- `src/lib/validators/` - Zod validation schemas for API input
-- `src/lib/constants/` - Application constants (e.g., transport/activity options)
-- `src/lib/utils/` - Utility functions
-- `src/db/` - Supabase client and generated database types
-  - `src/db/supabase.client.ts` - Creates Supabase SSR client
-  - `src/db/database.types.ts` - Generated types from Supabase schema
-- `src/types.ts` - All API DTOs and Command models (derived from database types)
-- `src/components/ui/` - Shadcn/ui components
-- `src/preferences/` - User preferences feature module (components + hooks)
-- `src/components/trip-plans/` - Trip plan feature components
-  - `create/` - Trip plan creation flow components
-  - `details/` - Trip plan details/editing components
-  - `shared/` - Shared components (ActivityCard, etc.)
-- `src/components/dashboard/` - Dashboard components
-- `src/components/landing/` - Landing page components
-- `src/components/auth/` - Authentication components
-- `src/middleware/index.ts` - Astro middleware (injects Supabase client, handles auth)
-- `src/errors/` - Custom error classes (ValidationError, DuplicateError, etc.)
-- `src/features/` - Feature flags system
-- `src/layouts/` - Astro layouts
+```
+src/
+├── features/                    (Domain features with co-located code)
+│   ├── preferences/             (User preferences feature)
+│   │   ├── components/          (PreferencesView, PreferenceCard, etc.)
+│   │   ├── hooks/               (usePreferences, usePreferenceForm, etc.)
+│   │   └── types.ts             (Feature-specific types)
+│   ├── trip-plans/              (Trip planning feature)
+│   │   ├── create/              (Trip plan creation flow)
+│   │   │   ├── hooks/           (useTripPlanGeneration, usePlanEditor, etc.)
+│   │   │   └── *.tsx            (CreateTripPlanContent, TripPlanForm, etc.)
+│   │   ├── details/             (Trip plan details/editing)
+│   │   │   └── *.tsx            (TripPlanDetailsView, TripPlanHeader, etc.)
+│   │   └── shared/              (Shared trip-plan components)
+│   │       └── *.tsx            (ActivityCard, DayCard, etc.)
+│   ├── auth/                    (Authentication forms)
+│   │   └── *.tsx                (LoginForm, RegisterForm, etc.)
+│   ├── dashboard/               (Dashboard feature)
+│   │   └── *.tsx                (DashboardContent, PlansList, PlanCard, etc.)
+│   └── landing/                 (Landing page sections)
+│       └── *.astro              (HeroSection, BenefitsSection, etc.)
+├── components/                  (Shared components only)
+│   ├── ui/                      (Shadcn/ui primitives - Button, Input, etc.)
+│   ├── navigation/              (Global navigation - NavbarContent, etc.)
+│   └── hooks/                   (Shared hooks)
+├── feature-flags/               (Feature flags system)
+│   ├── guards/                  (apiGuard, pageGuard)
+│   ├── react/                   (useFeatureFlag hook)
+│   └── *.ts                     (config, featureFlags, types)
+├── pages/                       (Astro pages and API routes)
+│   └── api/                     (REST API endpoints - use uppercase GET, POST, etc.)
+├── lib/                         (Business logic and utilities)
+│   ├── services/                (Business logic - tripPlan.service.ts, etc.)
+│   ├── validators/              (Zod validation schemas)
+│   ├── constants/               (Application constants)
+│   └── utils/                   (Utility functions)
+├── db/                          (Supabase client and types)
+│   ├── supabase.client.ts       (Creates Supabase SSR client)
+│   └── database.types.ts        (Generated types from Supabase schema)
+├── layouts/                     (Astro layouts)
+├── middleware/                  (Astro middleware - auth, etc.)
+├── errors/                      (Custom error classes)
+└── types.ts                     (API DTOs and Command models)
+```
+
+**Key principles:**
+- **Domain features** (`src/features/*`): Co-locate components, hooks, and types for specific features
+- **Shared components** (`src/components/*`): UI primitives and global navigation
+- **Feature flags** (`src/feature-flags/`): Feature toggle system (formerly `src/features/`)
+
+### Import Path Conventions
+
+Use TypeScript path aliases for clean imports:
+
+**Feature-specific aliases:**
+```typescript
+// Preferences feature
+import { PreferencesView } from "@preferences/components/PreferencesView";
+import { usePreferences } from "@preferences/hooks/usePreferences";
+
+// Trip plans feature
+import { CreateTripPlanContent } from "@trip-plans/create";
+import { TripPlanDetailsView } from "@trip-plans/details/TripPlanDetailsView";
+import { ActivityCard } from "@trip-plans/shared/ActivityCard";
+
+// Auth feature
+import { LoginForm } from "@auth/LoginForm";
+
+// Dashboard feature
+import { DashboardContent } from "@dashboard/DashboardContent";
+
+// Landing feature
+import LandingPage from "@landing/LandingPage.astro";
+```
+
+**Shared resource aliases:**
+```typescript
+// Shared components
+import { Button } from "@components/ui/button";
+import { NavbarContent } from "@components/navigation/NavbarContent";
+
+// Feature flags
+import { useFeatureFlag } from "@feature-flags";
+import { guardFeature } from "@feature-flags";
+
+// Libraries and utilities
+import { TripPlanService } from "@lib/services/tripPlan.service";
+import { cn } from "@lib/utils";
+
+// Layouts and pages
+import Layout from "@layouts/Layout.astro";
+```
+
+**When to use relative imports:**
+- Within the same feature directory (e.g., `./hooks/useTripPlanGeneration` from a component in the same feature)
+- For sibling files in the same directory
+- In Astro pages importing from parent directories (e.g., `../../features/dashboard/DashboardContent`)
 
 ### API Pattern (Critical)
 
