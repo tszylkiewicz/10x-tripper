@@ -12,17 +12,41 @@
     "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "@layouts": [
-        "./src/layouts/*"
+      "@preferences/*": [
+        "./src/features/preferences/*"
       ],
-      "@components": [
+      "@trip-plans/*": [
+        "./src/features/trip-plans/*"
+      ],
+      "@auth/*": [
+        "./src/features/auth/*"
+      ],
+      "@dashboard/*": [
+        "./src/features/dashboard/*"
+      ],
+      "@landing/*": [
+        "./src/features/landing/*"
+      ],
+      "@feature-flags/*": [
+        "./src/feature-flags/*"
+      ],
+      "@feature-flags": [
+        "./src/feature-flags/index.ts"
+      ],
+      "@components/*": [
         "./src/components/*"
       ],
-      "@lib": [
+      "@lib/*": [
         "./src/lib/*"
       ],
-      "@pages": [
+      "@layouts/*": [
+        "./src/layouts/*"
+      ],
+      "@pages/*": [
         "./src/pages/*"
+      ],
+      "@/*": [
+        "./src/*"
       ]
     }
   }
