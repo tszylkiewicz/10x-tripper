@@ -1,5 +1,6 @@
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { calculatePromptHash, logGenerationError, logGenerationSuccess } from "./planGenerationLogger.service";
 
 describe("PlanGenerationLogger Service", () => {

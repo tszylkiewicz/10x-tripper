@@ -9,9 +9,9 @@ import { MultiSelectWithCustom } from "./multi-select-with-custom";
 
 describe("MultiSelectWithCustom", () => {
   const mockOptions = [
-    { id: "opt1", label: "Option 1" },
-    { id: "opt2", label: "Option 2" },
-    { id: "opt3", label: "Option 3" },
+    { id: "opt1", label: "Option 1", labelEn: "Option 1" },
+    { id: "opt2", label: "Option 2", labelEn: "Option 2" },
+    { id: "opt3", label: "Option 3", labelEn: "Option 3" },
   ];
 
   describe("rendering", () => {

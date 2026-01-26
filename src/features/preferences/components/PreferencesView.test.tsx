@@ -191,6 +191,9 @@ function createMockPreference(overrides?: Partial<UserPreferenceDto>): UserPrefe
     name: "Weekend Getaway",
     people_count: 2,
     budget_type: "medium",
+    transport: null,
+    activities_todo: null,
+    activities_avoid: null,
     ...overrides,
   };
 }

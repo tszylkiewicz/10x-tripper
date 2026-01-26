@@ -144,7 +144,8 @@ export function usePreferenceForm({ initialData, mode }: UsePreferenceFormProps)
   const handleBlur = (name: keyof PreferenceFormViewModel) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
 
-    const error = validateField(name, formData[name]);
+    const value = formData[name];
+    const error = validateField(name, typeof value === "string" ? value : "");
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
