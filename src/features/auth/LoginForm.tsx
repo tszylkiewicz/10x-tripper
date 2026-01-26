@@ -61,7 +61,7 @@ export function LoginForm({ message, error: initialError }: LoginFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Logowanie</CardTitle>

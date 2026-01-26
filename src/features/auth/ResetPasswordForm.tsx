@@ -66,7 +66,7 @@ export function ResetPasswordForm({ message, error: initialError }: ResetPasswor
   // Success state - show success message
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <div className="flex items-center justify-center mb-4">
@@ -93,7 +93,7 @@ export function ResetPasswordForm({ message, error: initialError }: ResetPasswor
 
   // Reset password form
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Ustaw nowe hasło</CardTitle>
