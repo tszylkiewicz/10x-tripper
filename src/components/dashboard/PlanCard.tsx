@@ -1,6 +1,7 @@
-import { Calendar, Users, Wallet, Trash2 } from "lucide-react";
+import { Calendar, Users, Trash2 } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BudgetBadge } from "@/components/ui/BudgetBadge";
 import type { TripPlanDto } from "../../types";
 
 interface PlanCardProps {
@@ -57,18 +58,6 @@ function countActivities(planDetails: TripPlanDto["plan_details"]): number {
 }
 
 /**
- * Formats budget type for display
- */
-function formatBudgetType(budgetType: string): string {
-  const budgetLabels: Record<string, string> = {
-    low: "Niski",
-    medium: "Średni",
-    high: "Wysoki",
-  };
-  return budgetLabels[budgetType] || budgetType;
-}
-
-/**
  * PlanCard component
  * Displays a single trip plan card with key information and actions
  */
@@ -76,24 +65,8 @@ export function PlanCard({ plan, onClick, onDelete }: PlanCardProps) {
   const days = calculateDays(plan.start_date, plan.end_date);
   const activities = countActivities(plan.plan_details);
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDelete();
-  };
-
   return (
-    <Card
-      className="cursor-pointer transition-shadow hover:shadow-lg"
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-    >
+    <Card className="transition-shadow hover:shadow-lg">
       <CardHeader>
         <CardTitle className="text-lg">{plan.destination}</CardTitle>
       </CardHeader>
@@ -111,9 +84,9 @@ export function PlanCard({ plan, onClick, onDelete }: PlanCardProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Wallet className="size-4" />
-          <span>Budżet: {formatBudgetType(plan.budget_type)}</span>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Budżet:</span>
+          <BudgetBadge budgetType={plan.budget_type} />
         </div>
 
         <p className="text-sm text-muted-foreground">
@@ -122,18 +95,24 @@ export function PlanCard({ plan, onClick, onDelete }: PlanCardProps) {
         </p>
       </CardContent>
 
-      <CardFooter className="flex justify-between gap-2">
-        <Button variant="outline" size="sm" className="flex-1">
+      <CardFooter className="flex flex-col gap-3">
+        <Button
+          onClick={onClick}
+          variant="outline"
+          size="sm"
+          className="w-full cursor-pointer hover:bg-primary hover:text-primary-foreground"
+        >
           Zobacz szczegóły
         </Button>
         <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleDeleteClick}
+          variant="outline"
+          size="sm"
+          onClick={onDelete}
+          className="w-full cursor-pointer gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
           aria-label="Usuń plan"
-          className="text-muted-foreground hover:text-destructive"
         >
           <Trash2 className="size-4" />
+          Usuń
         </Button>
       </CardFooter>
     </Card>

@@ -1,9 +1,26 @@
 import { useState, useCallback } from "react";
 import { useTripPlans } from "../hooks/useTripPlans";
 import { PlansList } from "./PlansList";
-import { CreatePlanButton } from "./CreatePlanButton";
-import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
 import type { TripPlanDto } from "../../types";
+
+/**
+ * Formats date for display in dialog
+ */
+function formatDate(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString("pl-PL", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return dateString;
+  }
+}
 
 /**
  * DashboardContent component
@@ -65,15 +82,12 @@ export function DashboardContent() {
   return (
     <>
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Twoje plany</h1>
-            <p className="text-muted-foreground">Zarządzaj swoimi planami wycieczek</p>
-          </div>
-          <div className="hidden md:block">
-            <CreatePlanButton onClick={handleCreatePlan} />
-          </div>
-        </div>
+        <PageHeader
+          title="Twoje plany"
+          description="Zarządzaj swoimi planami wycieczek"
+          onCreateClick={handleCreatePlan}
+          createButtonLabel="Utwórz plan"
+        />
 
         <PlansList
           plans={plans}
@@ -86,17 +100,26 @@ export function DashboardContent() {
         />
       </main>
 
-      {/* Mobile FAB */}
-      <div className="md:hidden">
-        <CreatePlanButton onClick={handleCreatePlan} />
-      </div>
-
       <DeleteConfirmDialog
-        isOpen={selectedPlan !== null}
-        plan={selectedPlan}
+        open={selectedPlan !== null}
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
         isDeleting={isDeleting}
+        title="Usuń plan wycieczki"
+        description={
+          selectedPlan ? (
+            <>
+              Czy na pewno chcesz usunąć plan wycieczki do <strong>{selectedPlan.destination}</strong>?
+              <br />
+              <span className="text-xs">
+                ({formatDate(selectedPlan.start_date)} - {formatDate(selectedPlan.end_date)})
+              </span>
+              <br />
+              <br />
+              Ta operacja jest nieodwracalna.
+            </>
+          ) : null
+        }
       />
     </>
   );

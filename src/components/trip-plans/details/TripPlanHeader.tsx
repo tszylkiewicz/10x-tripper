@@ -98,7 +98,7 @@ function TripPlanHeaderComponent({
               variant="outline"
               size="sm"
               onClick={onDelete}
-              className="gap-2 text-destructive hover:text-destructive"
+              className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
             >
               <Trash2 className="size-4" />
               Usuń

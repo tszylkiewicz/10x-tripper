@@ -309,20 +309,20 @@ Aplikacja wykorzystuje bibliotekę **Shadcn/ui** (bazującą na Radix UI) z Tail
 
 Tokeny CSS używane w komponentach mapują się na paletę Ocean Explorer:
 
-| Token CSS              | Kolor Ocean Explorer | Hex       | Zastosowanie                      |
-| ---------------------- | -------------------- | --------- | --------------------------------- |
-| `--primary`            | Deep Teal            | `#0D9488` | Główne przyciski, linki, CTA      |
-| `--primary-foreground` | White                | `#FFFFFF` | Tekst na przyciskach primary      |
-| `--secondary`          | Light Gray           | `#F1F5F9` | Przyciski secondary, tła akcentów |
-| `--accent`             | Off White            | `#FAFAF9` | Hover na elementach nawigacji     |
-| `--destructive`        | Red                  | `#EF4444` | Przyciski usuwania, błędy         |
-| `--muted`              | Light Gray           | `#F1F5F9` | Tła wyłączonych elementów         |
-| `--muted-foreground`   | Gray                 | `#64748B` | Tekst pomocniczy, placeholder     |
-| `--background`         | Off White            | `#FAFAF9` | Tło strony                        |
-| `--card`               | White                | `#FFFFFF` | Tło kart, modali, formularzy      |
-| `--border`             | Light Gray           | `#E2E8F0` | Obramowania elementów             |
-| `--input`              | Light Gray           | `#E2E8F0` | Obramowania pól formularzy        |
-| `--ring`               | Deep Teal            | `#0D9488` | Focus ring (50% opacity)          |
+| Token CSS              | Kolor Ocean Explorer | Hex       | Zastosowanie                              |
+| ---------------------- | -------------------- | --------- | ----------------------------------------- |
+| `--primary`            | Deep Teal            | `#0D9488` | Główne przyciski, linki, CTA              |
+| `--primary-foreground` | White                | `#FFFFFF` | Tekst na przyciskach primary              |
+| `--secondary`          | Light Gray           | `#F1F5F9` | Przyciski secondary, tła akcentów         |
+| `--accent`             | Light Gray           | `#F1F5F9` | Hover na elementach UI, tła interaktywne  |
+| `--destructive`        | Red                  | `#EF4444` | Przyciski usuwania, błędy                 |
+| `--muted`              | Light Gray           | `#F1F5F9` | Tła wyłączonych elementów                 |
+| `--muted-foreground`   | Gray                 | `#64748B` | Tekst pomocniczy, placeholder             |
+| `--background`         | Off White            | `#FAFAF9` | Tło strony                                |
+| `--card`               | White                | `#FFFFFF` | Tło kart, modali, formularzy              |
+| `--border`             | Light Gray           | `#E2E8F0` | Obramowania elementów                     |
+| `--input`              | Light Gray           | `#E2E8F0` | Obramowania pól formularzy                |
+| `--ring`               | Deep Teal            | `#0D9488` | Focus ring (50% opacity)                  |
 
 ### 6.2 Przyciski
 
@@ -354,6 +354,32 @@ Tokeny CSS używane w komponentach mapują się na paletę Ocean Explorer:
 | `focus`    | Ring 3px w kolorze primary z 50% opacity                |
 | `disabled` | Opacity 50%, cursor not-allowed                         |
 | `loading`  | Spinner animowany, tekst przyciemiony                   |
+
+#### System dwupoziomowych stanów hover (Outline variant)
+
+Przyciski `variant="outline"` używają dwóch różnych wzorców hover w zależności od kontekstu:
+
+**Poziom 1: Akcje kluczowe (Primary CTAs w kartach)**
+- Transformacja do wypełnionego przycisku
+- Stosowane dla głównych akcji użytkownika
+- Przykłady:
+  ```tsx
+  // Primary action
+  className="hover:bg-primary hover:text-primary-foreground"
+  // Destructive action
+  className="hover:bg-destructive hover:text-destructive-foreground"
+  ```
+- Użycie: "Zobacz szczegóły", "Edytuj", "Utwórz plan", "Usuń" (w kartach)
+
+**Poziom 2: Akcje pomocnicze (domyślny hover)**
+- Subtelna zmiana tła na `--accent` (#F1F5F9)
+- Stosowane dla akcji drugorzędnych
+- Przykłady: przyciski Cancel, akcje formularzy, nawigacja
+- Użycie: Wariant outline bez dodatkowych klas hover
+
+**Zasada stosowania:**
+- Jeśli akcja jest głównym celem karty/sekcji → użyj poziomu 1
+- Jeśli akcja jest pomocnicza lub anulująca → użyj poziomu 2 (domyślny)
 
 #### Ikony w przyciskach
 
@@ -392,7 +418,7 @@ Tokeny CSS używane w komponentach mapują się na paletę Ocean Explorer:
 | ------------- | ---------------------------------------- |
 | Trigger       | Style jak Input + ikona ChevronDown      |
 | Content       | White tło, border, shadow-md, rounded-md |
-| Item hover    | Accent background `#FAFAF9`              |
+| Item hover    | Accent background `#F1F5F9`              |
 | Item selected | CheckIcon po lewej stronie               |
 | Animacja      | Fade + slide-down                        |
 
@@ -487,8 +513,8 @@ Tokeny CSS używane w komponentach mapują się na paletę Ocean Explorer:
 | Stan    | Tło              | Tekst           | Font         |
 | ------- | ---------------- | --------------- | ------------ |
 | Default | Transparent      | Gray `#64748B`  | 14px Regular |
-| Hover   | Accent `#FAFAF9` | Slate `#1E293B` | 14px Regular |
-| Active  | Accent `#FAFAF9` | Slate `#1E293B` | 14px Medium  |
+| Hover   | Accent `#F1F5F9` | Slate `#1E293B` | 14px Regular |
+| Active  | Accent `#F1F5F9` | Slate `#1E293B` | 14px Medium  |
 
 #### Menu użytkownika
 
@@ -671,9 +697,11 @@ Aplikacja używa systemu odstępów opartego na wielokrotnościach 4px:
 
 ## Historia zmian
 
-| Data       | Autor | Opis zmiany                                                     |
-| ---------- | ----- | --------------------------------------------------------------- |
-| 2025-01-21 | -     | Utworzenie dokumentu, definicja palety Ocean Explorer           |
-| 2026-01-21 | -     | Dodanie sekcji typografii - font Nunito                         |
-| 2026-01-21 | -     | Opracowanie sekcji logo - koncepcja, wersje, zasady użycia      |
-| 2026-01-21 | -     | Opracowanie sekcji UI - przyciski, formularze, karty, nawigacja |
+| Data       | Autor | Opis zmiany                                                            |
+| ---------- | ----- | ---------------------------------------------------------------------- |
+| 2025-01-21 | -     | Utworzenie dokumentu, definicja palety Ocean Explorer                  |
+| 2026-01-21 | -     | Dodanie sekcji typografii - font Nunito                                |
+| 2026-01-21 | -     | Opracowanie sekcji logo - koncepcja, wersje, zasady użycia             |
+| 2026-01-21 | -     | Opracowanie sekcji UI - przyciski, formularze, karty, nawigacja        |
+| 2026-01-25 | -     | Poprawka: zmiana koloru `--accent` z Off White na Light Gray (#F1F5F9)           |
+| 2026-01-25 | -     | Dodanie dokumentacji systemu dwupoziomowych stanów hover dla przycisków outline |

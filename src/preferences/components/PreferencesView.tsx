@@ -5,15 +5,15 @@
  * Odpowiada za pobieranie danych, zarządzanie dialogami i koordynację operacji CRUD.
  */
 
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FileHeart } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
 import { usePreferences } from "../hooks/usePreferences";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorAlert } from "./ErrorAlert";
-import { EmptyState } from "./EmptyState";
 import { PreferenceCard } from "./PreferenceCard";
 import { PreferenceFormDialog } from "./PreferenceFormDialog";
-import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import type { CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@/types";
 
 export function PreferencesView() {
@@ -54,28 +54,29 @@ export function PreferencesView() {
 
   return (
     <div className="container mx-auto px-4 py-8" data-testid="preferences-view">
-      {/* Header */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight" data-testid="preferences-page-title">
-            Moje Preferencje
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            Zarządzaj szablonami preferencji dla szybszego planowania wyjazdów
-          </p>
-        </div>
-        <Button onClick={openCreateDialog} className="gap-2" data-testid="create-preference-button">
-          <Plus className="size-4" />
-          Nowa preferencja
-        </Button>
-      </div>
+      <PageHeader
+        title="Moje Preferencje"
+        description="Zarządzaj szablonami preferencji dla szybszego planowania wyjazdów"
+        onCreateClick={openCreateDialog}
+        createButtonLabel="Nowa preferencja"
+        titleTestId="preferences-page-title"
+        createButtonTestId="create-preference-button"
+      />
 
       {/* Error Alert */}
       {state.error && <ErrorAlert message={state.error} onDismiss={clearError} onRetry={fetchPreferences} />}
 
       {/* Content */}
       {state.preferences.length === 0 ? (
-        <EmptyState onCreateClick={openCreateDialog} />
+        <EmptyState
+          icon={FileHeart}
+          title="Brak preferencji"
+          description="Utwórz swoją pierwszą preferencję, aby szybciej planować przyszłe wyjazdy. Zapisane preferencje pozwolą Ci łatwiej konfigurować parametry planów podróży."
+          actionLabel="Utwórz pierwszą preferencję"
+          onAction={openCreateDialog}
+          containerTestId="preferences-empty-state"
+          actionTestId="empty-state-create-button"
+        />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="preferences-grid">
           {state.preferences.map((preference) => (
@@ -100,12 +101,21 @@ export function PreferencesView() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <DeleteConfirmationDialog
+      <DeleteConfirmDialog
         open={state.showDeleteDialog}
-        preference={state.preferenceToDelete}
         onConfirm={handleDeleteConfirm}
         onCancel={closeDeleteDialog}
         isDeleting={state.isDeleting}
+        title="Czy na pewno chcesz usunąć?"
+        description={
+          state.preferenceToDelete ? (
+            <>
+              Ta akcja jest nieodwracalna. Preferencja{" "}
+              <strong className="font-semibold text-foreground">{state.preferenceToDelete.name}</strong> zostanie trwale
+              usunięta z twojego konta.
+            </>
+          ) : null
+        }
       />
     </div>
   );

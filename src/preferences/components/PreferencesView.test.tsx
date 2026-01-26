@@ -10,11 +10,11 @@
  * - Error handling
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PreferencesView } from "./PreferencesView";
-import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "../../types";
+import type { CreateUserPreferenceDto, UpdateUserPreferenceDto, UserPreferenceDto } from "../../types";
 import type { PreferencesViewState } from "../types";
 
 // Mock child components
@@ -111,23 +111,26 @@ vi.mock("./PreferenceFormDialog", () => ({
     ) : null,
 }));
 
-vi.mock("./DeleteConfirmationDialog", () => ({
-  DeleteConfirmationDialog: ({
+vi.mock("@/components/ui/DeleteConfirmDialog", () => ({
+  DeleteConfirmDialog: ({
     open,
-    preference,
+    title,
+    description,
     onConfirm,
     onCancel,
     isDeleting,
   }: {
     open: boolean;
-    preference: UserPreferenceDto | null;
+    title: string;
+    description: React.ReactNode;
     onConfirm: () => void;
     onCancel: () => void;
     isDeleting: boolean;
   }) =>
     open ? (
       <div data-testid="delete-confirmation-dialog">
-        <p data-testid="delete-preference-name">{preference?.name}</p>
+        <p data-testid="delete-dialog-title">{title}</p>
+        <div data-testid="delete-dialog-description">{description}</div>
         <button data-testid="confirm-delete-button" onClick={onConfirm} disabled={isDeleting}>
           Confirm Delete
         </button>
@@ -303,8 +306,11 @@ describe("PreferencesView", () => {
     it("should render create button in header", () => {
       render(<PreferencesView />);
 
-      const createButton = screen.getByRole("button", { name: /Nowa preferencja/i });
-      expect(createButton).toBeInTheDocument();
+      // Both desktop and mobile versions should exist
+      const desktopButton = screen.getByTestId("create-preference-button-desktop");
+      const mobileButton = screen.getByTestId("create-preference-button-mobile");
+      expect(desktopButton).toBeInTheDocument();
+      expect(mobileButton).toBeInTheDocument();
     });
   });
 
@@ -312,7 +318,7 @@ describe("PreferencesView", () => {
     it("should show empty state when no preferences exist", () => {
       render(<PreferencesView />);
 
-      expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+      expect(screen.getByTestId("preferences-empty-state")).toBeInTheDocument();
       expect(screen.getByText("Brak preferencji")).toBeInTheDocument();
     });
 
@@ -452,7 +458,7 @@ describe("PreferencesView", () => {
       const user = userEvent.setup();
       render(<PreferencesView />);
 
-      const createButton = screen.getByRole("button", { name: /Nowa preferencja/i });
+      const createButton = screen.getByTestId("create-preference-button-desktop");
       await user.click(createButton);
 
       expect(mockOpenCreateDialog).toHaveBeenCalledTimes(1);
@@ -829,7 +835,7 @@ describe("PreferencesView", () => {
       render(<PreferencesView />);
 
       expect(screen.getByTestId("delete-confirmation-dialog")).toBeInTheDocument();
-      expect(screen.getByTestId("delete-preference-name")).toHaveTextContent("To Delete");
+      expect(screen.getByTestId("delete-dialog-description")).toHaveTextContent("To Delete");
     });
 
     it("should call deletePreference when delete is confirmed", async () => {
@@ -1215,7 +1221,7 @@ describe("PreferencesView", () => {
       const user = userEvent.setup();
       render(<PreferencesView />);
 
-      const createButton = screen.getByRole("button", { name: /Nowa preferencja/i });
+      const createButton = screen.getByTestId("create-preference-button-desktop");
 
       // Rapid clicks
       await user.click(createButton);
@@ -1273,8 +1279,9 @@ describe("PreferencesView", () => {
     it("should have accessible button for creating preferences", () => {
       render(<PreferencesView />);
 
-      const createButton = screen.getByRole("button", { name: /Nowa preferencja/i });
+      const createButton = screen.getByTestId("create-preference-button-desktop");
       expect(createButton).toBeInTheDocument();
+      expect(createButton).toHaveAttribute("aria-label", "Nowa preferencja");
     });
 
     it("should maintain focus management during dialog operations", () => {

@@ -131,23 +131,26 @@ vi.mock("../shared/AccommodationCard", () => ({
   ),
 }));
 
-vi.mock("./DeleteConfirmDialog", () => ({
+vi.mock("@/components/ui/DeleteConfirmDialog", () => ({
   DeleteConfirmDialog: ({
-    isOpen,
-    planName,
+    open,
+    title,
+    description,
     isDeleting,
     onConfirm,
     onCancel,
   }: {
-    isOpen: boolean;
-    planName: string;
+    open: boolean;
+    title: string;
+    description: React.ReactNode;
     isDeleting: boolean;
     onConfirm: () => void;
     onCancel: () => void;
   }) =>
-    isOpen ? (
+    open ? (
       <div data-testid="delete-confirm-dialog">
-        <p data-testid="dialog-plan-name">{planName}</p>
+        <p data-testid="dialog-title">{title}</p>
+        <div data-testid="dialog-description">{description}</div>
         <p data-testid="dialog-is-deleting">{isDeleting ? "Deleting..." : "Ready"}</p>
         <button data-testid="confirm-delete-button" onClick={onConfirm} disabled={isDeleting}>
           Confirm Delete
@@ -1417,7 +1420,7 @@ describe("TripPlanDetailsView", () => {
       render(<TripPlanDetailsView planId="plan-123" />);
 
       expect(screen.getByTestId("delete-confirm-dialog")).toBeInTheDocument();
-      expect(screen.getByTestId("dialog-plan-name")).toHaveTextContent("Paris");
+      expect(screen.getByTestId("dialog-description")).toHaveTextContent("Paris");
     });
 
     it("should call deletePlan when confirm button is clicked", async () => {

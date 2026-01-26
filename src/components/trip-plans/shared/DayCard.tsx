@@ -145,7 +145,7 @@ function DayCardComponent({
               variant="ghost"
               size="sm"
               onClick={handleDeleteDay}
-              className="text-destructive hover:text-destructive"
+              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
               title="Usuń dzień"
             >
               <Trash2 className="size-4" />

@@ -10,8 +10,6 @@ export { TripPlanDetailsView } from "./TripPlanDetailsView";
 // Sub-components
 export { TripPlanHeader } from "./TripPlanHeader";
 export { LoadingState } from "./LoadingState";
-export { ErrorState } from "./ErrorState";
-export { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 
 // Re-export shared components for backwards compatibility
 export { DayCard as PlanDay } from "../shared/DayCard";
@@ -24,7 +22,6 @@ export type { UseTripPlanDetailsReturn } from "./useTripPlanDetails";
 
 // Types
 export type {
-  ErrorType,
   ViewError,
   ValidationErrors,
   TripPlanViewState,
@@ -36,7 +33,5 @@ export type {
   PlanDayProps,
   ActivityCardProps,
   AccommodationSectionProps,
-  DeleteConfirmDialogProps,
-  ErrorStateProps,
   LoadingStateProps,
 } from "./types";

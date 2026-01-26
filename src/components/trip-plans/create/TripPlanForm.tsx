@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, ChevronUp, Save, Sparkles } from "lucide-react";
@@ -27,6 +27,7 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isSavingPreference, setIsSavingPreference] = useState(false);
+  const [selectedPreferenceId, setSelectedPreferenceId] = useState<string | null>(null);
 
   const { preferences, isLoading: isLoadingPreferences } = useLoadPreference();
 
@@ -77,6 +78,7 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
    */
   const handleLoadPreference = (preferenceId: string) => {
     if (!preferenceId || preferenceId === "none") {
+      setSelectedPreferenceId(null);
       return;
     }
 
@@ -104,7 +106,26 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
 
     // Expand preferences section to show loaded data
     setIsPreferencesOpen(true);
+    setSelectedPreferenceId(preferenceId);
   };
+
+  /**
+   * Auto-load preference from URL parameter
+   */
+  useEffect(() => {
+    // Only run once when preferences are loaded
+    if (isLoadingPreferences || preferences.length === 0) {
+      return;
+    }
+
+    // Check if there's a preferenceId in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const preferenceId = urlParams.get("preferenceId");
+
+    if (preferenceId && !selectedPreferenceId) {
+      handleLoadPreference(preferenceId);
+    }
+  }, [preferences, isLoadingPreferences, selectedPreferenceId]);
 
   /**
    * Handle saving form data as preference
@@ -153,7 +174,11 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
         {/* Load from preferences */}
         <div className="space-y-2">
           <Label htmlFor={`${formId}-load-preference`}>Załaduj z preferencji</Label>
-          <Select onValueChange={handleLoadPreference} disabled={isLoadingPreferences || isSubmitting}>
+          <Select
+            value={selectedPreferenceId || "none"}
+            onValueChange={handleLoadPreference}
+            disabled={isLoadingPreferences || isSubmitting}
+          >
             <SelectTrigger id={`${formId}-load-preference`}>
               <SelectValue placeholder={isLoadingPreferences ? "Ładowanie..." : "Wybierz szablon"} />
             </SelectTrigger>

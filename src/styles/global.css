@@ -70,7 +70,7 @@
   --secondary: oklch(0.96 0.005 250); /* Light gray #F1F5F9 */
   --secondary-foreground: var(--ocean-slate);
 
-  --accent: var(--ocean-off-white);
+  --accent: oklch(0.96 0.005 250); /* Light gray #F1F5F9 - same as secondary for subtle hover states */
   --accent-foreground: var(--ocean-slate);
 
   --muted: oklch(0.96 0.005 250); /* #F1F5F9 */

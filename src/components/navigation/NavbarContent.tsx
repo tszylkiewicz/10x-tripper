@@ -126,14 +126,6 @@ export function NavbarContent({ userEmail, currentPath }: NavbarContentProps) {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px]">
               <nav className="flex flex-col gap-4 mt-8">
-                {/* Create Plan Button - Prominent */}
-                <Button asChild className="w-full justify-start gap-2" size="lg">
-                  <a href="/trip-plans/new" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Plus className="size-4" />
-                    <span>Utwórz plan</span>
-                  </a>
-                </Button>
-
                 {/* Navigation Links */}
                 <div className="space-y-1">
                   <a

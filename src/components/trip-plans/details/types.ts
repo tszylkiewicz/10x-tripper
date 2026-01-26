@@ -194,17 +194,6 @@ export interface AccommodationSectionProps {
 }
 
 /**
- * Props for DeleteConfirmDialog component
- */
-export interface DeleteConfirmDialogProps {
-  isOpen: boolean;
-  planName: string;
-  isDeleting: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
-
-/**
  * Props for ErrorState component
  */
 export interface ErrorStateProps {

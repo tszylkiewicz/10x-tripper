@@ -1,7 +1,8 @@
+import { MapPin } from "lucide-react";
 import type { TripPlanDto } from "../../types";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorState } from "./ErrorState";
-import { EmptyState } from "./EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { PlanCard } from "./PlanCard";
 
 interface PlansListProps {
@@ -32,11 +33,19 @@ export function PlansList({
   }
 
   if (error) {
-    return <ErrorState error={error} onRetry={onRetry} />;
+    return <ErrorState errorType="fetch-error" errorMessage={error} onRetry={onRetry} />;
   }
 
   if (plans.length === 0) {
-    return <EmptyState onCreatePlan={onCreatePlan} />;
+    return (
+      <EmptyState
+        icon={MapPin}
+        title="Brak planów wycieczek"
+        description="Zacznij planować swoją następną przygodę! Utwórz swój pierwszy plan wycieczki."
+        actionLabel="Utwórz pierwszy plan"
+        onAction={onCreatePlan}
+      />
+    );
   }
 
   return (

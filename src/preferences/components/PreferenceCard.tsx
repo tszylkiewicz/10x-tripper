@@ -6,47 +6,16 @@
  * Zawiera akcje edycji i usuwania.
  */
 
-import { Pencil, Trash2, Users } from "lucide-react";
+import { Pencil, Plus, Trash2, Users } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BudgetBadge } from "@/components/ui/BudgetBadge";
 import type { UserPreferenceDto } from "../../types";
 
 interface PreferenceCardProps {
   preference: UserPreferenceDto;
   onEdit: (preference: UserPreferenceDto) => void;
   onDelete: (preference: UserPreferenceDto) => void;
-}
-
-/**
- * Pomocnicza funkcja do mapowania typu budżetu na label
- */
-function getBudgetTypeLabel(budgetType: string | null): string {
-  if (!budgetType?.trim()) return "Nie określono";
-
-  const trimmed = budgetType.trim();
-  const labels: Record<string, string> = {
-    low: "Niski",
-    medium: "Średni",
-    high: "Wysoki",
-  };
-
-  return labels[trimmed] || trimmed;
-}
-
-/**
- * Pomocnicza funkcja do mapowania typu budżetu na kolor badge
- */
-function getBudgetTypeColor(budgetType: string | null): string {
-  if (!budgetType?.trim()) return "bg-muted text-muted-foreground";
-
-  const trimmed = budgetType.trim();
-  const colors: Record<string, string> = {
-    low: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    medium: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    high: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-  };
-
-  return colors[trimmed] || "bg-muted text-muted-foreground";
 }
 
 export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardProps) {
@@ -75,38 +44,47 @@ export function PreferenceCard({ preference, onEdit, onDelete }: PreferenceCardP
         {/* Typ budżetu */}
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">Budżet:</span>
-          <span
-            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${getBudgetTypeColor(
-              preference.budget_type
-            )}`}
-            data-testid="preference-card-budget-badge"
-          >
-            {getBudgetTypeLabel(preference.budget_type)}
-          </span>
+          <BudgetBadge budgetType={preference.budget_type} testId="preference-card-budget-badge" />
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end gap-2 border-t pt-4">
+      <CardFooter className="flex flex-col gap-3 border-t pt-4">
+        {/* Create trip with this preference */}
         <Button
-          variant="outline"
+          asChild
           size="sm"
-          onClick={() => onEdit(preference)}
-          className="gap-2"
-          data-testid="preference-card-edit-button"
+          className="cursor-pointer gap-2 w-full hover:bg-primary-dark"
+          data-testid="preference-card-create-trip-button"
         >
-          <Pencil className="size-4" />
-          Edytuj
+          <a href={`/trip-plans/new?preferenceId=${preference.id}`}>
+            <Plus className="size-4" />
+            Utwórz plan z tej preferencji
+          </a>
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onDelete(preference)}
-          className="gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
-          data-testid="preference-card-delete-button"
-        >
-          <Trash2 className="size-4" />
-          Usuń
-        </Button>
+
+        {/* Edit and Delete actions */}
+        <div className="flex gap-2 w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onEdit(preference)}
+            className="cursor-pointer gap-2 flex-1 hover:bg-primary hover:text-primary-foreground"
+            data-testid="preference-card-edit-button"
+          >
+            <Pencil className="size-4" />
+            Edytuj
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onDelete(preference)}
+            className="cursor-pointer gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground flex-1"
+            data-testid="preference-card-delete-button"
+          >
+            <Trash2 className="size-4" />
+            Usuń
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

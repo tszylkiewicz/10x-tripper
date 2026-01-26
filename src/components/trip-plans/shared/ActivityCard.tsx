@@ -250,7 +250,7 @@ function ActivityCardComponent({
 
         {/* Action buttons */}
         <div className="mt-4 flex justify-between">
-          <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive hover:text-destructive">
+          <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive hover:bg-destructive hover:text-destructive-foreground">
             <Trash2 className="mr-1 size-4" />
             Usuń
           </Button>

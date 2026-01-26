@@ -6,13 +6,13 @@
  */
 
 import { useCallback, useMemo } from "react";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
 import { useTripPlanDetails } from "./useTripPlanDetails";
 import { LoadingState } from "./LoadingState";
-import { ErrorState } from "./ErrorState";
 import { TripPlanHeader } from "./TripPlanHeader";
 import { DayCard } from "../shared/DayCard";
 import { AccommodationCard } from "../shared/AccommodationCard";
-import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import type { TripPlanMetadata, ValidationErrors } from "./types";
 
 interface TripPlanDetailsViewProps {
@@ -218,11 +218,19 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
 
         {/* Delete confirmation dialog */}
         <DeleteConfirmDialog
-          isOpen={isDeleteDialogOpen}
-          planName={displayPlan.destination}
-          isDeleting={isDeleting}
+          open={isDeleteDialogOpen}
           onConfirm={handleDeleteConfirm}
           onCancel={hideDeleteDialog}
+          isDeleting={isDeleting}
+          title="Usunąć plan wycieczki?"
+          description={
+            <>
+              Czy na pewno chcesz usunąć plan wycieczki do <strong>{displayPlan.destination}</strong>?
+              <br />
+              <br />
+              Ta operacja jest nieodwracalna. Wszystkie dane planu zostaną trwale usunięte.
+            </>
+          }
         />
       </div>
     </main>
