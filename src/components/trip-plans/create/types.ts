@@ -5,7 +5,7 @@
  * including state management, form handling, and plan editing types.
  */
 
-import type { GeneratedTripPlanDto, ApiErrorResponse, DayDto, ActivityDto, AccommodationDto } from "../../../types";
+import type { GeneratedTripPlanDto, ApiErrorResponse, DayDto, ActivityDto } from "../../../types";
 
 // =============================================================================
 // FORM DATA TYPES
@@ -212,15 +212,6 @@ export interface PlanHeaderProps {
   endDate: string;
   peopleCount: number;
   budgetType: string;
-}
-
-/**
- * Props for AccommodationCard component
- * @deprecated Accommodation feature removed from MVP - kept for backward compatibility
- */
-export interface AccommodationCardProps {
-  accommodation: AccommodationDto;
-  onUpdate: (updated: AccommodationDto) => void;
 }
 
 /**

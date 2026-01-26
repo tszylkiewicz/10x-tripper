@@ -2,10 +2,10 @@
  * Trip plan constants
  *
  * Shared constants and default values used across trip plan components.
- * Provides consistent defaults for new activities, accommodations, etc.
+ * Provides consistent defaults for new activities, etc.
  */
 
-import type { ActivityDto, AccommodationDto } from "../../types";
+import type { ActivityDto } from "../../types";
 
 /**
  * Empty activity template
@@ -16,17 +16,6 @@ export const EMPTY_ACTIVITY: ActivityDto = {
   title: "",
   description: "",
   location: "",
-};
-
-/**
- * Empty accommodation template
- * Used as default when creating new accommodations
- */
-export const EMPTY_ACCOMMODATION: AccommodationDto = {
-  name: "",
-  address: "",
-  check_in: "",
-  check_out: "",
 };
 
 /**
@@ -77,11 +66,6 @@ export const PLACEHOLDERS = {
     duration: "np. 2 godziny",
     category: "np. Zwiedzanie, Jedzenie, Transport",
   },
-  accommodation: {
-    name: "np. Hotel Marriott",
-    address: "ul. Przykładowa 1, 00-001 Warszawa",
-    bookingUrl: "https://booking.com/...",
-  },
 } as const;
 
 /**
@@ -96,15 +80,6 @@ export const ERROR_MESSAGES = {
     descriptionRequired: "Opis jest wymagany",
     locationRequired: "Lokalizacja jest wymagana",
     costNegative: "Koszt musi być >= 0",
-  },
-  accommodation: {
-    nameRequired: "Nazwa zakwaterowania jest wymagana",
-    addressRequired: "Adres jest wymagany",
-    checkInRequired: "Data zameldowania jest wymagana",
-    checkOutRequired: "Data wymeldowania jest wymagana",
-    checkOutBeforeCheckIn: "Data wymeldowania musi być >= data zameldowania",
-    costNegative: "Koszt musi być >= 0",
-    urlInvalid: "Nieprawidłowy format URL",
   },
   day: {
     cannotDeleteLastActivity: "Nie można usunąć ostatniej aktywności",

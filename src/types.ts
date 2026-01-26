@@ -36,18 +36,6 @@ export interface DayDto {
 }
 
 /**
- * Represents accommodation details for the trip
- */
-export interface AccommodationDto {
-  name: string;
-  address: string;
-  check_in: string;
-  check_out: string;
-  estimated_cost?: number;
-  booking_url?: string;
-}
-
-/**
  * Complete structure for the plan_details JSONB field
  * This is the structured format for trip plan details stored in the database
  */

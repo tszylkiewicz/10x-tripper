@@ -5,7 +5,7 @@
  * Designed to be flexible and support both use cases.
  */
 
-import type { ActivityDto, AccommodationDto } from "../../../types";
+import type { ActivityDto } from "../../../types";
 
 /**
  * Validation errors map (field name -> error message)
@@ -84,41 +84,6 @@ export interface DayCardProps {
 
   /** Callback when entire day is deleted */
   onDeleteDay?: (dayIndex: number) => void;
-
-  /** Optional CSS class for the card */
-  className?: string;
-}
-
-// =============================================================================
-// ACCOMMODATION CARD TYPES
-// =============================================================================
-
-/**
- * Props for shared AccommodationCard component
- *
- * Supports both create flow (simple edit/view) and details flow (add/edit/remove)
- */
-export interface AccommodationCardProps {
-  /** Accommodation data (can be null/undefined if not set) */
-  accommodation?: AccommodationDto | null;
-
-  /** Whether editing is enabled (default: true for create, conditional for details) */
-  isEditMode?: boolean;
-
-  /** Whether to show add button when no accommodation exists */
-  showAddButton?: boolean;
-
-  /** Whether to show remove button in edit mode */
-  showRemoveButton?: boolean;
-
-  /** Callback when accommodation is updated */
-  onUpdate: (accommodation: AccommodationDto) => void;
-
-  /** Callback when accommodation is added (for details flow) */
-  onAdd?: (accommodation: AccommodationDto) => void;
-
-  /** Callback when accommodation is removed (for details flow) */
-  onRemove?: () => void;
 
   /** Optional CSS class for the card */
   className?: string;

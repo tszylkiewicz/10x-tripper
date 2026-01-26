@@ -24,12 +24,6 @@ describe("TripPlanService", () => {
         ],
       },
     ],
-    accommodation: {
-      name: "Hotel Paris",
-      address: "123 Rue de Rivoli",
-      check_in: "2025-06-01",
-      check_out: "2025-06-03",
-    },
     total_estimated_cost: 1500,
     notes: "Test notes",
   };

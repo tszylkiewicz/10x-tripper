@@ -14,7 +14,6 @@ export { LoadingState } from "./LoadingState";
 // Re-export shared components for backwards compatibility
 export { DayCard as PlanDay } from "../shared/DayCard";
 export { ActivityCard } from "../shared/ActivityCard";
-export { AccommodationCard as AccommodationSection } from "../shared/AccommodationCard";
 
 // Hook
 export { useTripPlanDetails } from "./useTripPlanDetails";
@@ -27,11 +26,9 @@ export type {
   TripPlanViewState,
   TripPlanMetadata,
   ActivityFormData,
-  AccommodationFormData,
   TripPlanAction,
   TripPlanHeaderProps,
   PlanDayProps,
   ActivityCardProps,
-  AccommodationSectionProps,
   LoadingStateProps,
 } from "./types";

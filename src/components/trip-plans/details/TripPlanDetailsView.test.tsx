@@ -112,25 +112,6 @@ vi.mock("../shared/DayCard", () => ({
   ),
 }));
 
-vi.mock("../shared/AccommodationCard", () => ({
-  AccommodationCard: ({
-    accommodation,
-    isEditMode,
-  }: {
-    accommodation?: { name: string } | null;
-    isEditMode: boolean;
-  }) => (
-    <div data-testid="accommodation-section">
-      {accommodation ? (
-        <p data-testid="accommodation-name">{accommodation.name}</p>
-      ) : (
-        <p data-testid="no-accommodation">No accommodation</p>
-      )}
-      <p data-testid="accommodation-edit-mode">{isEditMode ? "Editable" : "Read-only"}</p>
-    </div>
-  ),
-}));
-
 vi.mock("@/components/ui/DeleteConfirmDialog", () => ({
   DeleteConfirmDialog: ({
     open,
@@ -171,9 +152,6 @@ const mockDeleteActivity = vi.fn();
 const mockAddActivity = vi.fn();
 const mockDeleteDay = vi.fn();
 const mockAddDay = vi.fn();
-const mockUpdateAccommodation = vi.fn();
-const mockRemoveAccommodation = vi.fn();
-const mockAddAccommodation = vi.fn();
 const mockSavePlan = vi.fn();
 const mockDeletePlan = vi.fn();
 const mockRefetch = vi.fn();
@@ -200,9 +178,6 @@ vi.mock("./useTripPlanDetails", () => ({
     addActivity: mockAddActivity,
     deleteDay: mockDeleteDay,
     addDay: mockAddDay,
-    updateAccommodation: mockUpdateAccommodation,
-    removeAccommodation: mockRemoveAccommodation,
-    addAccommodation: mockAddAccommodation,
     savePlan: mockSavePlan,
     deletePlan: mockDeletePlan,
     refetch: mockRefetch,
@@ -249,13 +224,6 @@ function createMockTripPlan(overrides?: Partial<TripPlanDto>): TripPlanDto {
           ],
         },
       ],
-      accommodation: {
-        name: "Hotel Paris",
-        address: "123 Rue de Rivoli",
-        check_in: "2025-06-01",
-        check_out: "2025-06-03",
-        estimated_cost: 200,
-      },
       total_estimated_cost: 500,
       notes: "Great trip!",
     },
@@ -292,9 +260,6 @@ describe("TripPlanDetailsView", () => {
       addActivity: mockAddActivity,
       deleteDay: mockDeleteDay,
       addDay: mockAddDay,
-      updateAccommodation: mockUpdateAccommodation,
-      removeAccommodation: mockRemoveAccommodation,
-      addAccommodation: mockAddAccommodation,
       savePlan: mockSavePlan,
       deletePlan: mockDeletePlan,
       refetch: mockRefetch,
@@ -328,9 +293,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -364,9 +326,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -403,9 +362,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -443,9 +399,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -485,9 +438,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -520,9 +470,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -560,9 +507,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -599,9 +543,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -615,44 +556,6 @@ describe("TripPlanDetailsView", () => {
       expect(screen.getByTestId("plan-day-1")).toBeInTheDocument();
       expect(screen.getByTestId("day-number-0")).toHaveTextContent("Day 1");
       expect(screen.getByTestId("day-number-1")).toHaveTextContent("Day 2");
-    });
-
-    it("should display accommodation section", () => {
-      const mockPlan = createMockTripPlan();
-
-      vi.mocked(useTripPlanDetails).mockReturnValue({
-        state: {
-          originalPlan: mockPlan,
-          editedPlan: mockPlan,
-          isLoading: false,
-          isSaving: false,
-          isDeleting: false,
-          isEditMode: false,
-          showDeleteDialog: false,
-          error: null,
-        },
-        enterEditMode: mockEnterEditMode,
-        exitEditMode: mockExitEditMode,
-        updateMetadata: mockUpdateMetadata,
-        updateActivity: mockUpdateActivity,
-        deleteActivity: mockDeleteActivity,
-        addActivity: mockAddActivity,
-        deleteDay: mockDeleteDay,
-        addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
-        savePlan: mockSavePlan,
-        deletePlan: mockDeletePlan,
-        refetch: mockRefetch,
-        showDeleteDialog: mockShowDeleteDialog,
-        hideDeleteDialog: mockHideDeleteDialog,
-      });
-
-      render(<TripPlanDetailsView planId="plan-123" />);
-
-      expect(screen.getByTestId("accommodation-section")).toBeInTheDocument();
-      expect(screen.getByTestId("accommodation-name")).toHaveTextContent("Hotel Paris");
     });
 
     it("should display notes section when notes exist", () => {
@@ -677,9 +580,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -732,9 +632,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -769,9 +666,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -810,9 +704,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -850,9 +741,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -864,7 +752,6 @@ describe("TripPlanDetailsView", () => {
 
       expect(screen.getByTestId("edit-mode")).toHaveTextContent("Edit Mode");
       expect(screen.getByTestId("day-edit-mode-0")).toHaveTextContent("Editable");
-      expect(screen.getByTestId("accommodation-edit-mode")).toHaveTextContent("Editable");
     });
 
     it("should exit edit mode when cancel button is clicked", async () => {
@@ -890,9 +777,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -931,9 +815,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -974,9 +855,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1016,9 +894,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1057,9 +932,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1103,9 +975,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1147,9 +1016,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1193,9 +1059,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1246,9 +1109,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1289,9 +1149,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1324,9 +1181,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1367,9 +1221,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1407,9 +1258,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1448,9 +1296,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1491,9 +1336,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1531,9 +1373,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1549,61 +1388,6 @@ describe("TripPlanDetailsView", () => {
   });
 
   describe("Edge cases", () => {
-    it("should handle plan without accommodation", () => {
-      const mockPlan = createMockTripPlan({
-        plan_details: {
-          days: [
-            {
-              day: 1,
-              date: "2025-06-01",
-              activities: [
-                {
-                  time: "10:00",
-                  title: "Activity",
-                  description: "Description",
-                  location: "Location",
-                },
-              ],
-            },
-          ],
-        },
-      });
-
-      vi.mocked(useTripPlanDetails).mockReturnValue({
-        state: {
-          originalPlan: mockPlan,
-          editedPlan: mockPlan,
-          isLoading: false,
-          isSaving: false,
-          isDeleting: false,
-          isEditMode: false,
-          showDeleteDialog: false,
-          error: null,
-        },
-        enterEditMode: mockEnterEditMode,
-        exitEditMode: mockExitEditMode,
-        updateMetadata: mockUpdateMetadata,
-        updateActivity: mockUpdateActivity,
-        deleteActivity: mockDeleteActivity,
-        addActivity: mockAddActivity,
-        deleteDay: mockDeleteDay,
-        addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
-        savePlan: mockSavePlan,
-        deletePlan: mockDeletePlan,
-        refetch: mockRefetch,
-        showDeleteDialog: mockShowDeleteDialog,
-        hideDeleteDialog: mockHideDeleteDialog,
-      });
-
-      render(<TripPlanDetailsView planId="plan-123" />);
-
-      expect(screen.getByTestId("accommodation-section")).toBeInTheDocument();
-      expect(screen.getByTestId("no-accommodation")).toBeInTheDocument();
-    });
-
     it("should handle plan with single day", () => {
       const mockPlan = createMockTripPlan({
         plan_details: {
@@ -1643,9 +1427,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,
@@ -1681,9 +1462,6 @@ describe("TripPlanDetailsView", () => {
         addActivity: mockAddActivity,
         deleteDay: mockDeleteDay,
         addDay: mockAddDay,
-        updateAccommodation: mockUpdateAccommodation,
-        removeAccommodation: mockRemoveAccommodation,
-        addAccommodation: mockAddAccommodation,
         savePlan: mockSavePlan,
         deletePlan: mockDeletePlan,
         refetch: mockRefetch,

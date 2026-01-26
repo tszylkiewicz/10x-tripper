@@ -5,7 +5,7 @@
  * including state management, validation, and form handling types.
  */
 
-import type { TripPlanDto, ActivityDto, AccommodationDto } from "../../../types";
+import type { TripPlanDto, ActivityDto } from "../../../types";
 
 // =============================================================================
 // ERROR TYPES
@@ -93,13 +93,6 @@ export interface ActivityFormData extends ActivityDto {
   isEditing?: boolean;
 }
 
-/**
- * Accommodation form data with editing state
- */
-export interface AccommodationFormData extends AccommodationDto {
-  isEditing?: boolean;
-}
-
 // =============================================================================
 // REDUCER ACTION TYPES
 // =============================================================================
@@ -120,9 +113,6 @@ export type TripPlanAction =
   | { type: "ADD_ACTIVITY"; payload: { dayIndex: number; activity: ActivityDto } }
   | { type: "DELETE_DAY"; payload: { dayIndex: number } }
   | { type: "ADD_DAY"; payload: { day: number; date: string; activities: ActivityDto[] } }
-  | { type: "UPDATE_ACCOMMODATION"; payload: AccommodationDto }
-  | { type: "REMOVE_ACCOMMODATION" }
-  | { type: "ADD_ACCOMMODATION"; payload: AccommodationDto }
   | { type: "SAVE_START" }
   | { type: "SAVE_SUCCESS"; payload: TripPlanDto }
   | { type: "SAVE_ERROR"; payload: ViewError }
@@ -179,18 +169,6 @@ export interface ActivityCardProps {
   validationErrors?: ValidationErrors;
   onUpdate: (activity: ActivityDto) => void;
   onDelete: () => void;
-}
-
-/**
- * Props for AccommodationSection component
- */
-export interface AccommodationSectionProps {
-  accommodation?: AccommodationDto | null;
-  isEditMode: boolean;
-  validationErrors?: ValidationErrors;
-  onUpdate: (accommodation: AccommodationDto) => void;
-  onRemove: () => void;
-  onAdd: (accommodation: AccommodationDto) => void;
 }
 
 /**

@@ -12,7 +12,6 @@ export { PlanActions } from "./PlanActions";
 
 // Re-export shared components for backwards compatibility
 export { DayCard } from "../shared/DayCard";
-export { AccommodationCard } from "../shared/AccommodationCard";
 
 // Re-export hooks
 export { useTripPlanGeneration, usePlanEditor, useAcceptPlan } from "./hooks";

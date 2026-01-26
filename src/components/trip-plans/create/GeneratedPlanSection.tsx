@@ -2,7 +2,7 @@
  * GeneratedPlanSection component
  *
  * Main container for displaying the AI-generated trip plan.
- * Orchestrates PlanHeader, AccommodationCard, DayCards, and PlanActions.
+ * Orchestrates PlanHeader, DayCards, and PlanActions.
  */
 
 import { useCallback, useState } from "react";

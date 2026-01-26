@@ -33,18 +33,6 @@ const daySchema = z.object({
 });
 
 /**
- * Schema for accommodation details
- */
-const accommodationSchema = z.object({
-  name: z.string().min(1, "Accommodation name is required"),
-  address: z.string().min(1, "Accommodation address is required"),
-  check_in: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Check-in must be in YYYY-MM-DD format"),
-  check_out: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Check-out must be in YYYY-MM-DD format"),
-  estimated_cost: z.number().nonnegative("Estimated cost must be non-negative").optional(),
-  booking_url: z.string().url("Booking URL must be a valid URL").optional(),
-});
-
-/**
  * Schema for plan_details JSONB structure
  *
  * TODO: Post-MVP - Add size limits for performance:
@@ -53,7 +41,6 @@ const accommodationSchema = z.object({
  */
 const planDetailsSchema = z.object({
   days: z.array(daySchema).min(1, "Plan must contain at least one day"),
-  accommodation: accommodationSchema.optional(),
   notes: z.string().optional(),
   total_estimated_cost: z.number().nonnegative("Total estimated cost must be non-negative").optional(),
   accepted_at: z.string().optional(),

@@ -6,7 +6,7 @@
  */
 
 // Date formatting
-export { formatDate, formatAccommodationDate, formatDateRange } from "./date-formatting";
+export { formatDate } from "./date-formatting";
 
 // Activity validation
 export {
@@ -16,20 +16,9 @@ export {
   type ValidationErrors as ActivityValidationErrors,
 } from "./activity-validation";
 
-// Accommodation validation
-export {
-  validateAccommodation,
-  validateAccommodationRequired,
-  isAccommodationValid,
-  isValidUrl,
-  validateDateRange,
-  type ValidationErrors as AccommodationValidationErrors,
-} from "./accommodation-validation";
-
 // Constants
 export {
   EMPTY_ACTIVITY,
-  EMPTY_ACCOMMODATION,
   DEFAULT_ACTIVITY_TIME,
   MAX_ACTIVITY_TITLE_LENGTH,
   MIN_ACTIVITIES_PER_DAY,

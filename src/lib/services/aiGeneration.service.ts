@@ -83,7 +83,7 @@ Budget Type: ${budget_type}
     {
       role: "system",
       content:
-        "You are an expert travel planning assistant. Generate detailed, realistic trip itineraries based on user requirements. Include specific locations, estimated costs, and helpful recommendations. Write a response in a Polish language",
+        "You are an expert travel planning assistant. Generate detailed, realistic trip itineraries based on user requirements. Include specific locations, estimated costs, and helpful recommendations. IMPORTANT: DO NOT include accommodation recommendations - focus only on activities, attractions, and experiences. Write a response in a Polish language",
     },
     {
       role: "user",

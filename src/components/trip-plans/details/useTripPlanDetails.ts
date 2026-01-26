@@ -6,14 +6,7 @@
  */
 
 import { useReducer, useEffect, useCallback } from "react";
-import type {
-  TripPlanDto,
-  UpdateTripPlanDto,
-  ApiSuccessResponse,
-  ApiErrorResponse,
-  ActivityDto,
-  AccommodationDto,
-} from "../../../types";
+import type { TripPlanDto, UpdateTripPlanDto, ApiSuccessResponse, ApiErrorResponse, ActivityDto } from "../../../types";
 import type { TripPlanAction, TripPlanViewState, ViewError, TripPlanMetadata } from "./types";
 import { initialTripPlanViewState } from "./types";
 
@@ -165,47 +158,6 @@ function tripPlanReducer(state: TripPlanViewState, action: TripPlanAction): Trip
       };
     }
 
-    case "UPDATE_ACCOMMODATION": {
-      if (!state.editedPlan) return state;
-      return {
-        ...state,
-        editedPlan: {
-          ...state.editedPlan,
-          plan_details: {
-            ...state.editedPlan.plan_details,
-            accommodation: action.payload,
-          },
-        },
-      };
-    }
-
-    case "REMOVE_ACCOMMODATION": {
-      if (!state.editedPlan) return state;
-      const newPlanDetails = { ...state.editedPlan.plan_details };
-      delete newPlanDetails.accommodation;
-      return {
-        ...state,
-        editedPlan: {
-          ...state.editedPlan,
-          plan_details: newPlanDetails,
-        },
-      };
-    }
-
-    case "ADD_ACCOMMODATION": {
-      if (!state.editedPlan) return state;
-      return {
-        ...state,
-        editedPlan: {
-          ...state.editedPlan,
-          plan_details: {
-            ...state.editedPlan.plan_details,
-            accommodation: action.payload,
-          },
-        },
-      };
-    }
-
     case "SAVE_START":
       return { ...state, isSaving: true, error: null };
 
@@ -295,10 +247,6 @@ export interface UseTripPlanDetailsReturn {
   // Day operations
   deleteDay: (dayIndex: number) => void;
   addDay: (day: number, date: string, activities: ActivityDto[]) => void;
-  // Accommodation operations
-  updateAccommodation: (accommodation: AccommodationDto) => void;
-  removeAccommodation: () => void;
-  addAccommodation: (accommodation: AccommodationDto) => void;
   // API operations
   savePlan: () => Promise<boolean>;
   deletePlan: () => Promise<boolean>;
@@ -457,19 +405,6 @@ export function useTripPlanDetails(planId: string): UseTripPlanDetailsReturn {
     dispatch({ type: "ADD_DAY", payload: { day, date, activities } });
   }, []);
 
-  // Accommodation operations
-  const updateAccommodation = useCallback((accommodation: AccommodationDto) => {
-    dispatch({ type: "UPDATE_ACCOMMODATION", payload: accommodation });
-  }, []);
-
-  const removeAccommodation = useCallback(() => {
-    dispatch({ type: "REMOVE_ACCOMMODATION" });
-  }, []);
-
-  const addAccommodation = useCallback((accommodation: AccommodationDto) => {
-    dispatch({ type: "ADD_ACCOMMODATION", payload: accommodation });
-  }, []);
-
   // Dialog
   const showDeleteDialog = useCallback(() => {
     dispatch({ type: "SHOW_DELETE_DIALOG" });
@@ -499,9 +434,6 @@ export function useTripPlanDetails(planId: string): UseTripPlanDetailsReturn {
     addActivity,
     deleteDay,
     addDay,
-    updateAccommodation,
-    removeAccommodation,
-    addAccommodation,
     savePlan,
     deletePlan,
     refetch,

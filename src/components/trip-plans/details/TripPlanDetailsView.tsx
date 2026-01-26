@@ -12,7 +12,6 @@ import { useTripPlanDetails } from "./useTripPlanDetails";
 import { LoadingState } from "./LoadingState";
 import { TripPlanHeader } from "./TripPlanHeader";
 import { DayCard } from "../shared/DayCard";
-import { AccommodationCard } from "../shared/AccommodationCard";
 import type { TripPlanMetadata, ValidationErrors } from "./types";
 
 interface TripPlanDetailsViewProps {
@@ -76,9 +75,6 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
     deleteActivity,
     addActivity,
     deleteDay,
-    updateAccommodation,
-    removeAccommodation,
-    addAccommodation,
     savePlan,
     deletePlan,
     refetch,
@@ -190,15 +186,6 @@ export function TripPlanDetailsView({ planId }: TripPlanDetailsViewProps) {
             />
           ))}
         </div>
-
-        {/* Accommodation section */}
-        <AccommodationCard
-          accommodation={displayPlan.plan_details.accommodation}
-          isEditMode={isEditMode}
-          onUpdate={updateAccommodation}
-          onRemove={removeAccommodation}
-          onAdd={addAccommodation}
-        />
 
         {/* Notes section (read-only for now) */}
         {displayPlan.plan_details.notes && (
