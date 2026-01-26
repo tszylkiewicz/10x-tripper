@@ -14,7 +14,7 @@ import { UserPreferencesService } from "@/lib/services/userPreferences.service.t
 import { createUserPreferenceSchema } from "@/lib/validators/preferences.validator.ts";
 import { ValidationError } from "@/errors/validation.error.ts";
 import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
-import { guardFeature } from "@/features";
+import { guardFeature } from "@feature-flags";
 import { logger } from "@/lib/utils/logger.ts";
 import type { ApiErrorResponse, ApiSuccessResponse, UserPreferenceDto } from "@/types.ts";
 

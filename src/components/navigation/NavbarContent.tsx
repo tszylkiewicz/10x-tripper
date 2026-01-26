@@ -3,7 +3,7 @@ import { List, LogOut, Menu, Plus, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useFeatureFlag } from "@/features";
+import { useFeatureFlag } from "@feature-flags";
 import { logger } from "@/lib/utils/logger";
 
 interface NavbarContentProps {

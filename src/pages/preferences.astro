@@ -10,7 +10,7 @@
 
 import Layout from "../layouts/Layout.astro";
 import { PreferencesView } from "../preferences/components/PreferencesView";
-import { shouldRenderPage } from "../features";
+import { shouldRenderPage } from "../feature-flags";
 
 // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
 const env = Astro.locals.runtime?.env || import.meta.env;
