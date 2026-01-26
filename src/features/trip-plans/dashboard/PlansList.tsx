@@ -1,9 +1,9 @@
 import { MapPin } from "lucide-react";
-import type { TripPlanDto } from "../../types";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorState } from "@ui/ErrorState";
-import { EmptyState } from "@ui/EmptyState";
-import { PlanCard } from "./PlanCard";
+import type { TripPlanDto } from "@types";
+import { LoadingSpinner } from "./LoadingSpinner.tsx";
+import { ErrorState } from "@ui/ErrorState.tsx";
+import { EmptyState } from "@ui/EmptyState.tsx";
+import { PlanCard } from "./PlanCard.tsx";
 
 interface PlansListProps {
   plans: TripPlanDto[];
@@ -20,14 +20,14 @@ interface PlansListProps {
  * Main list component that renders trip plans with conditional states
  */
 export function PlansList({
-  plans,
-  isLoading,
-  error,
-  onPlanClick,
-  onDeleteClick,
-  onCreatePlan,
-  onRetry,
-}: PlansListProps) {
+                            plans,
+                            isLoading,
+                            error,
+                            onPlanClick,
+                            onDeleteClick,
+                            onCreatePlan,
+                            onRetry,
+                          }: PlansListProps) {
   if (isLoading) {
     return <LoadingSpinner />;
   }

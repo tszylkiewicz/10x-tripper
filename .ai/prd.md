@@ -50,9 +50,26 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
    - Wygenerowany plan NIE jest od razu zapisywany w bazie — istnieje tylko w interfejsie użytkownika
 4. Edycja wygenerowanego planu (przed akceptacją)
    - Użytkownik może przeglądać i edytować wygenerowany plan w interfejsie
-   - Może dodawać / usuwać / przenosić dni i atrakcje
+   - Zarządzanie dniami:
+     - Dodawanie nowego dnia na końcu planu:
+       - Jeśli nowa liczba dni przekracza zakres dat → automatycznie wydłuża `end_date` o 1 dzień
+       - Jeśli mieści się w zakresie dat → dodaje dzień bez zmiany `end_date`
+       - Limit: zakres dat po wydłużeniu nie może przekroczyć 30 dni
+     - Usuwanie dnia (NIE modyfikuje `end_date` - pozwala na wolne dni na odpoczynek)
+     - Dni są automatycznie przenumerowywane po usunięciu (1, 2, 3, ...)
+     - Daty dni kalkulowane jako: `start_date + (numer_dnia - 1)`
+   - Zarządzanie aktywnościami:
+     - Dodawanie aktywności do dowolnego dnia
+     - Edycja aktywności (czas, tytuł, opis, lokalizacja, koszt, kategoria)
+     - Usuwanie aktywności (minimum 1 aktywność na dzień)
+     - Reordering aktywności w ramach dnia (funkcja drag & drop NIE jest wymagana w MVP)
    - Edycje są tymczasowe (tylko w interfejsie) dopóki użytkownik nie zaakceptuje planu
    - Zmiana planu przed akceptacją oznacza, że plan staje się „edytowany" (informacja analityczna)
+   - Walidacja przed akceptacją:
+     - Liczba dni z aktywnościami <= (end_date - start_date + 1) (dni mieszczą się w zakresie dat)
+     - Zakres dat nie przekracza limitu: (end_date - start_date + 1) <= 30
+     - Każdy dzień musi mieć co najmniej 1 aktywność
+     - Wszystkie aktywności muszą mieć wypełnione pola obowiązkowe (czas, tytuł, opis, lokalizacja)
 5. Akceptacja planu
    - Użytkownik zatwierdza plan (z lub bez edycji) klikając „Akceptuj"
    - Dopiero wtedy plan jest zapisywany w bazie danych
@@ -81,6 +98,11 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Brak zaawansowanej analizy multimediów oraz map
 - Brak systemu ocen planu na etapie MVP
 - Brak rekomendacji zakwaterowania w MVP (funkcja planowana na przyszłe wersje)
+- Brak drag & drop do zmiany kolejności aktywności w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności)
+- Brak automatycznego zapisywania draftu edycji w localStorage (edycje tracone przy odświeżeniu strony)
+- Brak limitu regeneracji planu w MVP (ograniczenie tylko na poziomie backendu poprzez rate limiting API)
+- Brak możliwości wstawiania dni w środku planu (tylko dodawanie na końcu)
+- Brak edycji dat dni (daty kalkulowane automatycznie od start_date)
 
 ## 5. Predefiniowane opcje
 
@@ -163,11 +185,12 @@ Lista predefiniowanych kategorii aktywności (multi-select):
 - Opis: Jako zalogowany użytkownik chcę wygenerować plan wycieczki na podstawie moich preferencji przy użyciu AI.
 - Kryteria akceptacji:
   1. Formularz wymusza wypełnienie pól obowiązkowych (cel, daty, liczba osób, budżet).
-  2. Pola transport, "co robić" i "czego unikać" umożliwiają wielokrotny wybór z predefiniowanej listy opcji oraz dodanie własnego tekstu.
-  3. Kliknięcie „Generuj plan" rozpoczyna proces generowania.
-  4. Wyświetla się wskaźnik postępu podczas generowania.
-  5. Plan pojawia się w ≤ 180 s lub komunikat błędu.
-  6. Wygenerowany plan jest wyświetlany w interfejsie, ale NIE jest jeszcze zapisany w bazie.
+  2. Formularz waliduje, że zakres dat nie przekracza 30 dni (`end_date - start_date + 1 <= 30`).
+  3. Pola transport, "co robić" i "czego unikać" umożliwiają wielokrotny wybór z predefiniowanej listy opcji oraz dodanie własnego tekstu.
+  4. Kliknięcie „Generuj plan" rozpoczyna proces generowania.
+  5. Wyświetla się wskaźnik postępu podczas generowania.
+  6. Plan pojawia się w ≤ 180 s lub komunikat błędu.
+  7. Wygenerowany plan jest wyświetlany w interfejsie, ale NIE jest jeszcze zapisany w bazie.
 
 ### US-005
 
@@ -184,12 +207,38 @@ Lista predefiniowanych kategorii aktywności (multi-select):
 
 - ID: US-006
 - Tytuł: Edycja wygenerowanego planu przed akceptacją
-- Opis: Jako użytkownik chcę móc edytować wygenerowany plan (dodawać, usuwać, przenosić atrakcje i dni) przed jego zaakceptowaniem.
-- Kryteria akceptacji:
-  1. UI pozwala na dodawanie, usuwanie, przeciąganie pozycji w wygenerowanym planie.
-  2. Edycje są widoczne natychmiast w interfejsie.
-  3. Plan pozostaje niezapisany w bazie do momentu akceptacji.
-  4. System śledzi czy plan został edytowany (do celów analitycznych).
+- Opis: Jako użytkownik chcę móc edytować wygenerowany plan (dodawać, usuwać aktywności i dni) przed jego zaakceptowaniem.
+- Kryteria akceptacji - Zarządzanie dniami:
+  1. Przycisk "Dodaj kolejny dzień" jest dostępny na końcu listy dni.
+  2. Dodanie nowego dnia:
+     - System sprawdza czy nowa liczba dni przekracza zakres dat: `new_day_count > (end_date - start_date + 1)`
+     - Jeśli TAK (przekracza zakres): automatycznie wydłuża `end_date` o 1 dzień
+     - Jeśli NIE (mieści się w zakresie): dodaje dzień bez zmiany `end_date`
+     - Przykład: Daty 1-6.02 (6 dni), plan ma 5 dni → dodanie 6. dnia NIE zmienia end_date
+     - Przykład: Daty 1-6.02, plan ma 6 dni → dodanie 7. dnia ZMIENIA end_date na 7.02
+  3. System blokuje dodanie dnia, jeśli po wydłużeniu `end_date` zakres przekroczyłby 30 dni (wyświetla komunikat "Maksymalny limit to 30 dni").
+  4. Nowy dzień zawiera pustą aktywność jako placeholder do wypełnienia.
+  5. Data nowego dnia jest kalkulowana jako `start_date + (numer_dnia - 1)`.
+  6. Usunięcie dnia NIE modyfikuje `end_date` (pozwala na wolne dni bez aktywności, np. na odpoczynek).
+  7. Po usunięciu dnia pozostałe dni są automatycznie przenumerowane (1, 2, 3, ...).
+  8. Użytkownik nie może usunąć ostatniego pozostałego dnia (minimum 1 dzień w planie).
+  9. Daty dni są zawsze kalkulowane automatycznie na podstawie `start_date + (numer_dnia - 1)`.
+- Kryteria akceptacji - Zarządzanie aktywnościami:
+  10. Użytkownik może kliknąć ikonę edycji na aktywności, aby edytować jej pola (czas, tytuł, opis, lokalizacja, czas trwania, koszt, kategoria).
+  11. Edycja aktywności wyświetla inline formularz z walidacją pól obowiązkowych (czas, tytuł, opis, lokalizacja).
+  12. Przycisk "Dodaj aktywność" jest dostępny w każdym dniu.
+  13. Użytkownik może usunąć aktywność, jeśli w dniu jest więcej niż 1 aktywność (minimum 1 aktywność na dzień).
+  14. Próba usunięcia ostatniej aktywności w dniu wyświetla komunikat błędu lub blokuje akcję.
+  15. Reordering aktywności poprzez drag & drop NIE jest wymagany w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności).
+- Kryteria akceptacji - Ogólne:
+  16. Edycje są widoczne natychmiast w interfejsie.
+  17. Plan pozostaje niezapisany w bazie do momentu akceptacji.
+  18. System śledzi czy plan został edytowany poprzez flagę `isEdited` (do celów analitycznych).
+  19. Każda modyfikacja (dodanie/usunięcie/edycja dnia lub aktywności) ustawia flagę `isEdited = true`.
+  20. Przed akceptacją system waliduje: liczba dni z aktywnościami <= (end_date - start_date + 1) (musi mieścić się w zakresie dat).
+  21. Przed akceptacją system waliduje: zakres dat nie przekracza 30 dni: `(end_date - start_date + 1) <= 30`.
+  22. Przed akceptacją system waliduje: każdy dzień ma minimum 1 aktywność z wypełnionymi polami obowiązkowymi.
+  23. Jeśli walidacja się nie powiedzie, użytkownik nie może zaakceptować planu i widzi komunikat błędu ze szczegółami.
 
 ### US-007
 

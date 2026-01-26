@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import type { TripPlanDto, ApiSuccessResponse } from "../../types";
-import { logger } from "@lib/utils/logger";
+import { useCallback, useEffect, useState } from "react";
+import type { ApiSuccessResponse, TripPlanDto } from "@types";
+import { logger } from "@lib/utils/logger.ts";
 
 /**
  * State interface for the trip plans list

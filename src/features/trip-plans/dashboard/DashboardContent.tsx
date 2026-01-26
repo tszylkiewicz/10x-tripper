@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { useTripPlans } from "@components/hooks/useTripPlans";
-import { PlansList } from "./PlansList";
-import { PageHeader } from "@ui/PageHeader";
-import { DeleteConfirmDialog } from "@ui/DeleteConfirmDialog";
+import { useCallback, useState } from "react";
+import { useTripPlans } from "@trip-plans/dashboard/useTripPlans.ts";
+import { PlansList } from "./PlansList.tsx";
+import { PageHeader } from "@ui/PageHeader.tsx";
+import { DeleteConfirmDialog } from "@ui/DeleteConfirmDialog.tsx";
 import type { TripPlanDto } from "@types";
 
 /**
@@ -58,7 +58,7 @@ export function DashboardContent() {
         });
       }
     },
-    [plans]
+    [plans],
   );
 
   const handleDeleteConfirm = useCallback(async () => {

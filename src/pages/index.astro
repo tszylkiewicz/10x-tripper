@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { DashboardContent } from "../features/dashboard/DashboardContent";
+import { DashboardContent } from "@trip-plans/dashboard/DashboardContent";
 import LandingPage from "../features/landing/LandingPage.astro";
 
 const {
@@ -15,16 +15,16 @@ if (user) {
 
 {
   isAuthenticated ? (
-    <Layout title="Tripper - Twoje plany">
-      <DashboardContent client:load />
-    </Layout>
-  ) : (
-    <Layout
-      title="Tripper - Zamień pomysły na gotowe plany wycieczek z AI"
-      description="Tripper zamienia notatki podróżne w szczegółowe plany wycieczek. Opisz cel, daty i preferencje - AI stworzy plan dopasowany do Ciebie."
-      showNavigation={false}
-    >
-      <LandingPage />
-    </Layout>
-  )
-}
+  <Layout title="Tripper - Twoje plany">
+    <DashboardContent client:load />
+  </Layout>
+    ) : (
+  <Layout
+    title="Tripper - Zamień pomysły na gotowe plany wycieczek z AI"
+    description="Tripper zamienia notatki podróżne w szczegółowe plany wycieczek. Opisz cel, daty i preferencje - AI stworzy plan dopasowany do Ciebie."
+    showNavigation={false}
+  >
+    <LandingPage />
+  </Layout>
+    )
+  }
