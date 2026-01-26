@@ -3,7 +3,7 @@
  * Database helpers for E2E test cleanup
  */
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/db/database.types";
+import type { Database } from "@db/database.types";
 
 // Get test user ID from environment
 export const TEST_USER_ID = process.env.E2E_USERNAME_ID;

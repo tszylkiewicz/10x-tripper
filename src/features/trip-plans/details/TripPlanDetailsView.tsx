@@ -6,8 +6,8 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { ErrorState } from "@/components/ui/ErrorState";
-import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
+import { ErrorState } from "@ui/ErrorState";
+import { DeleteConfirmDialog } from "@ui/DeleteConfirmDialog";
 import { useTripPlanDetails } from "./useTripPlanDetails";
 import { LoadingState } from "./LoadingState";
 import { TripPlanHeader } from "./TripPlanHeader";

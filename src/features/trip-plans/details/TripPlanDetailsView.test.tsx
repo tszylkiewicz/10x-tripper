@@ -4,19 +4,19 @@
  * Tests the main orchestration flow: Fetch -> Display -> Edit -> Save/Delete
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TripPlanDetailsView } from "./TripPlanDetailsView";
 import type { ViewError } from "./types";
-import type { TripPlanDto } from "@/types";
+import type { TripPlanDto } from "@types";
 
 // Mock child components
-vi.mock("./LoadingState", () => ({
+vi.mock("@ui/LoadingState", () => ({
   LoadingState: ({ message }: { message?: string }) => <div data-testid="loading-state">{message || "Loading..."}</div>,
 }));
 
-vi.mock("./ErrorState", () => ({
+vi.mock("@ui/ErrorState", () => ({
   ErrorState: ({
     errorType,
     errorMessage,

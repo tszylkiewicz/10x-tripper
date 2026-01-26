@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
-import { logger } from "@/lib/utils/logger";
+import type { ApiSuccessResponse, ApiErrorResponse } from "@types";
+import { logger } from "@lib/utils/logger";
 
 export const prerender = false;
 

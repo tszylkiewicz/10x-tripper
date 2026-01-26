@@ -6,7 +6,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, Json, Tables } from "@/db/database.types.ts";
+import type { Database, Json, Tables } from "@db/database.types.ts";
 import type {
   AcceptPlanCommand,
   DeleteTripPlanCommand,
@@ -14,9 +14,9 @@ import type {
   TripPlanDto,
   TripPlanUpdate,
   UpdatePlanCommand,
-} from "@/types.ts";
+} from "@types";
 import { isValidUUID } from "../validators/uuid.validator";
-import { ValidationError } from "@/errors/validation.error.ts";
+import { ValidationError } from "@errors/validation.error.ts";
 import { logger } from "../utils/logger";
 
 export class TripPlanService {

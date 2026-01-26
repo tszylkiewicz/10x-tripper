@@ -2,7 +2,7 @@ import type { Mock } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ErrorWithMetadata, OpenRouterEnv } from "./aiGeneration.service";
 import { buildMessages, generateTripPlan, messagesToPrompt } from "./aiGeneration.service";
-import type { GeneratePlanCommand, PlanDetailsDto } from "@/types.ts";
+import type { GeneratePlanCommand, PlanDetailsDto } from "@types";
 
 // Mock environment variables for tests
 const mockEnv: OpenRouterEnv = {

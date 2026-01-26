@@ -6,14 +6,14 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/db/database.types.ts";
+import type { Database } from "@db/database.types.ts";
 import type {
   CreatePreferenceCommand,
   DeletePreferenceCommand,
   UpdatePreferenceCommand,
   UserPreferenceDto,
-} from "@/types.ts";
-import { ValidationError } from "@/errors/validation.error.ts";
+} from "@types";
+import { ValidationError } from "@errors/validation.error.ts";
 import { logger } from "../utils/logger";
 
 export class UserPreferencesService {

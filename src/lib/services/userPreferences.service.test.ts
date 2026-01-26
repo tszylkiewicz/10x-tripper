@@ -1,8 +1,8 @@
 import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UserPreferencesService } from "./userPreferences.service";
-import { ValidationError } from "@/errors/validation.error.ts";
-import type { CreatePreferenceCommand, DeletePreferenceCommand, UpdatePreferenceCommand } from "@/types.ts";
+import { ValidationError } from "@errors/validation.error.ts";
+import type { CreatePreferenceCommand, DeletePreferenceCommand, UpdatePreferenceCommand } from "@types";
 
 describe("UserPreferencesService", () => {
   let service: UserPreferencesService;

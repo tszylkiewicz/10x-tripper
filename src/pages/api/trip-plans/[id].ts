@@ -10,12 +10,12 @@
  */
 
 import type { APIRoute } from "astro";
-import { TripPlanService } from "@/lib/services/tripPlan.service.ts";
-import { isValidUUID } from "@/lib/validators/uuid.validator.ts";
-import { updateTripPlanSchema } from "@/lib/validators/tripPlans.validator.ts";
-import { ValidationError } from "@/errors/validation.error.ts";
-import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
-import { logger } from "@/lib/utils/logger.ts";
+import { TripPlanService } from "@lib/services/tripPlan.service.ts";
+import { isValidUUID } from "@lib/validators/uuid.validator.ts";
+import { updateTripPlanSchema } from "@lib/validators/tripPlans.validator.ts";
+import { ValidationError } from "@errors/validation.error.ts";
+import { createUnauthorizedResponse, requireAuth } from "@lib/auth.utils.ts";
+import { logger } from "@lib/utils/logger.ts";
 import type {
   ApiErrorResponse,
   ApiSuccessResponse,

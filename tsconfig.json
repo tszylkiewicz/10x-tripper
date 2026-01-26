@@ -1,53 +1,27 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist"
-  ],
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "@preferences/*": [
-        "./src/features/preferences/*"
-      ],
-      "@trip-plans/*": [
-        "./src/features/trip-plans/*"
-      ],
-      "@auth/*": [
-        "./src/features/auth/*"
-      ],
-      "@dashboard/*": [
-        "./src/features/dashboard/*"
-      ],
-      "@landing/*": [
-        "./src/features/landing/*"
-      ],
-      "@feature-flags/*": [
-        "./src/feature-flags/*"
-      ],
-      "@feature-flags": [
-        "./src/feature-flags/index.ts"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@lib/*": [
-        "./src/lib/*"
-      ],
-      "@layouts/*": [
-        "./src/layouts/*"
-      ],
-      "@pages/*": [
-        "./src/pages/*"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "@preferences/*": ["./src/features/preferences/*"],
+      "@trip-plans/*": ["./src/features/trip-plans/*"],
+      "@auth/*": ["./src/features/auth/*"],
+      "@dashboard/*": ["./src/features/dashboard/*"],
+      "@landing/*": ["./src/features/landing/*"],
+      "@feature-flags": ["./src/feature-flags/index.ts"],
+      "@feature-flags/*": ["./src/feature-flags/*"],
+      "@components/*": ["./src/components/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@db/*": ["./src/db/*"],
+      "@errors/*": ["./src/errors/*"],
+      "@types": ["./src/types.ts"]
     }
   }
 }

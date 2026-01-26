@@ -6,15 +6,15 @@
  */
 
 import { FileHeart } from "lucide-react";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
+import { PageHeader } from "@ui/PageHeader";
+import { EmptyState } from "@ui/EmptyState";
+import { DeleteConfirmDialog } from "@ui/DeleteConfirmDialog";
 import { usePreferences } from "../hooks/usePreferences";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorAlert } from "./ErrorAlert";
 import { PreferenceCard } from "./PreferenceCard";
 import { PreferenceFormDialog } from "./PreferenceFormDialog";
-import type { CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@/types";
+import type { CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@types";
 
 export function PreferencesView() {
   const {

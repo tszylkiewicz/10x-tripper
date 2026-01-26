@@ -4,8 +4,8 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";
-import type { PreferenceOption } from "@/lib/constants/preferences.constants";
-import { createCustomOption, getCustomText, isCustomOption } from "@/lib/constants/preferences.constants";
+import type { PreferenceOption } from "@lib/constants/preferences.constants";
+import { createCustomOption, getCustomText, isCustomOption } from "@lib/constants/preferences.constants";
 import { X } from "lucide-react";
 
 export interface MultiSelectWithCustomProps {

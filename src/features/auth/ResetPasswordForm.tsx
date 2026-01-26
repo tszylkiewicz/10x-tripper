@@ -1,10 +1,10 @@
 import { useState, type FormEvent } from "react";
-import { resetPasswordWithConfirmSchema } from "@/lib/validators/auth.validator";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { resetPasswordWithConfirmSchema } from "@lib/validators/auth.validator";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
+import { Label } from "@ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@ui/card";
+import { Alert, AlertDescription } from "@ui/alert";
 import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 
 interface ResetPasswordFormProps {

@@ -1,7 +1,7 @@
 import { Calendar, Users, Trash2 } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BudgetBadge } from "@/components/ui/BudgetBadge";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@ui/card";
+import { Button } from "@ui/button";
+import { BudgetBadge } from "@ui/BudgetBadge";
 import type { TripPlanDto } from "../../types";
 
 interface PlanCardProps {

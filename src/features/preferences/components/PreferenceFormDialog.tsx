@@ -6,23 +6,16 @@
  */
 
 import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@ui/dialog";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
+import { Label } from "@ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/select";
+import { MultiSelectWithCustom } from "@ui/multi-select-with-custom";
 import { usePreferenceForm } from "../hooks/usePreferenceForm";
 import { BUDGET_TYPE_OPTIONS } from "../types";
-import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS } from "@/lib/constants/preferences.constants";
-import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@/types";
+import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS } from "@lib/constants/preferences.constants";
+import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@types";
 
 interface PreferenceFormDialogProps {
   open: boolean;

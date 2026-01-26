@@ -13,7 +13,7 @@ import type {
   UpdateUserPreferenceDto,
   ApiSuccessResponse,
   ApiErrorResponse,
-} from "@/types";
+} from "@types";
 
 /**
  * Hook do zarządzania danymi preferencji (CRUD operations)

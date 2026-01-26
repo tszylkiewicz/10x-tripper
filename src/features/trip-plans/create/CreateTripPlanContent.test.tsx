@@ -9,7 +9,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CreateTripPlanContent } from "./CreateTripPlanContent";
 import type { EditableGeneratedPlan, TripPlanFormData } from "./types";
-import type { ApiErrorResponse, GeneratedTripPlanDto, TripPlanDto } from "@/types.ts";
+import type { ApiErrorResponse, GeneratedTripPlanDto, TripPlanDto } from "@types";
 import type { UsePlanEditorReturn } from "./hooks/usePlanEditor";
 
 // Create a mock function to control TripPlanForm behavior
@@ -54,9 +54,9 @@ vi.mock("./TripPlanForm", () => ({
               people_count: 3,
               budget_type: "high",
               preferences: {
-                transport: "trains",
-                todo: "temples, ramen",
-                avoid: "crowded areas",
+                transport: ["trains"],
+                todo: ["temples, ramen"],
+                avoid: ["crowded areas"],
               },
             })
           }

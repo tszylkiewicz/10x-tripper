@@ -1,8 +1,8 @@
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import { resetPasswordSchema } from "@/lib/validators/auth.validator";
-import type { ApiSuccessResponse, ApiErrorResponse } from "@/types";
-import { logger } from "@/lib/utils/logger";
+import { resetPasswordSchema } from "@lib/validators/auth.validator";
+import type { ApiSuccessResponse, ApiErrorResponse } from "@types";
+import { logger } from "@lib/utils/logger";
 
 export const prerender = false;
 

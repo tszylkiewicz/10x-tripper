@@ -80,6 +80,7 @@ src/
 ```
 
 **Key principles:**
+
 - **Domain features** (`src/features/*`): Co-locate components, hooks, and types for specific features
 - **Shared components** (`src/components/*`): UI primitives and global navigation
 - **Feature flags** (`src/feature-flags/`): Feature toggle system (formerly `src/features/`)
@@ -89,6 +90,7 @@ src/
 Use TypeScript path aliases for clean imports:
 
 **Feature-specific aliases:**
+
 ```typescript
 // Preferences feature
 import { PreferencesView } from "@preferences/components/PreferencesView";
@@ -110,6 +112,7 @@ import LandingPage from "@landing/LandingPage.astro";
 ```
 
 **Shared resource aliases:**
+
 ```typescript
 // Shared components
 import { Button } from "@components/ui/button";
@@ -128,6 +131,7 @@ import Layout from "@layouts/Layout.astro";
 ```
 
 **When to use relative imports:**
+
 - Within the same feature directory (e.g., `./hooks/useTripPlanGeneration` from a component in the same feature)
 - For sibling files in the same directory
 - In Astro pages importing from parent directories (e.g., `../../features/dashboard/DashboardContent`)
@@ -137,6 +141,7 @@ import Layout from "@layouts/Layout.astro";
 All API endpoints follow this pattern:
 
 1. **Parse request body** (for POST/PUT)
+
    ```typescript
    let body: unknown;
    try {
@@ -147,28 +152,33 @@ All API endpoints follow this pattern:
    ```
 
 2. **Validate with Zod** from `src/lib/validators/`
+
    ```typescript
    import { someSchema } from "@/lib/validators/something.validator.ts";
    const validatedData = someSchema.parse(body);
    ```
 
 3. **Verify authentication** using `requireAuth()` from `@/lib/auth.utils.ts`
+
    ```typescript
    const userId = await requireAuth(locals.supabase);
    ```
 
 4. **Build Command object** (includes `user_id`)
+
    ```typescript
    const command: SomeCommand = { ...validatedData, user_id: userId };
    ```
 
 5. **Call service method**
+
    ```typescript
    const service = new SomeService(locals.supabase);
    const result = await service.someMethod(command);
    ```
 
 6. **Return typed response** (ApiSuccessResponse<T> or ApiErrorResponse)
+
    ```typescript
    const successResponse: ApiSuccessResponse<ResultDto> = { data: result };
    return new Response(JSON.stringify(successResponse), { status: 200 });
@@ -187,6 +197,7 @@ All API endpoints follow this pattern:
 - Soft-delete pattern: Set `deleted_at` timestamp (trigger sets `deleted_by`)
 
 **Creating Supabase client in services:**
+
 ```typescript
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/db/database.types.ts";
@@ -213,6 +224,7 @@ export class MyService {
 - All types are derived from `src/db/database.types.ts` (generated from Supabase schema)
 
 **Key type patterns:**
+
 ```typescript
 // DTO - what API returns
 export type TripPlanDto = Pick<Tables<"trip_plans">, "id" | "destination" | "start_date" | ...>;
@@ -251,6 +263,7 @@ export interface PlanDetailsDto {
    - `AuthenticationError` - Auth failures
 
 2. **Service layer** throws custom errors:
+
    ```typescript
    if (invalid) {
      throw new ValidationError("Message", "field_name");
@@ -258,6 +271,7 @@ export interface PlanDetailsDto {
    ```
 
 3. **API routes** catch and convert to error responses:
+
    ```typescript
    catch (error) {
      if (error instanceof ValidationError) {
@@ -273,12 +287,14 @@ export interface PlanDetailsDto {
 ## Key Conventions
 
 ### General
+
 - Use feedback from linters to improve code when making changes
 - Use early returns for error conditions to avoid deeply nested if statements
 - Implement proper error logging with `logger` from `@/lib/utils/logger.ts`
 - Handle authentication errors by checking `error.name === "AuthenticationError"`
 
 ### Astro-specific
+
 - Never use `"use client"` - this is Astro, not Next.js
 - All API routes must use `export const prerender = false`
 - Use uppercase HTTP method names: `export const GET: APIRoute`, `export const POST: APIRoute`
@@ -286,16 +302,19 @@ export interface PlanDetailsDto {
 - Use `context.locals.supabase` for database access (injected by middleware)
 
 ### Database
+
 - Soft-delete for trip_plans: Set `deleted_at`, trigger sets `deleted_by`
 - Always exclude soft-deleted records: `.is("deleted_at", null)`
 - RLS policies enforce user ownership - queries filter by `user_id`
 
 ### Validation
+
 - Validate all API input with Zod before processing
 - Zod schemas live in `src/lib/validators/`
 - Services may throw ValidationError for business rules not covered by Zod
 
 ### AI Generation
+
 - AI generation uses OpenRouter API via `aiGeneration.service.ts`
 - Generation results are tracked in `plan_generations` table
 - Errors logged in `plan_generation_error_logs` table

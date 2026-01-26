@@ -15,17 +15,12 @@
 
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import type {
-  ApiErrorResponse,
-  ApiSuccessResponse,
-  GeneratedTripPlanDto,
-  GenerateTripPlanRequestDto,
-} from "@/types.ts";
-import { createGeneratePlanCommand, validateGenerateTripPlanRequest } from "@/lib/validators/tripPlans.validator.ts";
-import { buildMessages, generateTripPlan, messagesToPrompt } from "@/lib/services/aiGeneration.service.ts";
-import { logGenerationError, logGenerationSuccess } from "@/lib/services/planGenerationLogger.service.ts";
-import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
-import { logger } from "@/lib/utils/logger.ts";
+import type { ApiErrorResponse, ApiSuccessResponse, GeneratedTripPlanDto, GenerateTripPlanRequestDto } from "@types";
+import { createGeneratePlanCommand, validateGenerateTripPlanRequest } from "@lib/validators/tripPlans.validator.ts";
+import { buildMessages, generateTripPlan, messagesToPrompt } from "@lib/services/aiGeneration.service.ts";
+import { logGenerationError, logGenerationSuccess } from "@lib/services/planGenerationLogger.service.ts";
+import { createUnauthorizedResponse, requireAuth } from "@lib/auth.utils.ts";
+import { logger } from "@lib/utils/logger.ts";
 
 export const prerender = false;
 

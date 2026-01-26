@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 import { useTripPlans } from "@components/hooks/useTripPlans";
 import { PlansList } from "./PlansList";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { DeleteConfirmDialog } from "@/components/ui/DeleteConfirmDialog";
-import type { TripPlanDto } from "@/types";
+import { PageHeader } from "@ui/PageHeader";
+import { DeleteConfirmDialog } from "@ui/DeleteConfirmDialog";
+import type { TripPlanDto } from "@types";
 
 /**
  * Formats date for display in dialog

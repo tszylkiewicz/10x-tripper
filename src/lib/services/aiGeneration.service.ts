@@ -4,7 +4,7 @@
  * Service for generating trip plans using AI (OpenRouter API).
  */
 
-import type { GeneratedTripPlanDto, GeneratePlanCommand, PlanDetailsDto } from "@/types.ts";
+import type { GeneratedTripPlanDto, GeneratePlanCommand, PlanDetailsDto } from "@types";
 import type { ChatMessage } from "./openrouter";
 import { OpenRouterService } from "./openrouter";
 import { z } from "zod";

@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PreferencesView } from "./PreferencesView";
-import type { CreateUserPreferenceDto, UpdateUserPreferenceDto, UserPreferenceDto } from "@/types";
+import type { CreateUserPreferenceDto, UpdateUserPreferenceDto, UserPreferenceDto } from "@types";
 import type { PreferencesViewState } from "../types";
 
 // Mock child components

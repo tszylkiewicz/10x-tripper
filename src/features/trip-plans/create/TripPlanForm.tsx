@@ -2,18 +2,18 @@ import { useEffect, useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, ChevronUp, Save, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom";
-import { tripPlanFormSchema, type TripPlanFormSchema } from "@/lib/validators/tripPlanForm.validator";
-import { ACTIVITY_OPTIONS, TRANSPORT_OPTIONS } from "@/lib/constants/preferences.constants";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
+import { Label } from "@ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ui/select";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@ui/collapsible";
+import { MultiSelectWithCustom } from "@ui/multi-select-with-custom";
+import { tripPlanFormSchema, type TripPlanFormSchema } from "@lib/validators/tripPlanForm.validator";
+import { ACTIVITY_OPTIONS, TRANSPORT_OPTIONS } from "@lib/constants/preferences.constants";
 import { BUDGET_TYPE_OPTIONS, type TripPlanFormData, type TripPlanFormProps } from "./types";
 import { useLoadPreference } from "./hooks/useLoadPreference";
 import { SavePreferenceDialog } from "./SavePreferenceDialog";
-import type { CreateUserPreferenceDto } from "@/types";
+import type { CreateUserPreferenceDto } from "@types";
 
 /**
  * TripPlanForm component

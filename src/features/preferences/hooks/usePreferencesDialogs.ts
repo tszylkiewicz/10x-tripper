@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import type { PreferencesDialogsState } from "../types";
-import type { UserPreferenceDto } from "@/types";
+import type { UserPreferenceDto } from "@types";
 
 /**
  * Hook do zarządzania dialogami

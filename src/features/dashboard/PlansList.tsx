@@ -1,8 +1,8 @@
 import { MapPin } from "lucide-react";
 import type { TripPlanDto } from "../../types";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorState } from "@/components/ui/ErrorState";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@ui/ErrorState";
+import { EmptyState } from "@ui/EmptyState";
 import { PlanCard } from "./PlanCard";
 
 interface PlansListProps {

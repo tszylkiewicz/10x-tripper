@@ -11,14 +11,14 @@
 
 import { memo, useState, useCallback, useId } from "react";
 import { Plus, Trash2, Calendar, X, Save } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/utils/date-formatting";
-import { validateActivity } from "@/lib/utils/activity-validation";
-import { EMPTY_ACTIVITY, MIN_ACTIVITIES_PER_DAY } from "@/lib/utils/trip-plan-constants";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
+import { Label } from "@ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
+import { cn } from "@lib/utils";
+import { formatDate } from "@lib/utils/date-formatting";
+import { validateActivity } from "@lib/utils/activity-validation";
+import { EMPTY_ACTIVITY, MIN_ACTIVITIES_PER_DAY } from "@lib/utils/trip-plan-constants";
 import { ActivityCard } from "./ActivityCard";
 import type { ActivityDto } from "../../../types";
 import type { DayCardProps, ValidationErrors } from "./types";

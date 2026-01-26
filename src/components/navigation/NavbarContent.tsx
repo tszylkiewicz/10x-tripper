@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { List, LogOut, Menu, Plus, Settings, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { Button } from "@ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@ui/sheet";
+import { cn } from "@lib/utils";
 import { useFeatureFlag } from "@feature-flags";
-import { logger } from "@/lib/utils/logger";
+import { logger } from "@lib/utils/logger";
 
 interface NavbarContentProps {
   userEmail?: string;

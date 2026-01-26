@@ -4,7 +4,7 @@
  * Helper functions for protecting API routes based on feature flags.
  */
 
-import type { ApiErrorResponse } from "@/types";
+import type { ApiErrorResponse } from "@types";
 import type { FeatureFlagName } from "../types";
 import { isFeatureEnabled } from "../featureFlags";
 

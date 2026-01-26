@@ -5,9 +5,9 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/db/database.types";
-import type { ApiErrorResponse } from "@/types";
-import { AuthenticationError } from "@/errors/auth.error";
+import type { Database } from "@db/database.types";
+import type { ApiErrorResponse } from "@types";
+import { AuthenticationError } from "@errors/auth.error";
 
 /**
  * Verifies that a valid user exists and returns the user ID

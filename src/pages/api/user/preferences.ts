@@ -10,13 +10,13 @@
 
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
-import { UserPreferencesService } from "@/lib/services/userPreferences.service.ts";
-import { createUserPreferenceSchema } from "@/lib/validators/preferences.validator.ts";
-import { ValidationError } from "@/errors/validation.error.ts";
-import { createUnauthorizedResponse, requireAuth } from "@/lib/auth.utils.ts";
+import { UserPreferencesService } from "@lib/services/userPreferences.service.ts";
+import { createUserPreferenceSchema } from "@lib/validators/preferences.validator.ts";
+import { ValidationError } from "@errors/validation.error.ts";
+import { createUnauthorizedResponse, requireAuth } from "@lib/auth.utils.ts";
 import { guardFeature } from "@feature-flags";
-import { logger } from "@/lib/utils/logger.ts";
-import type { ApiErrorResponse, ApiSuccessResponse, UserPreferenceDto } from "@/types.ts";
+import { logger } from "@lib/utils/logger.ts";
+import type { ApiErrorResponse, ApiSuccessResponse, UserPreferenceDto } from "@types";
 
 export const prerender = false;
 

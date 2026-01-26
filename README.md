@@ -14,6 +14,7 @@ Tripper is a web application that helps users plan trips by leveraging generativ
 ## Tech Stack
 
 ### Frontend
+
 - [Astro](https://astro.build/) v5 - Modern web framework with SSR
 - [React](https://react.dev/) v19 - Interactive UI components
 - [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe development
@@ -21,17 +22,20 @@ Tripper is a web application that helps users plan trips by leveraging generativ
 - [Shadcn/ui](https://ui.shadcn.com/) - Accessible UI components
 
 ### Backend
+
 - [Supabase](https://supabase.com/) - Backend-as-a-Service
   - PostgreSQL database
   - Built-in authentication
   - Row-Level Security (RLS)
 
 ### AI
+
 - [Openrouter.ai](https://openrouter.ai/) - AI model access
   - Multiple model providers (OpenAI, Anthropic, Google)
   - API key limits and usage control
 
 ### CI/CD & Hosting
+
 - GitHub Actions - CI/CD pipelines
 - [Cloudflare Pages](https://pages.cloudflare.com/) - Hosting platform
   - Unlimited bandwidth (free tier)
@@ -91,20 +95,24 @@ The application will be available at `http://localhost:3000`.
 ## Available Scripts
 
 ### Development
+
 - `npm run dev` - Start development server
 - `npm run dev:e2e` - Start development server in test mode
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 
 ### Code Quality
+
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues
 - `npm run format` - Format code with Prettier
 
 ### Database
+
 - `npm run db:migrate` - Run Supabase migrations
 
 ### Testing
+
 - `npm test` - Run unit tests
 - `npm run test:ui` - Run tests with UI
 - `npm run test:watch` - Run tests in watch mode

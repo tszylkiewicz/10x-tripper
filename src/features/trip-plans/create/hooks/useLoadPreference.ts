@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useState } from "react";
-import type { UserPreferenceDto } from "@/types";
+import type { UserPreferenceDto } from "@types";
 
 interface UseLoadPreferenceReturn {
   preferences: UserPreferenceDto[];

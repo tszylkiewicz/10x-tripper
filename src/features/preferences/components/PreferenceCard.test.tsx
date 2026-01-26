@@ -13,7 +13,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PreferenceCard } from "./PreferenceCard";
-import type { UserPreferenceDto } from "@/types.ts";
+import type { UserPreferenceDto } from "@types";
 
 // Helper to create mock preference
 function createMockPreference(overrides?: Partial<UserPreferenceDto>): UserPreferenceDto {

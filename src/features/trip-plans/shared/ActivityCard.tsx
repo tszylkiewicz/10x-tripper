@@ -11,12 +11,12 @@
 
 import { memo, useState, useCallback, useId } from "react";
 import { Clock, MapPin, Timer, DollarSign, Tag, Trash2, Save, X, Pencil } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { validateActivity } from "@/lib/utils/activity-validation";
+import { Button } from "@ui/button";
+import { Input } from "@ui/input";
+import { Label } from "@ui/label";
+import { Card, CardContent } from "@ui/card";
+import { cn } from "@lib/utils";
+import { validateActivity } from "@lib/utils/activity-validation";
 import type { ActivityDto } from "../../../types";
 import type { ActivityCardProps, ValidationErrors } from "./types";
 

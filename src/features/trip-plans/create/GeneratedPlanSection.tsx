@@ -15,7 +15,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@ui/alert-dialog";
 import { PlanHeader } from "./PlanHeader";
 import { PlanActions } from "./PlanActions";
 import { DayCard } from "../shared/DayCard";
