@@ -22,7 +22,7 @@ import { MultiSelectWithCustom } from "@/components/ui/multi-select-with-custom"
 import { usePreferenceForm } from "../hooks/usePreferenceForm";
 import { BUDGET_TYPE_OPTIONS } from "../types";
 import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS } from "@/lib/constants/preferences.constants";
-import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "../../types";
+import type { UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto } from "@/types";
 
 interface PreferenceFormDialogProps {
   open: boolean;

@@ -5,7 +5,7 @@
  * Używane przez komponenty i hooki w tej domenie.
  */
 
-import type { UserPreferenceDto } from "../types";
+import type { UserPreferenceDto } from "@/types";
 
 // =============================================================================
 // FORM VIEW MODELS

@@ -10,7 +10,7 @@ import { Pencil, Plus, Trash2, Users } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BudgetBadge } from "@/components/ui/BudgetBadge";
-import type { UserPreferenceDto } from "../../types";
+import type { UserPreferenceDto } from "@/types";
 
 interface PreferenceCardProps {
   preference: UserPreferenceDto;

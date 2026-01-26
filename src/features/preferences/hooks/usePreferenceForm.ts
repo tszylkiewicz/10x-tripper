@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from "react";
 import type { PreferenceFormViewModel, PreferenceFormErrors } from "../types";
-import type { CreateUserPreferenceDto, UpdateUserPreferenceDto, UserPreferenceDto } from "../../types";
+import type { CreateUserPreferenceDto, UpdateUserPreferenceDto, UserPreferenceDto } from "@/types";
 
 interface UsePreferenceFormProps {
   initialData?: UserPreferenceDto;
