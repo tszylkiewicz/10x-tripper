@@ -21,6 +21,7 @@ import { buildMessages, generateTripPlan, messagesToPrompt } from "@lib/services
 import { logGenerationError, logGenerationSuccess } from "@lib/services/planGenerationLogger.service.ts";
 import { createUnauthorizedResponse, requireAuth } from "@lib/auth.utils.ts";
 import { logger } from "@lib/utils/logger.ts";
+import { getMergedEnv } from "@lib/utils/env.ts";
 
 export const prerender = false;
 
@@ -93,8 +94,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // 4. Get user_id from authenticated session
     const userId = await requireAuth(locals.supabase);
 
-    // 5. Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-    const env = locals.runtime?.env ?? import.meta.env;
+    // 5. Get env vars from runtime context (Cloudflare) or import.meta.env (local dev/E2E)
+    // Merges both sources to work in all environments
+    const env = getMergedEnv(locals.runtime?.env, import.meta.env);
 
     // 6. Create command object
     const command = createGeneratePlanCommand(validatedData, userId);

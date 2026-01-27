@@ -17,9 +17,10 @@ import { isFeatureEnabled } from "../featureFlags";
  *
  * @example
  * ---
- * import { shouldRenderPage } from '@/features';
+ * import { shouldRenderPage } from '@feature-flags';
+ * import { getMergedEnv } from '@lib/utils/env';
  *
- * const env = Astro.locals.runtime?.env ?? import.meta.env
+ * const env = getMergedEnv(Astro.locals.runtime?.env, import.meta.env);
  * if (!shouldRenderPage('preferences', env)) {
  *   return Astro.redirect('/404');
  * }

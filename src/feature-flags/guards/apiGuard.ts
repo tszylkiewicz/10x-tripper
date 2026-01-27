@@ -35,8 +35,10 @@ export function createFeatureDisabledResponse(): Response {
  * @returns Response if disabled, null if enabled
  *
  * @example
+ * import { getMergedEnv } from '@lib/utils/env';
+ *
  * export const GET: APIRoute = async ({ locals }) => {
- *   const env = locals.runtime?.env ?? import.meta.env;
+ *   const env = getMergedEnv(locals.runtime?.env, import.meta.env);
  *   const guardResponse = guardFeature('preferences', env);
  *   if (guardResponse) return guardResponse;
  *   // ... rest of handler

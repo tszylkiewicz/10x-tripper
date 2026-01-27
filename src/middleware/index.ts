@@ -1,6 +1,7 @@
 import { defineMiddleware } from "astro:middleware";
 
 import { createSupabaseServerInstance } from "../db/supabase.client.ts";
+import { getMergedEnv } from "../lib/utils/env.ts";
 
 // Public paths - Auth pages and API endpoints that don't require authentication
 const PUBLIC_PATHS = [
@@ -20,8 +21,9 @@ const PUBLIC_PATHS = [
 ];
 
 export const onRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
-  // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-  const env = locals.runtime?.env ?? import.meta.env;
+  // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev/E2E)
+  // Merges both sources to work in all environments
+  const env = getMergedEnv(locals.runtime?.env, import.meta.env);
 
   // Create Supabase server instance with cookie support for all requests
   const supabase = createSupabaseServerInstance(

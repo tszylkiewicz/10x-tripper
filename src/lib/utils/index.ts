@@ -47,3 +47,6 @@ export {
   PLACEHOLDERS,
   ERROR_MESSAGES,
 } from "./trip-plan-constants";
+
+// Environment utilities
+export { getMergedEnv } from "./env";
