@@ -94,7 +94,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const userId = await requireAuth(locals.supabase);
 
     // 5. Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-    const env = locals.runtime?.env || import.meta.env || process.env;
+    const env = import.meta.env || locals.runtime?.env;
 
     // 6. Create command object
     const command = createGeneratePlanCommand(validatedData, userId);
