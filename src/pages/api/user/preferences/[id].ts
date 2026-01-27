@@ -34,7 +34,7 @@ export const prerender = false;
  */
 export const GET: APIRoute = async ({ params, locals }) => {
   // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-  const env = locals.runtime?.env || import.meta.env;
+  const env = locals.runtime?.env || import.meta.env || process.env;
 
   // Check feature flag
   const guardResponse = guardFeature("preferences", env);
@@ -120,7 +120,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
  */
 export const PUT: APIRoute = async ({ params, request, locals }) => {
   // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-  const env = locals.runtime?.env || import.meta.env;
+  const env = locals.runtime?.env || import.meta.env || process.env;
 
   // Check feature flag
   const guardResponse = guardFeature("preferences", env);
@@ -282,7 +282,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
  */
 export const DELETE: APIRoute = async ({ params, locals }) => {
   // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-  const env = locals.runtime?.env || import.meta.env;
+  const env = locals.runtime?.env || import.meta.env || process.env;
 
   // Check feature flag
   const guardResponse = guardFeature("preferences", env);
