@@ -32,7 +32,7 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
     {
       SUPABASE_URL: env.SUPABASE_URL,
       SUPABASE_KEY: env.SUPABASE_KEY,
-    },
+    }
   );
 
   // Set Supabase client in locals for use in pages and API routes

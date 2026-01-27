@@ -19,7 +19,7 @@ import { isFeatureEnabled } from "../featureFlags";
  * ---
  * import { shouldRenderPage } from '@/features';
  *
- * const env = Astro.import.meta.env || locals.runtime?.env;
+ * const env = import.meta.env || Astro.locals.runtime?.env
  * if (!shouldRenderPage('preferences', env)) {
  *   return Astro.redirect('/404');
  * }
