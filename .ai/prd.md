@@ -51,7 +51,8 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 4. Edycja wygenerowanego planu (przed akceptacją)
    - Użytkownik może przeglądać i edytować wygenerowany plan w interfejsie
    - Zarządzanie dniami:
-     - Dodawanie nowego dnia na końcu planu:
+     - **Dodawanie nowego dnia na końcu planu (nice to have - feature flag: `day-adding`):**
+       - Funkcja ukryta za feature flag'iem, nie jest wymagana w MVP
        - Jeśli nowa liczba dni przekracza zakres dat → automatycznie wydłuża `end_date` o 1 dzień
        - Jeśli mieści się w zakresie dat → dodaje dzień bez zmiany `end_date`
        - Limit: zakres dat po wydłużeniu nie może przekroczyć 30 dni
@@ -101,7 +102,8 @@ Samodzielne układanie zbalansowanych planów wycieczek wymaga czasu, doświadcz
 - Brak drag & drop do zmiany kolejności aktywności w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności)
 - Brak automatycznego zapisywania draftu edycji w localStorage (edycje tracone przy odświeżeniu strony)
 - Brak limitu regeneracji planu w MVP (ograniczenie tylko na poziomie backendu poprzez rate limiting API)
-- Brak możliwości wstawiania dni w środku planu (tylko dodawanie na końcu)
+- **Funkcjonalność dodawania dni do planu (nice to have)** - Możliwość dodawania nowych dni na końcu planu jest obecnie ukryta za feature flag'iem `day-adding` i jest planowana jako rozszerzenie przyszłych wersji, ale nie jest wymagana w MVP
+- Brak możliwości wstawiania dni w środku planu (tylko dodawanie na końcu, jeśli funkcja dodawania dni zostanie włączona)
 - Brak edycji dat dni (daty kalkulowane automatycznie od start_date)
 
 ## 5. Predefiniowane opcje
@@ -209,36 +211,22 @@ Lista predefiniowanych kategorii aktywności (multi-select):
 - Tytuł: Edycja wygenerowanego planu przed akceptacją
 - Opis: Jako użytkownik chcę móc edytować wygenerowany plan (dodawać, usuwać aktywności i dni) przed jego zaakceptowaniem.
 - Kryteria akceptacji - Zarządzanie dniami:
-  1. Przycisk "Dodaj kolejny dzień" jest dostępny na końcu listy dni.
-  2. Dodanie nowego dnia:
+  1. **[NICE TO HAVE - Feature flag: `day-adding`]** Przycisk "Dodaj kolejny dzień" jest dostępny na końcu listy dni (tylko gdy feature flag jest włączony).
+  2. **[NICE TO HAVE - Feature flag: `day-adding`]** Dodanie nowego dnia:
      - System sprawdza czy nowa liczba dni przekracza zakres dat: `new_day_count > (end_date - start_date + 1)`
      - Jeśli TAK (przekracza zakres): automatycznie wydłuża `end_date` o 1 dzień
      - Jeśli NIE (mieści się w zakresie): dodaje dzień bez zmiany `end_date`
      - Przykład: Daty 1-6.02 (6 dni), plan ma 5 dni → dodanie 6. dnia NIE zmienia end_date
      - Przykład: Daty 1-6.02, plan ma 6 dni → dodanie 7. dnia ZMIENIA end_date na 7.02
-  3. System blokuje dodanie dnia, jeśli po wydłużeniu `end_date` zakres przekroczyłby 30 dni (wyświetla komunikat "Maksymalny limit to 30 dni").
-  4. Nowy dzień zawiera pustą aktywność jako placeholder do wypełnienia.
-  5. Data nowego dnia jest kalkulowana jako `start_date + (numer_dnia - 1)`.
+  3. **[NICE TO HAVE - Feature flag: `day-adding`]** System blokuje dodanie dnia, jeśli po wydłużeniu `end_date` zakres przekroczyłby 30 dni (wyświetla komunikat "Maksymalny limit to 30 dni").
+  4. **[NICE TO HAVE - Feature flag: `day-adding`]** Nowy dzień zawiera pustą aktywność jako placeholder do wypełnienia.
+  5. **[NICE TO HAVE - Feature flag: `day-adding`]** Data nowego dnia jest kalkulowana jako `start_date + (numer_dnia - 1)`.
   6. Usunięcie dnia NIE modyfikuje `end_date` (pozwala na wolne dni bez aktywności, np. na odpoczynek).
   7. Po usunięciu dnia pozostałe dni są automatycznie przenumerowane (1, 2, 3, ...).
   8. Użytkownik nie może usunąć ostatniego pozostałego dnia (minimum 1 dzień w planie).
   9. Daty dni są zawsze kalkulowane automatycznie na podstawie `start_date + (numer_dnia - 1)`.
-- Kryteria akceptacji - Zarządzanie aktywnościami:
-  10. Użytkownik może kliknąć ikonę edycji na aktywności, aby edytować jej pola (czas, tytuł, opis, lokalizacja, czas trwania, koszt, kategoria).
-  11. Edycja aktywności wyświetla inline formularz z walidacją pól obowiązkowych (czas, tytuł, opis, lokalizacja).
-  12. Przycisk "Dodaj aktywność" jest dostępny w każdym dniu.
-  13. Użytkownik może usunąć aktywność, jeśli w dniu jest więcej niż 1 aktywność (minimum 1 aktywność na dzień).
-  14. Próba usunięcia ostatniej aktywności w dniu wyświetla komunikat błędu lub blokuje akcję.
-  15. Reordering aktywności poprzez drag & drop NIE jest wymagany w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności).
-- Kryteria akceptacji - Ogólne:
-  16. Edycje są widoczne natychmiast w interfejsie.
-  17. Plan pozostaje niezapisany w bazie do momentu akceptacji.
-  18. System śledzi czy plan został edytowany poprzez flagę `isEdited` (do celów analitycznych).
-  19. Każda modyfikacja (dodanie/usunięcie/edycja dnia lub aktywności) ustawia flagę `isEdited = true`.
-  20. Przed akceptacją system waliduje: liczba dni z aktywnościami <= (end_date - start_date + 1) (musi mieścić się w zakresie dat).
-  21. Przed akceptacją system waliduje: zakres dat nie przekracza 30 dni: `(end_date - start_date + 1) <= 30`.
-  22. Przed akceptacją system waliduje: każdy dzień ma minimum 1 aktywność z wypełnionymi polami obowiązkowymi.
-  23. Jeśli walidacja się nie powiedzie, użytkownik nie może zaakceptować planu i widzi komunikat błędu ze szczegółami.
+- Kryteria akceptacji - Zarządzanie aktywnościami: 10. Użytkownik może kliknąć ikonę edycji na aktywności, aby edytować jej pola (czas, tytuł, opis, lokalizacja, czas trwania, koszt, kategoria). 11. Edycja aktywności wyświetla inline formularz z walidacją pól obowiązkowych (czas, tytuł, opis, lokalizacja). 12. Przycisk "Dodaj aktywność" jest dostępny w każdym dniu. 13. Użytkownik może usunąć aktywność, jeśli w dniu jest więcej niż 1 aktywność (minimum 1 aktywność na dzień). 14. Próba usunięcia ostatniej aktywności w dniu wyświetla komunikat błędu lub blokuje akcję. 15. Reordering aktywności poprzez drag & drop NIE jest wymagany w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności).
+- Kryteria akceptacji - Ogólne: 16. Edycje są widoczne natychmiast w interfejsie. 17. Plan pozostaje niezapisany w bazie do momentu akceptacji. 18. System śledzi czy plan został edytowany poprzez flagę `isEdited` (do celów analitycznych). 19. Każda modyfikacja (dodanie/usunięcie/edycja dnia lub aktywności) ustawia flagę `isEdited = true`. 20. Przed akceptacją system waliduje: liczba dni z aktywnościami <= (end_date - start_date + 1) (musi mieścić się w zakresie dat). 21. Przed akceptacją system waliduje: zakres dat nie przekracza 30 dni: `(end_date - start_date + 1) <= 30`. 22. Przed akceptacją system waliduje: każdy dzień ma minimum 1 aktywność z wypełnionymi polami obowiązkowymi. 23. Jeśli walidacja się nie powiedzie, użytkownik nie może zaakceptować planu i widzi komunikat błędu ze szczegółami.
 
 ### US-007
 

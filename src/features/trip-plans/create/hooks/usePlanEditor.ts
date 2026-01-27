@@ -1,6 +1,8 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { GeneratedTripPlanDto } from "../../../../types";
 import type { EditableGeneratedPlan, PlanEditAction } from "../types";
+import { addDays, calculateDateRange } from "../../../../lib/utils/date-calculations";
+import { MAX_DAYS_PER_PLAN } from "../../../../lib/utils/trip-plan-constants";
 
 /**
  * Return type for the usePlanEditor hook
@@ -75,6 +77,36 @@ export function usePlanEditor(initialPlan: GeneratedTripPlanDto | null): UsePlan
         }
 
         case "ADD_DAY": {
+          const currentDateRange = calculateDateRange(prev.start_date, prev.end_date);
+          const newDayCount = updatedDays.length + 1;
+
+          // Check if we need to extend end_date
+          if (newDayCount > currentDateRange) {
+            // Calculate how many days we need to extend
+            const daysToExtend = newDayCount - currentDateRange;
+            const newEndDate = addDays(prev.end_date, daysToExtend);
+            const newDateRange = calculateDateRange(prev.start_date, newEndDate);
+
+            // Validate that we don't exceed 30-day limit
+            if (newDateRange > MAX_DAYS_PER_PLAN) {
+              return prev;
+            }
+
+            // Add the day and extend end_date
+            updatedDays = [...updatedDays, action.day];
+
+            return {
+              ...prev,
+              end_date: newEndDate,
+              plan_details: {
+                ...plan_details,
+                days: updatedDays,
+              },
+              isEdited: true,
+            };
+          }
+
+          // New day count fits within current date range - just add the day
           updatedDays = [...updatedDays, action.day];
           break;
         }

@@ -9,11 +9,11 @@
  */
 
 import Layout from "../layouts/Layout.astro";
-import { PreferencesView } from "../features/preferences/components/PreferencesView";
-import { shouldRenderPage } from "../feature-flags";
+import { PreferencesView } from "@preferences/components/PreferencesView.tsx";
+import { shouldRenderPage } from "@feature-flags";
 
 // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-const env = Astro.locals.runtime?.env || import.meta.env;
+const env = import.meta.env || Astro.locals.runtime?.env;
 
 // Check feature flag - redirect to home if preferences feature is disabled
 if (!shouldRenderPage("preferences", env)) {

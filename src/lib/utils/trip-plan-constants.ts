@@ -35,6 +35,12 @@ export const MAX_ACTIVITY_TITLE_LENGTH = 200;
 export const MIN_ACTIVITIES_PER_DAY = 1;
 
 /**
+ * Maximum number of days per trip plan
+ * Business rule: trip plans cannot exceed 30 days
+ */
+export const MAX_DAYS_PER_PLAN = 30;
+
+/**
  * Common activity categories
  * Used for suggestions/autocomplete in UI
  */

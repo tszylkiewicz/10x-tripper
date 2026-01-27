@@ -5,6 +5,7 @@
  */
 
 import { z } from "zod";
+import { MAX_DAYS_PER_PLAN } from "../utils/trip-plan-constants";
 import type { GeneratePlanCommand, GenerateTripPlanRequestDto } from "../../types";
 
 // UUID v4 regex for optional generation_id
@@ -35,12 +36,16 @@ const daySchema = z.object({
 /**
  * Schema for plan_details JSONB structure
  *
- * TODO: Post-MVP - Add size limits for performance:
- * - Max 30 days per plan
- * - Max 20 activities per day
+ * Enforces business rules:
+ * - Min 1 day per plan
+ * - Max 30 days per plan (MVP requirement)
+ * - Min 1 activity per day
  */
 const planDetailsSchema = z.object({
-  days: z.array(daySchema).min(1, "Plan must contain at least one day"),
+  days: z
+    .array(daySchema)
+    .min(1, "Plan must contain at least one day")
+    .max(MAX_DAYS_PER_PLAN, `Plan cannot exceed ${MAX_DAYS_PER_PLAN} days`),
   notes: z.string().optional(),
   total_estimated_cost: z.number().nonnegative("Total estimated cost must be non-negative").optional(),
   accepted_at: z.string().optional(),
@@ -109,6 +114,20 @@ export const acceptTripPlanSchema = z
       message: "End date must be on or after start date",
       path: ["end_date"],
     }
+  )
+  .refine(
+    (data) => {
+      // Validate: date range does not exceed 30 days
+      const start = new Date(data.start_date);
+      const end = new Date(data.end_date);
+      const diffMs = end.getTime() - start.getTime();
+      const dayCount = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      return dayCount <= MAX_DAYS_PER_PLAN;
+    },
+    {
+      message: `Trip duration cannot exceed ${MAX_DAYS_PER_PLAN} days`,
+      path: ["end_date"],
+    }
   );
 
 export type AcceptTripPlanInput = z.infer<typeof acceptTripPlanSchema>;
@@ -174,6 +193,23 @@ export const updateTripPlanSchema = z
     },
     {
       message: "End date must be on or after start date",
+      path: ["end_date"],
+    }
+  )
+  .refine(
+    (data) => {
+      // If both dates provided, validate date range does not exceed 30 days
+      if (data.start_date && data.end_date) {
+        const start = new Date(data.start_date);
+        const end = new Date(data.end_date);
+        const diffMs = end.getTime() - start.getTime();
+        const dayCount = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
+        return dayCount <= MAX_DAYS_PER_PLAN;
+      }
+      return true;
+    },
+    {
+      message: `Trip duration cannot exceed ${MAX_DAYS_PER_PLAN} days`,
       path: ["end_date"],
     }
   );
@@ -254,6 +290,20 @@ export const generateTripPlanSchema = z
       message: "End date must be on or after start date",
       path: ["end_date"],
     }
+  )
+  .refine(
+    (data) => {
+      // Validate: date range does not exceed 30 days
+      const start = new Date(data.start_date);
+      const end = new Date(data.end_date);
+      const diffMs = end.getTime() - start.getTime();
+      const dayCount = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      return dayCount <= MAX_DAYS_PER_PLAN;
+    },
+    {
+      message: `Trip duration cannot exceed ${MAX_DAYS_PER_PLAN} days`,
+      path: ["end_date"],
+    }
   );
 
 export type GenerateTripPlanInput = z.infer<typeof generateTripPlanSchema>;
@@ -265,7 +315,7 @@ export type GenerateTripPlanInput = z.infer<typeof generateTripPlanSchema>;
  * @throws ZodError if validation fails
  */
 export function validateGenerateTripPlanRequest(body: unknown): GenerateTripPlanRequestDto {
-  return generateTripPlanSchema.parse(body);
+  return generateTripPlanSchema.parse(body) as GenerateTripPlanRequestDto;
 }
 
 /**

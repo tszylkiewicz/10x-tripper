@@ -20,14 +20,14 @@ interface PlansListProps {
  * Main list component that renders trip plans with conditional states
  */
 export function PlansList({
-                            plans,
-                            isLoading,
-                            error,
-                            onPlanClick,
-                            onDeleteClick,
-                            onCreatePlan,
-                            onRetry,
-                          }: PlansListProps) {
+  plans,
+  isLoading,
+  error,
+  onPlanClick,
+  onDeleteClick,
+  onCreatePlan,
+  onRetry,
+}: PlansListProps) {
   if (isLoading) {
     return <LoadingSpinner />;
   }

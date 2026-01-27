@@ -310,6 +310,9 @@ describe("PreferenceCard", () => {
         name: "Family Vacation",
         people_count: 5,
         budget_type: "high",
+        transport: null,
+        activities_todo: null,
+        activities_avoid: null,
       });
     });
 
@@ -374,6 +377,9 @@ describe("PreferenceCard", () => {
         name: "Mountain Hiking",
         people_count: 3,
         budget_type: "low",
+        transport: null,
+        activities_todo: null,
+        activities_avoid: null,
       });
     });
 

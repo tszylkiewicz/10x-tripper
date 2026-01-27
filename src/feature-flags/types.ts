@@ -8,7 +8,7 @@
  * All available feature flags in the application.
  * Add new flags here to maintain type safety.
  */
-export type FeatureFlagName = "preferences";
+export type FeatureFlagName = "preferences" | "day-adding";
 
 /**
  * Environment names supported by the application.

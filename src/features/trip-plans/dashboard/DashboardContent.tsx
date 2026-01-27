@@ -58,7 +58,7 @@ export function DashboardContent() {
         });
       }
     },
-    [plans],
+    [plans]
   );
 
   const handleDeleteConfirm = useCallback(async () => {

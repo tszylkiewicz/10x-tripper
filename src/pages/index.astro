@@ -15,16 +15,16 @@ if (user) {
 
 {
   isAuthenticated ? (
-  <Layout title="Tripper - Twoje plany">
-    <DashboardContent client:load />
-  </Layout>
-    ) : (
-  <Layout
-    title="Tripper - Zamień pomysły na gotowe plany wycieczek z AI"
-    description="Tripper zamienia notatki podróżne w szczegółowe plany wycieczek. Opisz cel, daty i preferencje - AI stworzy plan dopasowany do Ciebie."
-    showNavigation={false}
-  >
-    <LandingPage />
-  </Layout>
-    )
-  }
+    <Layout title="Tripper - Twoje plany">
+      <DashboardContent client:load />
+    </Layout>
+  ) : (
+    <Layout
+      title="Tripper - Zamień pomysły na gotowe plany wycieczek z AI"
+      description="Tripper zamienia notatki podróżne w szczegółowe plany wycieczek. Opisz cel, daty i preferencje - AI stworzy plan dopasowany do Ciebie."
+      showNavigation={false}
+    >
+      <LandingPage />
+    </Layout>
+  )
+}

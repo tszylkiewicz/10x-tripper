@@ -68,8 +68,12 @@ src/
 ├── lib/                         (Business logic and utilities)
 │   ├── services/                (Business logic - tripPlan.service.ts, etc.)
 │   ├── validators/              (Zod validation schemas)
-│   ├── constants/               (Application constants)
+│   ├── constants/               (Application constants - trip-plan-constants.ts, etc.)
 │   └── utils/                   (Utility functions)
+│       ├── date-calculations.ts (Date arithmetic for trip planning)
+│       ├── plan-validation.ts   (Pre-acceptance plan validation)
+│       ├── activity-validation.ts (Activity field validation)
+│       └── *.ts                 (Other utilities)
 ├── db/                          (Supabase client and types)
 │   ├── supabase.client.ts       (Creates Supabase SSR client)
 │   └── database.types.ts        (Generated types from Supabase schema)
@@ -255,6 +259,24 @@ export interface PlanDetailsDto {
 - Path alias: `@/*` maps to `./src/*`
 - Styling: Use Tailwind 4 utility classes, leverage responsive variants (`sm:`, `md:`, etc.)
 
+**Edit State Tracking:**
+
+Trip plans track whether they've been modified with an `isEdited` flag:
+
+```typescript
+// Before acceptance (in UI only)
+interface EditableGeneratedPlan extends GeneratedTripPlanDto {
+  isEdited: boolean; // true if user modified the AI-generated plan
+}
+
+// After acceptance (in database)
+type PlanSource = "ai" | "ai-edited";
+// "ai" = accepted without modifications
+// "ai-edited" = modified before or after acceptance
+```
+
+This enables analytics to measure AI plan acceptance rates.
+
 ### Error Handling
 
 1. **Custom error classes** in `src/errors/`:
@@ -313,12 +335,264 @@ export interface PlanDetailsDto {
 - Zod schemas live in `src/lib/validators/`
 - Services may throw ValidationError for business rules not covered by Zod
 
+### Constants
+
+**Trip Plan Constants** (`src/lib/utils/trip-plan-constants.ts`):
+
+```typescript
+// Maximum trip duration (days)
+export const MAX_DAYS_PER_PLAN = 30;
+
+// Empty activity template for new days
+export const EMPTY_ACTIVITY: ActivityDto = {
+  time: "",
+  title: "",
+  description: "",
+  location: "",
+  estimated_cost: undefined,
+  duration: undefined,
+  category: undefined,
+};
+```
+
+**Preference Constants** (`src/lib/constants/preferences.constants.ts`):
+
+- `TRANSPORT_OPTIONS` - Predefined transport modes (9 options)
+- `ACTIVITY_OPTIONS` - Predefined activity categories (13 options)
+- `CUSTOM_OPTION_PREFIX` - Prefix for custom user-entered options ("custom:")
+- Utility functions: `isCustomOption()`, `getCustomText()`, `createCustomOption()`
+
 ### AI Generation
 
 - AI generation uses OpenRouter API via `aiGeneration.service.ts`
 - Generation results are tracked in `plan_generations` table
 - Errors logged in `plan_generation_error_logs` table
 - Plan source is `"ai"` when unmodified, `"ai-edited"` when modified before/after acceptance
+
+### Day Management in Trip Plans
+
+Trip plans support dynamic day management with automatic date calculations, validation, and 30-day limits.
+
+#### Core Concepts
+
+**Date Range vs Day Count:**
+
+- `start_date` and `end_date` define the trip's date range (inclusive)
+- Days with activities can be less than or equal to the date range
+- Allows "rest days" without activities within the trip dates
+- Example: 7-day trip (June 1-7) can have 5 days with activities + 2 rest days
+
+**Day Number Calculation:**
+
+- Days are numbered sequentially: 1, 2, 3, ...
+- Day dates calculated as: `start_date + (day_number - 1)`
+- After deleting a day, remaining days are automatically renumbered
+
+**30-Day Limit:**
+
+- Maximum trip duration: `(end_date - start_date + 1) <= 30 days`
+- Enforced in frontend, backend validation, and database constraints
+- Constant defined in `src/lib/utils/trip-plan-constants.ts`
+
+#### Adding Days
+
+When user clicks "Dodaj dzień" (Add Day):
+
+1. **Check if new day fits within current date range:**
+
+   ```typescript
+   const newDayCount = currentDays.length + 1;
+   const currentDateRange = calculateDateRange(start_date, end_date);
+
+   if (newDayCount <= currentDateRange) {
+     // Fits within range - add day without changing end_date
+   }
+   ```
+
+2. **If exceeds date range, extend end_date conditionally:**
+
+   ```typescript
+   if (newDayCount > currentDateRange) {
+     const daysToExtend = newDayCount - currentDateRange;
+     const newEndDate = addDays(end_date, daysToExtend);
+
+     // Validate 30-day limit
+     if (calculateDateRange(start_date, newEndDate) > MAX_DAYS_PER_PLAN) {
+       // Block - would exceed 30-day limit
+       return;
+     }
+
+     // Extend end_date and add day
+   }
+   ```
+
+3. **Create new day with empty activity:**
+   ```typescript
+   const newDay: DayDto = {
+     day: newDayNumber,
+     date: calculateDayDate(start_date, newDayNumber),
+     activities: [{ ...EMPTY_ACTIVITY }],
+   };
+   ```
+
+**Implementation:** See `GeneratedPlanSection.tsx:92-139` for handleAddDay logic.
+
+#### Removing Days
+
+When user removes a day:
+
+1. Filter out the day from the array
+2. Renumber remaining days sequentially (1, 2, 3, ...)
+3. **Do NOT modify end_date** - preserves date range for potential rest days
+4. Cannot remove the last day (minimum 1 day required)
+
+**Implementation:** See `GeneratedPlanSection.tsx:69-89` for handleDayRemove logic.
+
+#### Date Calculation Utilities
+
+Located in `src/lib/utils/date-calculations.ts`:
+
+```typescript
+// Calculate number of days in range (inclusive)
+calculateDateRange(startDate: string, endDate: string): number
+// Returns: 3 for "2025-02-01" to "2025-02-03"
+
+// Add/subtract days from a date
+addDays(dateString: string, days: number): string
+// Returns: "2025-02-06" for addDays("2025-02-01", 5)
+
+// Calculate date for a specific day number
+calculateDayDate(startDate: string, dayNumber: number): string
+// Returns: "2025-02-03" for calculateDayDate("2025-02-01", 3)
+
+// Validate date range doesn't exceed max
+isWithinMaxDays(startDate: string, endDate: string, maxDays = 30): boolean
+
+// Validate end_date >= start_date
+isValidDateRange(startDate: string, endDate: string): boolean
+```
+
+**All dates use ISO 8601 format: YYYY-MM-DD**
+
+#### Plan Validation System
+
+Before accepting a plan, comprehensive validation ensures data integrity.
+
+**Validation Rules:**
+
+1. **Plan must have at least one day**
+2. **Each day must have at least one activity**
+3. **All activities must have required fields:**
+   - `time` - Activity start time (required)
+   - `title` - Activity name (required)
+   - `description` - Activity details (required)
+   - `location` - Activity location (required)
+4. **Optional fields:** `estimated_cost`, `duration`, `category`
+
+**Validation Flow:**
+
+```typescript
+// src/lib/utils/plan-validation.ts
+const result: PlanValidationResult = validatePlan(planDetails);
+
+if (!result.isValid) {
+  // result.errors - Array of activity-level errors
+  // result.summary - Human-readable error summary
+  // Block acceptance, show errors to user
+}
+```
+
+**Activity Validation:**
+
+```typescript
+// src/lib/utils/activity-validation.ts
+const fieldErrors = validateActivity(activity);
+// Returns: { time: "Czas jest wymagany", title: "Tytuł jest wymagany" }
+```
+
+**UI Integration:**
+
+- Validation runs on "Akceptuj plan" button click
+- Errors displayed in Alert component at top of form
+- Lists affected days and activities
+- Scroll to top to show errors
+- Errors clear when user makes changes
+
+**Implementation:** See `GeneratedPlanSection.tsx:178-195` for validation logic.
+
+#### The usePlanEditor Hook
+
+Centralized state management for plan editing with action-based updates.
+
+**Location:** `src/features/trip-plans/create/hooks/usePlanEditor.ts`
+
+**Actions:**
+
+```typescript
+type PlanEditAction =
+  | { type: "ADD_DAY"; day: DayDto }
+  | { type: "REMOVE_DAY"; dayIndex: number }
+  | { type: "UPDATE_DAY"; dayIndex: number; day: DayDto }
+  | { type: "ADD_ACTIVITY"; dayIndex: number; activity: ActivityDto }
+  | { type: "REMOVE_ACTIVITY"; dayIndex: number; activityIndex: number }
+  | { type: "UPDATE_ACTIVITY"; dayIndex: number; activityIndex: number; activity: ActivityDto }
+  | { type: "REORDER_ACTIVITIES"; dayIndex: number; fromIndex: number; toIndex: number };
+```
+
+**Usage:**
+
+```typescript
+const { editablePlan, updatePlan, isEdited } = usePlanEditor(generatedPlan);
+
+// Add a day
+updatePlan({ type: "ADD_DAY", day: newDay });
+
+// Remove a day
+updatePlan({ type: "REMOVE_DAY", dayIndex: 2 });
+
+// Update activity
+updatePlan({
+  type: "UPDATE_ACTIVITY",
+  dayIndex: 0,
+  activityIndex: 1,
+  activity: updatedActivity,
+});
+```
+
+**Features:**
+
+- Automatic `isEdited` flag tracking
+- Immutable state updates
+- Day renumbering after removal
+- Conditional `end_date` extension on ADD_DAY
+- 30-day limit enforcement
+
+**Testing:** Comprehensive test suite in `usePlanEditor.test.ts` (9 tests, all passing).
+
+#### Testing Day Management
+
+**Unit Tests:**
+
+- `usePlanEditor.test.ts` - Hook logic (9 tests)
+- `date-calculations.test.ts` - Date utilities (38 tests)
+- `plan-validation.test.ts` - Validation logic
+- `activity-validation.test.ts` - Activity validation (29 tests)
+
+**Key Test Scenarios:**
+
+1. Adding days within date range (no end_date change)
+2. Adding days requiring end_date extension
+3. Blocking add when 30-day limit reached
+4. Removing days and renumbering
+5. Validating plans before acceptance
+6. Date calculations across month boundaries
+7. Leap year handling
+
+**E2E Tests (Planned):**
+
+- Full day management flow in browser
+- Validation error display
+- 30-day limit UI feedback
 
 ## Database Schema (Main Tables)
 
@@ -331,10 +605,44 @@ export interface PlanDetailsDto {
 
 ## Testing
 
-- Unit tests: Vitest (run with `npm test`)
-- E2E tests: Playwright (run with `npm run test:e2e`)
-- Test setup in `src/test/setup.ts`
-- Test utilities in `src/test/utils/test-utils.tsx`
+### Unit Tests
+
+- **Framework:** Vitest with React Testing Library
+- **Run:** `npm test` (all tests) or `npm run test:watch` (watch mode)
+- **Coverage:** 391 tests across 13 test suites (all passing)
+- **Test setup:** `src/test/setup.ts`
+- **Test utilities:** `src/test/utils/test-utils.tsx`
+
+**Key Test Suites:**
+
+- `usePlanEditor.test.ts` - Day management hook logic (9 tests)
+- `date-calculations.test.ts` - Date utilities (38 tests)
+- `activity-validation.test.ts` - Activity field validation (29 tests)
+- `plan-validation.test.ts` - Plan validation logic
+- `CreateTripPlanContent.test.tsx` - Trip plan creation flow (31 tests)
+- `TripPlanDetailsView.test.tsx` - Trip plan details view (30 tests)
+- `PreferenceCard.test.tsx` - Preference cards (51 tests)
+- `tripPlans.validator.test.ts` - Zod validation schemas (16 tests)
+
+**Vitest Configuration:**
+
+- Path aliases configured in `vitest.config.ts` to match `tsconfig.json`
+- All TypeScript path aliases (`@lib/*`, `@trip-plans/*`, etc.) work in tests
+- Environment: jsdom for React component testing
+- Coverage thresholds: 80% for statements, branches, functions, lines
+
+### E2E Tests
+
+- **Framework:** Playwright
+- **Run:** `npm run test:e2e`
+- **Dev server:** `npm run dev:e2e` (starts server in test mode)
+- **Coverage:** Authentication flows, trip plan CRUD operations
+
+**Planned E2E Coverage:**
+
+- Day management flows (add/remove days)
+- 30-day limit enforcement
+- Pre-acceptance validation
 
 ## Deployment
 

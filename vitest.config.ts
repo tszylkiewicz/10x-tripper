@@ -33,6 +33,20 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@preferences": path.resolve(__dirname, "./src/features/preferences"),
+      "@trip-plans": path.resolve(__dirname, "./src/features/trip-plans"),
+      "@auth": path.resolve(__dirname, "./src/features/auth"),
+      "@dashboard": path.resolve(__dirname, "./src/features/dashboard"),
+      "@landing": path.resolve(__dirname, "./src/features/landing"),
+      "@feature-flags": path.resolve(__dirname, "./src/feature-flags/index.ts"),
+      "@components": path.resolve(__dirname, "./src/components"),
+      "@ui": path.resolve(__dirname, "./src/components/ui"),
+      "@lib": path.resolve(__dirname, "./src/lib"),
+      "@layouts": path.resolve(__dirname, "./src/layouts"),
+      "@pages": path.resolve(__dirname, "./src/pages"),
+      "@db": path.resolve(__dirname, "./src/db"),
+      "@errors": path.resolve(__dirname, "./src/errors"),
+      "@types": path.resolve(__dirname, "./src/types.ts"),
     },
   },
 });

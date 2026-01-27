@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, ChevronUp, Save, Sparkles } from "lucide-react";
@@ -76,38 +76,41 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
   /**
    * Handle loading a preference template
    */
-  const handleLoadPreference = (preferenceId: string) => {
-    if (!preferenceId || preferenceId === "none") {
-      setSelectedPreferenceId(null);
-      return;
-    }
+  const handleLoadPreference = useCallback(
+    (preferenceId: string) => {
+      if (!preferenceId || preferenceId === "none") {
+        setSelectedPreferenceId(null);
+        return;
+      }
 
-    const preference = preferences.find((p) => p.id === preferenceId);
-    if (!preference) {
-      return;
-    }
+      const preference = preferences.find((p) => p.id === preferenceId);
+      if (!preference) {
+        return;
+      }
 
-    // Load preference data into form fields
-    if (preference.people_count) {
-      setValue("people_count", preference.people_count, { shouldValidate: true });
-    }
-    if (preference.budget_type) {
-      setValue("budget_type", preference.budget_type as "low" | "medium" | "high", { shouldValidate: true });
-    }
-    if (preference.transport) {
-      setValue("preferences.transport", preference.transport, { shouldValidate: true });
-    }
-    if (preference.activities_todo) {
-      setValue("preferences.todo", preference.activities_todo, { shouldValidate: true });
-    }
-    if (preference.activities_avoid) {
-      setValue("preferences.avoid", preference.activities_avoid, { shouldValidate: true });
-    }
+      // Load preference data into form fields
+      if (preference.people_count) {
+        setValue("people_count", preference.people_count, { shouldValidate: true });
+      }
+      if (preference.budget_type) {
+        setValue("budget_type", preference.budget_type as "low" | "medium" | "high", { shouldValidate: true });
+      }
+      if (preference.transport) {
+        setValue("preferences.transport", preference.transport, { shouldValidate: true });
+      }
+      if (preference.activities_todo) {
+        setValue("preferences.todo", preference.activities_todo, { shouldValidate: true });
+      }
+      if (preference.activities_avoid) {
+        setValue("preferences.avoid", preference.activities_avoid, { shouldValidate: true });
+      }
 
-    // Expand preferences section to show loaded data
-    setIsPreferencesOpen(true);
-    setSelectedPreferenceId(preferenceId);
-  };
+      // Expand preferences section to show loaded data
+      setIsPreferencesOpen(true);
+      setSelectedPreferenceId(preferenceId);
+    },
+    [preferences, setValue]
+  );
 
   /**
    * Auto-load preference from URL parameter
@@ -125,7 +128,7 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
     if (preferenceId && !selectedPreferenceId) {
       handleLoadPreference(preferenceId);
     }
-  }, [preferences, isLoadingPreferences, selectedPreferenceId]);
+  }, [preferences, isLoadingPreferences, selectedPreferenceId, handleLoadPreference]);
 
   /**
    * Handle saving form data as preference
