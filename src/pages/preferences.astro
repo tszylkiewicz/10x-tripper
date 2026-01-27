@@ -1,16 +1,16 @@
 ---
 /**
- * Preferences Page
- *
- * Strona zarządzania preferencjami użytkownika.
- * Wyświetla listę preferencji i pozwala na operacje CRUD.
- *
- * Route: /preferences
- */
+  * Preferences Page
+  *
+  * Strona zarządzania preferencjami użytkownika.
+  * Wyświetla listę preferencji i pozwala na operacje CRUD.
+  *
+  * Route: /preferences
+  */
 
 import Layout from "../layouts/Layout.astro";
-import { PreferencesView } from "../features/preferences/components/PreferencesView";
-import { shouldRenderPage } from "../feature-flags";
+import { PreferencesView } from "@preferences/components/PreferencesView.tsx";
+import { shouldRenderPage } from "@feature-flags";
 
 // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
 const env = Astro.locals.runtime?.env || import.meta.env || process.env;

@@ -43,7 +43,9 @@ export class PreferencesPage {
     // Initialize main page locators
     this.container = page.getByTestId("preferences-view");
     this.pageTitle = page.getByTestId("preferences-page-title");
-    this.createButton = page.getByTestId("create-preference-button");
+    // Note: PageHeader component adds -desktop/-mobile suffix to create button test IDs
+    // Desktop viewport uses -desktop variant, mobile uses -mobile variant
+    this.createButton = page.getByTestId("create-preference-button-desktop");
     this.preferencesGrid = page.getByTestId("preferences-grid");
     this.emptyState = page.getByTestId("preferences-empty-state");
     this.errorAlert = page.getByTestId("error-alert");
