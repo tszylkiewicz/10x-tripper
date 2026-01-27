@@ -4,7 +4,8 @@ AI-powered trip planning application that converts user notes into detailed, mul
 
 ## Overview
 
-Tripper is a web application that helps users plan trips by leveraging generative AI to transform simplified notes into comprehensive travel plans. The MVP focuses on:
+Tripper is a web application that helps users plan trips by leveraging generative AI to transform simplified notes into
+comprehensive travel plans. The MVP focuses on:
 
 - User account management and travel preferences
 - Creating and storing trip plans

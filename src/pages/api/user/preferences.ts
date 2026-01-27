@@ -16,6 +16,7 @@ import { ValidationError } from "@errors/validation.error.ts";
 import { createUnauthorizedResponse, requireAuth } from "@lib/auth.utils.ts";
 import { guardFeature } from "@feature-flags";
 import { logger } from "@lib/utils/logger.ts";
+import { getMergedEnv } from "@lib/utils/env.ts";
 import type { ApiErrorResponse, ApiSuccessResponse, UserPreferenceDto } from "@types";
 
 export const prerender = false;
@@ -24,8 +25,9 @@ export const prerender = false;
  * GET handler - Retrieve all user preferences
  */
 export const GET: APIRoute = async ({ locals }) => {
-  // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-  const env = locals.runtime?.env ?? import.meta.env;
+  // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev/E2E)
+  // Merges both sources to work in all environments
+  const env = getMergedEnv(locals.runtime?.env, import.meta.env);
 
   // Check feature flag
   const guardResponse = guardFeature("preferences", env);
@@ -77,8 +79,9 @@ export const GET: APIRoute = async ({ locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev)
-  const env = locals.runtime?.env ?? import.meta.env;
+  // Get env vars from runtime context (Cloudflare) or import.meta.env (local dev/E2E)
+  // Merges both sources to work in all environments
+  const env = getMergedEnv(locals.runtime?.env, import.meta.env);
 
   // Check feature flag
   const guardResponse = guardFeature("preferences", env);
