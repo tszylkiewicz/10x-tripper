@@ -1,7 +1,27 @@
 import { defineMiddleware } from "astro:middleware";
 
 import { createSupabaseServerInstance } from "../db/supabase.client.ts";
-import { getMergedEnv } from "../lib/utils/env.ts";
+
+/**
+ * Merges environment variables from runtime context (Cloudflare) and import.meta.env.
+ * Prefers runtime.env when available, but falls back to import.meta.env for missing properties.
+ */
+function getMergedEnv(
+  runtimeEnv?: Record<string, string | undefined> | null,
+  metaEnv: Record<string, string | undefined> = import.meta.env as Record<string, string | undefined>
+): Record<string, string | undefined> {
+  // If runtime.env doesn't exist or is null, use metaEnv directly
+  if (!runtimeEnv) {
+    return metaEnv;
+  }
+
+  // Merge both sources, preferring runtimeEnv but falling back to metaEnv
+  // This handles cases where runtimeEnv exists but is missing some properties
+  return {
+    ...metaEnv,
+    ...runtimeEnv,
+  };
+}
 
 // Public paths - Auth pages and API endpoints that don't require authentication
 const PUBLIC_PATHS = [
@@ -26,14 +46,22 @@ export const onRequest = defineMiddleware(async ({ locals, cookies, url, request
   const env = getMergedEnv(locals.runtime?.env, import.meta.env);
 
   // Create Supabase server instance with cookie support for all requests
+  // These env vars are required and should always be present
+  const supabaseUrl = env.SUPABASE_URL;
+  const supabaseKey = env.SUPABASE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Missing required environment variables: SUPABASE_URL and SUPABASE_KEY must be set");
+  }
+
   const supabase = createSupabaseServerInstance(
     {
       cookies,
       headers: request.headers,
     },
     {
-      SUPABASE_URL: env.SUPABASE_URL,
-      SUPABASE_KEY: env.SUPABASE_KEY,
+      SUPABASE_URL: supabaseUrl,
+      SUPABASE_KEY: supabaseKey,
     }
   );
 
