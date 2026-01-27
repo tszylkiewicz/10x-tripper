@@ -43,7 +43,7 @@ export function getCurrentEnvironment(env?: { PUBLIC_ENV_NAME?: string }): Envir
  *
  * @example
  * // Server-side (SSR)
- * const env = import.meta.env ?? Astro.locals.runtime?.env
+ * const env = Astro.locals.runtime?.env ?? import.meta.env
  * if (!isFeatureEnabled('preferences', env)) {
  *   return new Response(null, { status: 404 });
  * }
