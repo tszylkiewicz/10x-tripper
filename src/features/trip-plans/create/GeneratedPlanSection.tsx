@@ -19,6 +19,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@ui/alert";
 import { Button } from "@ui/button";
 import { Plus, AlertCircle } from "lucide-react";
+import { useFeatureFlag } from "@feature-flags";
 import { PlanHeader } from "./PlanHeader";
 import { PlanActions } from "./PlanActions";
 import { DayCard } from "../shared/DayCard";
@@ -40,6 +41,9 @@ export function GeneratedPlanSection({
 }: GeneratedPlanSectionProps) {
   const [showRegenerateDialog, setShowRegenerateDialog] = useState(false);
   const [validationResult, setValidationResult] = useState<PlanValidationResult | null>(null);
+
+  // Feature flag: day-adding (nice to have)
+  const dayAddingEnabled = useFeatureFlag("day-adding");
 
   // Handler for day updates
   const handleDayUpdate = useCallback(
@@ -242,26 +246,30 @@ export function GeneratedPlanSection({
           />
         ))}
 
-        {/* Add Day button */}
-        <div className="flex justify-center pt-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            onClick={handleAddDay}
-            disabled={!canAddDay()}
-            className="w-full max-w-md"
-          >
-            <Plus className="mr-2 h-5 w-5" />
-            Dodaj dzień
-          </Button>
-        </div>
+        {/* Add Day button (feature flag: day-adding) */}
+        {dayAddingEnabled && (
+          <>
+            <div className="flex justify-center pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={handleAddDay}
+                disabled={!canAddDay()}
+                className="w-full max-w-md"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                Dodaj dzień
+              </Button>
+            </div>
 
-        {/* 30-day limit message */}
-        {!canAddDay() && (
-          <p className="text-center text-sm text-muted-foreground">
-            Osiągnięto maksymalną długość podróży ({MAX_DAYS_PER_PLAN} dni)
-          </p>
+            {/* 30-day limit message */}
+            {!canAddDay() && (
+              <p className="text-center text-sm text-muted-foreground">
+                Osiągnięto maksymalną długość podróży ({MAX_DAYS_PER_PLAN} dni)
+              </p>
+            )}
+          </>
         )}
       </div>
 

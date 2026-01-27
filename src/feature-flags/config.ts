@@ -21,17 +21,29 @@ export const featureFlagsConfig: FeatureFlagsConfig = {
       enabled: true,
       description: "User preferences management feature",
     },
+    "day-adding": {
+      enabled: false,
+      description: "Add day functionality in trip plan editing (nice to have)",
+    },
   },
   integration: {
     preferences: {
       enabled: true,
       description: "User preferences management feature",
     },
+    "day-adding": {
+      enabled: false,
+      description: "Add day functionality in trip plan editing (nice to have)",
+    },
   },
   prod: {
     preferences: {
       enabled: false,
       description: "User preferences management feature",
+    },
+    "day-adding": {
+      enabled: false,
+      description: "Add day functionality in trip plan editing (nice to have)",
     },
   },
 };
