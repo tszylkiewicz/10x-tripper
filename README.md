@@ -4,7 +4,8 @@ AI-powered trip planning application that converts user notes into detailed, mul
 
 ## Overview
 
-Tripper is a web application that helps users plan trips by leveraging generative AI to transform simplified notes into comprehensive travel plans. The MVP focuses on:
+Tripper is a web application that helps users plan trips by leveraging generative AI to transform simplified notes into
+comprehensive travel plans. The MVP focuses on:
 
 - User account management and travel preferences
 - Creating and storing trip plans
@@ -24,23 +25,23 @@ Tripper is a web application that helps users plan trips by leveraging generativ
 ### Backend
 
 - [Supabase](https://supabase.com/) - Backend-as-a-Service
-  - PostgreSQL database
-  - Built-in authentication
-  - Row-Level Security (RLS)
+    - PostgreSQL database
+    - Built-in authentication
+    - Row-Level Security (RLS)
 
 ### AI
 
 - [Openrouter.ai](https://openrouter.ai/) - AI model access
-  - Multiple model providers (OpenAI, Anthropic, Google)
-  - API key limits and usage control
+    - Multiple model providers (OpenAI, Anthropic, Google)
+    - API key limits and usage control
 
 ### CI/CD & Hosting
 
 - GitHub Actions - CI/CD pipelines
 - [Cloudflare Pages](https://pages.cloudflare.com/) - Hosting platform
-  - Unlimited bandwidth (free tier)
-  - Automatic preview deployments
-  - Global edge network
+    - Unlimited bandwidth (free tier)
+    - Automatic preview deployments
+    - Global edge network
 
 ## Prerequisites
 
@@ -184,16 +185,16 @@ This project is configured for deployment on **Cloudflare Pages**.
 
 1. Connect your repository to Cloudflare Pages
 2. Configure build settings:
-   - **Build command:** `npm run build`
-   - **Build output directory:** `dist`
-   - **Node.js version:** `22` (set via environment variable `NODE_VERSION`)
+    - **Build command:** `npm run build`
+    - **Build output directory:** `dist`
+    - **Node.js version:** `22` (set via environment variable `NODE_VERSION`)
 3. Add environment variables:
-   - `SUPABASE_URL`
-   - `SUPABASE_KEY`
-   - `OPENROUTER_API_KEY`
-   - `OPENROUTER_MODEL`
-   - `PUBLIC_APP_URL`
-   - `PUBLIC_ENV_NAME=production`
+    - `SUPABASE_URL`
+    - `SUPABASE_KEY`
+    - `OPENROUTER_API_KEY`
+    - `OPENROUTER_MODEL`
+    - `PUBLIC_APP_URL`
+    - `PUBLIC_ENV_NAME=production`
 
 ### Preview Deployments
 
