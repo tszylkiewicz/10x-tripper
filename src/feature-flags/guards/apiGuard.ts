@@ -36,7 +36,7 @@ export function createFeatureDisabledResponse(): Response {
  *
  * @example
  * export const GET: APIRoute = async ({ locals }) => {
- *   const env = import.meta.env || locals.runtime?.env;
+ *   const env = import.meta.env ?? locals.runtime?.env;
  *   const guardResponse = guardFeature('preferences', env);
  *   if (guardResponse) return guardResponse;
  *   // ... rest of handler
