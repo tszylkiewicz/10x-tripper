@@ -11,13 +11,13 @@
 import Layout from "../layouts/Layout.astro";
 import { PreferencesView } from "@preferences/components/PreferencesView.tsx";
 import { shouldRenderPage } from "@feature-flags";
-import { getMergedEnv } from "@lib/utils/env.ts";
 
-// Get env vars from runtime context (Cloudflare) or import.meta.env (local dev/E2E)
-// Merges both sources to work in all environments
-const env = getMergedEnv(Astro.locals.runtime?.env, import.meta.env);
+// Get env from runtime context (Cloudflare) or fallback to import.meta.env (local dev/E2E)
+// The feature flag system handles the fallback internally, so we just pass runtime.env if available
+const env = Astro.locals.runtime?.env;
 
 // Check feature flag - redirect to home if preferences feature is disabled
+// shouldRenderPage will fall back to import.meta.env internally if env is undefined
 if (!shouldRenderPage("preferences", env)) {
   return Astro.redirect("/");
 }
