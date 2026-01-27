@@ -6,6 +6,7 @@
  */
 
 import { z } from "zod";
+import { MAX_DAYS_PER_PLAN } from "../utils/trip-plan-constants";
 
 /**
  * Helper function to check if a date is not in the past
@@ -80,6 +81,19 @@ export const tripPlanFormSchema = z
     },
     {
       message: "Data zakończenia musi być równa lub późniejsza niż data rozpoczęcia",
+      path: ["end_date"],
+    }
+  )
+  .refine(
+    (data) => {
+      const start = new Date(data.start_date);
+      const end = new Date(data.end_date);
+      const diffMs = end.getTime() - start.getTime();
+      const dayCount = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      return dayCount <= MAX_DAYS_PER_PLAN;
+    },
+    {
+      message: `Podróż nie może trwać dłużej niż ${MAX_DAYS_PER_PLAN} dni`,
       path: ["end_date"],
     }
   );

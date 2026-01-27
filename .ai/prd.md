@@ -223,22 +223,8 @@ Lista predefiniowanych kategorii aktywności (multi-select):
   7. Po usunięciu dnia pozostałe dni są automatycznie przenumerowane (1, 2, 3, ...).
   8. Użytkownik nie może usunąć ostatniego pozostałego dnia (minimum 1 dzień w planie).
   9. Daty dni są zawsze kalkulowane automatycznie na podstawie `start_date + (numer_dnia - 1)`.
-- Kryteria akceptacji - Zarządzanie aktywnościami:
-  10. Użytkownik może kliknąć ikonę edycji na aktywności, aby edytować jej pola (czas, tytuł, opis, lokalizacja, czas trwania, koszt, kategoria).
-  11. Edycja aktywności wyświetla inline formularz z walidacją pól obowiązkowych (czas, tytuł, opis, lokalizacja).
-  12. Przycisk "Dodaj aktywność" jest dostępny w każdym dniu.
-  13. Użytkownik może usunąć aktywność, jeśli w dniu jest więcej niż 1 aktywność (minimum 1 aktywność na dzień).
-  14. Próba usunięcia ostatniej aktywności w dniu wyświetla komunikat błędu lub blokuje akcję.
-  15. Reordering aktywności poprzez drag & drop NIE jest wymagany w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności).
-- Kryteria akceptacji - Ogólne:
-  16. Edycje są widoczne natychmiast w interfejsie.
-  17. Plan pozostaje niezapisany w bazie do momentu akceptacji.
-  18. System śledzi czy plan został edytowany poprzez flagę `isEdited` (do celów analitycznych).
-  19. Każda modyfikacja (dodanie/usunięcie/edycja dnia lub aktywności) ustawia flagę `isEdited = true`.
-  20. Przed akceptacją system waliduje: liczba dni z aktywnościami <= (end_date - start_date + 1) (musi mieścić się w zakresie dat).
-  21. Przed akceptacją system waliduje: zakres dat nie przekracza 30 dni: `(end_date - start_date + 1) <= 30`.
-  22. Przed akceptacją system waliduje: każdy dzień ma minimum 1 aktywność z wypełnionymi polami obowiązkowymi.
-  23. Jeśli walidacja się nie powiedzie, użytkownik nie może zaakceptować planu i widzi komunikat błędu ze szczegółami.
+- Kryteria akceptacji - Zarządzanie aktywnościami: 10. Użytkownik może kliknąć ikonę edycji na aktywności, aby edytować jej pola (czas, tytuł, opis, lokalizacja, czas trwania, koszt, kategoria). 11. Edycja aktywności wyświetla inline formularz z walidacją pól obowiązkowych (czas, tytuł, opis, lokalizacja). 12. Przycisk "Dodaj aktywność" jest dostępny w każdym dniu. 13. Użytkownik może usunąć aktywność, jeśli w dniu jest więcej niż 1 aktywność (minimum 1 aktywność na dzień). 14. Próba usunięcia ostatniej aktywności w dniu wyświetla komunikat błędu lub blokuje akcję. 15. Reordering aktywności poprzez drag & drop NIE jest wymagany w MVP (użytkownik może usuwać i dodawać w pożądanej kolejności).
+- Kryteria akceptacji - Ogólne: 16. Edycje są widoczne natychmiast w interfejsie. 17. Plan pozostaje niezapisany w bazie do momentu akceptacji. 18. System śledzi czy plan został edytowany poprzez flagę `isEdited` (do celów analitycznych). 19. Każda modyfikacja (dodanie/usunięcie/edycja dnia lub aktywności) ustawia flagę `isEdited = true`. 20. Przed akceptacją system waliduje: liczba dni z aktywnościami <= (end_date - start_date + 1) (musi mieścić się w zakresie dat). 21. Przed akceptacją system waliduje: zakres dat nie przekracza 30 dni: `(end_date - start_date + 1) <= 30`. 22. Przed akceptacją system waliduje: każdy dzień ma minimum 1 aktywność z wypełnionymi polami obowiązkowymi. 23. Jeśli walidacja się nie powiedzie, użytkownik nie może zaakceptować planu i widzi komunikat błędu ze szczegółami.
 
 ### US-007
 

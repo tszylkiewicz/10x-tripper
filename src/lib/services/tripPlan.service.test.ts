@@ -2,7 +2,7 @@ import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { TripPlanService } from "./tripPlan.service";
-import { ValidationError } from "@errors/validation.error.ts";
+import { ValidationError } from "@errors/validation.error";
 import type { AcceptPlanCommand, DeleteTripPlanCommand, PlanDetailsDto, UpdatePlanCommand } from "@types";
 
 describe("TripPlanService", () => {

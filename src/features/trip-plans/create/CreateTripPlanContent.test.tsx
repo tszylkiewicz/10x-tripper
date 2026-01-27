@@ -851,9 +851,9 @@ describe("CreateTripPlanContent", () => {
         expect(mockGeneratePlan).toHaveBeenCalledWith(
           expect.objectContaining({
             preferences: expect.objectContaining({
-              transport: "trains",
-              todo: "temples, ramen",
-              avoid: "crowded areas",
+              transport: ["trains"],
+              todo: ["temples, ramen"],
+              avoid: ["crowded areas"],
             }),
           })
         );
