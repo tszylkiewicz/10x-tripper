@@ -92,6 +92,7 @@ export function PreferencesView() {
 
       {/* Form Dialog (Create/Edit) */}
       <PreferenceFormDialog
+        key={`${state.dialogMode}-${state.selectedPreference?.id || "new"}`}
         open={state.dialogMode !== null}
         mode={state.dialogMode || "create"}
         initialData={state.selectedPreference || undefined}

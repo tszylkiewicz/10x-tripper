@@ -8,7 +8,7 @@ import type { GeneratedTripPlanDto, GeneratePlanCommand, PlanDetailsDto } from "
 import type { ChatMessage } from "./openrouter";
 import { OpenRouterService } from "./openrouter";
 import { z } from "zod";
-import { TRANSPORT_OPTIONS, ACTIVITY_OPTIONS, optionsToPromptText } from "../constants/preferences.constants";
+import { ACTIVITY_OPTIONS, optionsToPromptText, TRANSPORT_OPTIONS } from "../constants/preferences.constants";
 
 // Custom error type with metadata
 export interface ErrorWithMetadata extends Error {
@@ -158,13 +158,26 @@ export async function generateTripPlan(
 
     const messages = buildMessages(command);
 
+    // Calculate token budget based on trip duration
+    // ~600-800 tokens per day for detailed activities + overhead
+    const durationDays =
+      Math.ceil(
+        (new Date(command.end_date).getTime() - new Date(command.start_date).getTime()) / (1000 * 60 * 60 * 24)
+      ) + 1;
+    const baseTokensPerDay = 1000;
+    const overhead = 1500; // For system message, notes, structure
+    const calculatedTokens = Math.min(durationDays * baseTokensPerDay + overhead, 40000); // Cap at 16k
+
+    // eslint-disable-next-line no-console
+    console.log(`[AI Generation] Trip duration: ${durationDays} days, allocated tokens: ${calculatedTokens}`);
+
     // Use OpenRouterService with structured output
     const planDetails = await openRouterService.completeStructured<PlanDetailsDto>({
       messages,
       schema: getJsonSchema(),
       validator: (data) => PlanDetailsSchema.parse(data),
       temperature: 0.8,
-      maxTokens: 4000,
+      maxTokens: calculatedTokens,
     });
 
     return {

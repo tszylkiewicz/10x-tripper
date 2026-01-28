@@ -265,14 +265,33 @@ export class OpenRouterService {
 
       // Include both original and cleaned content for debugging
       const errorMessage = `Failed to parse JSON response: ${error instanceof Error ? error.message : "Unknown error"}`;
-      // eslint-disable-next-line no-console
-      console.error("JSON Parse Error:", {
+      const debugInfo = {
         error: errorMessage,
         originalLength: content.length,
         cleanedLength: cleaned.length,
         originalStart: content.substring(0, 100),
         cleanedStart: cleaned.substring(0, 100),
-      });
+        originalEnd: content.substring(Math.max(0, content.length - 100)),
+        cleanedEnd: cleaned.substring(Math.max(0, cleaned.length - 100)),
+      };
+
+      // eslint-disable-next-line no-console
+      console.error("JSON Parse Error:", debugInfo);
+
+      // Check if this looks like truncation (incomplete JSON at the end)
+      const endsAbruptly =
+        cleaned.endsWith('"') ||
+        cleaned.endsWith(",") ||
+        cleaned.endsWith(":") ||
+        !cleaned.trim().endsWith("}") ||
+        !cleaned.trim().endsWith("]");
+
+      if (endsAbruptly) {
+        throw new OpenRouterParseError(
+          `${errorMessage}. Response appears truncated - consider increasing maxTokens.`,
+          cleaned
+        );
+      }
 
       throw new OpenRouterParseError(errorMessage, cleaned);
     }
@@ -353,6 +372,14 @@ export class OpenRouterService {
       ...baseOptions,
       responseFormat,
     });
+
+    // Check if response was truncated due to token limit
+    if (response.finishReason === "length") {
+      throw new OpenRouterParseError(
+        `Response truncated due to token limit (maxTokens: ${baseOptions.maxTokens}). Increase maxTokens or reduce input size.`,
+        response.content
+      );
+    }
 
     // Parse and validate structured response
     return this.parseStructuredResponse<T>(response.content, validator);

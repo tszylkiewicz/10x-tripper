@@ -101,7 +101,7 @@ export interface UpdateUserPreferenceDto {
  * Used in: GET /api/trip-plans, GET /api/trip-plans/:id, POST /api/trip-plans, PATCH /api/trip-plans/:id responses
  *
  * Explicitly picks only the fields that should be exposed via API.
- * Excludes: user_id, deleted_at, and deleted_by for security and clarity.
+ * Excludes: user_id and deleted_at for security and clarity.
  * This ensures new database fields won't automatically leak into the API response.
  */
 export type TripPlanDto = Pick<
@@ -385,7 +385,6 @@ export type TripPlanInsert = Pick<
   | "budget_type"
   | "created_at"
   | "deleted_at"
-  | "deleted_by"
   | "destination"
   | "end_date"
   | "id"
@@ -411,7 +410,6 @@ export type TripPlanUpdate = Pick<
   | "budget_type"
   | "created_at"
   | "deleted_at"
-  | "deleted_by"
   | "destination"
   | "end_date"
   | "id"

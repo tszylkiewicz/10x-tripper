@@ -10,7 +10,7 @@ import type { LoadingOverlayProps } from "./types";
 export function LoadingOverlay({
   isVisible,
   message = "Generowanie spersonalizowanego planu wycieczki...",
-  subMessage = "To może potrwać do 3 minut",
+  subMessage = "To może chwilę potrwać",
 }: LoadingOverlayProps) {
   if (!isVisible) return null;
 

@@ -92,7 +92,7 @@ export class TripPlanService {
 
   /**
    * Soft deletes a trip plan by ID
-   * Sets deleted_at timestamp, trigger automatically sets deleted_by
+   * Sets deleted_at timestamp
    *
    * @param command - Command containing trip plan ID and user ID
    * @returns true if deleted successfully, false if not found
