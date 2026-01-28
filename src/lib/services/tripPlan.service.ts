@@ -101,7 +101,7 @@ export class TripPlanService {
   async deleteTripPlan(command: DeleteTripPlanCommand): Promise<boolean> {
     const { data, error } = await this.supabase
       .from("trip_plans")
-      .update({ deleted_at: new Date().toISOString() })
+      .delete()
       .eq("id", command.id)
       .eq("user_id", command.user_id)
       .select("id");

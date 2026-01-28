@@ -22,9 +22,9 @@ export interface TripPlanFormData {
   people_count: number;
   budget_type: string;
   preferences?: {
-    transport?: string[] | null;
-    todo?: string[] | null;
-    avoid?: string[] | null;
+    transport?: string[];
+    todo?: string[];
+    avoid?: string[];
   };
 }
 

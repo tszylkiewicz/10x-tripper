@@ -65,9 +65,9 @@ export function TripPlanForm({ onSubmit, isSubmitting = false, initialData }: Tr
       ...data,
       preferences: {
         transport:
-          data.preferences?.transport && data.preferences.transport.length > 0 ? data.preferences.transport : null,
-        todo: data.preferences?.todo && data.preferences.todo.length > 0 ? data.preferences.todo : null,
-        avoid: data.preferences?.avoid && data.preferences.avoid.length > 0 ? data.preferences.avoid : null,
+          data.preferences?.transport && data.preferences.transport.length > 0 ? data.preferences.transport : [],
+        todo: data.preferences?.todo && data.preferences.todo.length > 0 ? data.preferences.todo : [],
+        avoid: data.preferences?.avoid && data.preferences.avoid.length > 0 ? data.preferences.avoid : [],
       },
     };
     onSubmit(formData);

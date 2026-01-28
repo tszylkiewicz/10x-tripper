@@ -39,6 +39,7 @@ describe("TripPlanService", () => {
       eq: vi.fn().mockReturnThis(),
       is: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
       single: vi.fn(),
     } as unknown as SupabaseClient;
 
@@ -199,37 +200,10 @@ describe("TripPlanService", () => {
       const result = await service.deleteTripPlan(command);
 
       expect(mockSupabase.from).toHaveBeenCalledWith("trip_plans");
-      expect(mockSupabase.update).toHaveBeenCalledWith({
-        deleted_at: expect.any(String),
-      });
+      expect(mockSupabase.delete).toHaveBeenCalled();
       expect(mockSupabase.eq).toHaveBeenCalledWith("id", "plan-1");
       expect(mockSupabase.eq).toHaveBeenCalledWith("user_id", "user-123");
       expect(result).toBe(true);
-    });
-
-    it("should set deleted_at to current ISO timestamp", async () => {
-      const command: DeleteTripPlanCommand = {
-        id: "plan-1",
-        user_id: "user-123",
-      };
-
-      const beforeTime = new Date().toISOString();
-
-      (mockSupabase.select as Mock).mockResolvedValueOnce({
-        data: [{ id: "plan-1" }],
-        error: null,
-      });
-
-      await service.deleteTripPlan(command);
-
-      const afterTime = new Date().toISOString();
-      const updateCall = (mockSupabase.update as Mock).mock.calls[0][0];
-      const deletedAt = updateCall.deleted_at;
-
-      // Verify it's a valid ISO timestamp between before and after
-      expect(deletedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
-      expect(deletedAt >= beforeTime).toBe(true);
-      expect(deletedAt <= afterTime).toBe(true);
     });
 
     it("should return false when trip plan not found", async () => {
