@@ -417,7 +417,7 @@ describe("AI Generation Service", () => {
       const callArgs = mockCompleteStructured.mock.calls[0][0];
 
       expect(callArgs.temperature).toBe(0.8);
-      expect(callArgs.maxTokens).toBe(4000);
+      expect(callArgs.maxTokens).toBe(6500);
       expect(callArgs.validator).toBeDefined();
     });
 
